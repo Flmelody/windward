@@ -67,11 +67,11 @@ curl http://127.0.0.1:8080/function1
 ```
 
 ```shell
-curl http://127.0.0.1:8080/v1/function2
+curl http://127.0.0.1:8080/v1/function2 -X POST
 ```
 
 ```shell
-curl http://127.0.0.1:8080/v1/function3
+curl http://127.0.0.1:8080/v1/function3 -X DELETE
 ```
 
 ## todo
