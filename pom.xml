@@ -43,7 +43,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netty-all.version>4.1.94.Final</netty-all.version>
         <jackson-databind.version>2.15.2</jackson-databind.version>
-        <logback-classic.version>1.2.3</logback-classic.version>
+        <logback-classic.version>1.2.9</logback-classic.version>
         <junit.version>RELEASE</junit.version>
     </properties>
 
