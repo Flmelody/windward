@@ -4,6 +4,17 @@ Light web function server for Java
 
 ## quick start
 
+### maven dependency
+
+```xml
+
+<dependency>
+    <groupId>org.flmelody</groupId>
+    <artifactId>windward</artifactId>
+    <version>1.0-RELEASE</version>
+</dependency>
+```
+
 ### define function
 
 ```shell
