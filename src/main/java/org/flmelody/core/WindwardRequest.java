@@ -11,9 +11,13 @@ public class WindwardRequest {
   private String method;
   private String uri;
   private Boolean keepAlive;
-  private String contentType;
+  private final Map<String, List<String>> headers = new HashMap<>();
   private final Map<String, List<String>> querystring = new HashMap<>();
   private String requestBody;
+
+  public static WindwardRequest empty() {
+    return new WindwardRequest();
+  }
 
   public static WindwardRequestBuilder newBuild() {
     return new WindwardRequestBuilder(new WindwardRequest());
@@ -37,15 +41,6 @@ public class WindwardRequest {
    */
   public String getUri() {
     return uri;
-  }
-
-  /**
-   * request contentType
-   *
-   * @return contentType
-   */
-  public String getContentType() {
-    return contentType;
   }
 
   /**
@@ -89,8 +84,8 @@ public class WindwardRequest {
       return this;
     }
 
-    public WindwardRequestBuilder contentType(String contentType) {
-      windwardRequest.contentType = contentType;
+    public WindwardRequestBuilder headers(Map<String, List<String>> headers) {
+      windwardRequest.headers.putAll(headers);
       return this;
     }
 

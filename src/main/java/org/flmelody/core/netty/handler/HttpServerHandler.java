@@ -4,15 +4,19 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.util.CharsetUtil;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import org.flmelody.core.Handler;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.Windward;
@@ -38,7 +42,6 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
   protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
     if (msg instanceof FullHttpRequest) {
       FullHttpRequest fullHttpRequest = (FullHttpRequest) msg;
-      HttpMethod method = fullHttpRequest.method();
       String uri = fullHttpRequest.uri();
       ByteBuf content = fullHttpRequest.content();
       boolean keepAlive = HttpUtil.isKeepAlive(fullHttpRequest);
@@ -47,16 +50,14 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
       Map<String, List<String>> params = queryStringDecoder.parameters();
 
       uri = uri.split("\\?")[0];
-      if (logger.isDebugEnabled()) {
-        logger.debug("Accept request uri {}", uri);
-      }
-      Object router = Windward.findRouter(uri, method.name());
+      Object router = Windward.findRouter(uri, fullHttpRequest.method().name());
       if (router instanceof Consumer) {
         @SuppressWarnings("unchecked")
-        Consumer<WindwardContext> contextConsumer = (Consumer<WindwardContext>) router;
+        final Consumer<WindwardContext> contextConsumer = (Consumer<WindwardContext>) router;
         WindwardRequest.WindwardRequestBuilder windwardRequestBuilder =
             WindwardRequest.newBuild()
-                .method(method.name())
+                .headers(prepareHeaders(fullHttpRequest.headers()))
+                .method(fullHttpRequest.method().name())
                 .uri(uri)
                 .keepAlive(keepAlive)
                 .querystring(params);
@@ -70,6 +71,17 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
                 .responseWriter(new NettyResponseWriter(ctx));
         WindwardContext windwardContext =
             new WindwardContext(windwardRequestBuilder.build(), windwardResponseBuild.build());
+        for (Handler handler : Windward.handlers()) {
+          try {
+            handler.invoke(windwardContext);
+          } catch (Exception e) {
+            logger.error("Handler error", e);
+            windwardContext.close();
+          }
+        }
+        if (windwardContext.isClosed()) {
+          return;
+        }
         contextConsumer.accept(windwardContext);
       } else if (router instanceof Supplier) {
         Supplier<?> supplier = (Supplier<?>) router;
@@ -95,5 +107,21 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
     ctx.close();
+  }
+
+  private Map<String, List<String>> prepareHeaders(HttpHeaders httpHeaders) {
+    Iterator<Map.Entry<String, String>> entryIterator = httpHeaders.iteratorAsString();
+    Map<String, List<String>> headers = new HashMap<>();
+    while (entryIterator.hasNext()) {
+      Map.Entry<String, String> next = entryIterator.next();
+      if (headers.containsKey(next.getKey())) {
+        headers.get(next.getKey()).add(next.getValue());
+      } else {
+        ArrayList<String> values = new ArrayList<>();
+        values.add(next.getValue());
+        headers.put(next.getKey(), values);
+      }
+    }
+    return headers;
   }
 }

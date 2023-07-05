@@ -4,6 +4,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -37,6 +38,10 @@ public class NettyResponseWriter implements ResponseWriter {
 
   @Override
   public <T> void write(int code, String contentType, T data, Boolean close) {
+    Channel channel = ctx.channel();
+    if (!channel.isActive()) {
+      return;
+    }
     String response = null;
     if (MediaType.APPLICATION_JSON_VALUE.equals(contentType)) {
       response = JacksonUtil.toJson(data);

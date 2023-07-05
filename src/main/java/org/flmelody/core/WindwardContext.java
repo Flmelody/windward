@@ -10,6 +10,7 @@ import java.util.List;
 public class WindwardContext {
   private final WindwardRequest windwardRequest;
   private final WindwardResponse windwardResponse;
+  private Boolean closed = Boolean.FALSE;
 
   public WindwardContext(WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
     this.windwardRequest = windwardRequest;
@@ -42,8 +43,36 @@ public class WindwardContext {
     return this.windwardRequest.getQuerystring().get(parameterName);
   }
 
+  /**
+   * get request body
+   *
+   * @return request body
+   */
   public String getRequestBody() {
     return this.windwardRequest.getRequestBody();
+  }
+
+  /**
+   * get windwardRequest
+   *
+   * @return windwardRequest
+   */
+  public WindwardRequest windwardRequest() {
+    return this.windwardRequest;
+  }
+
+  /** close context */
+  public void close() {
+    this.closed = Boolean.TRUE;
+  }
+
+  /**
+   * check if current context is already closed
+   *
+   * @return is closed
+   */
+  public Boolean isClosed() {
+    return this.closed;
   }
 
   /**

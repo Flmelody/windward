@@ -1,6 +1,7 @@
 package org.flmelody.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -14,6 +15,8 @@ public class Windward implements Router {
   private static AbstractRouterGroup baseRouterGroup;
   // registered function
   private static final List<AbstractRouterGroup> routerGroups = new ArrayList<>();
+  // handlers
+  private static final List<Handler> handlers = new ArrayList<>();
   private HttpServer httpServer;
 
   private Windward(String relativePath) {
@@ -44,6 +47,7 @@ public class Windward implements Router {
   public static Windward setup(int port, String relativePath) {
     Windward windward = new Windward(relativePath);
     windward.httpServer = new NettyHttpServer(port);
+    windward.registerHandler(new LoggingHandler());
     return windward;
   }
 
@@ -69,6 +73,20 @@ public class Windward implements Router {
   }
 
   /**
+   * register handler
+   *
+   * @param handler handler
+   * @return current windward
+   */
+  public Windward registerHandler(Handler... handler) {
+    if (handler == null) {
+      return this;
+    }
+    handlers.addAll(Arrays.asList(handler));
+    return this;
+  }
+
+  /**
    * find out registered function by specific path
    *
    * @param relativePath relativePath
@@ -82,6 +100,15 @@ public class Windward implements Router {
       }
     }
     return baseRouterGroup.matchRouter(relativePath, method);
+  }
+
+  /**
+   * get handlers
+   *
+   * @return handlers
+   */
+  public static List<Handler> handlers() {
+    return handlers;
   }
 
   public Windward then() {

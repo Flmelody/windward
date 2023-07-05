@@ -39,6 +39,7 @@ public class FunctionTest {
 
     public void function3(WindwardContext windwardContext) {
       windwardContext.json(new User(1, "esotericman"));
+      windwardContext.json(new User(1, "esotericman"));
     }
   }
 
