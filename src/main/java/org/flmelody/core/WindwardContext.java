@@ -102,6 +102,16 @@ public class WindwardContext {
    * @param data strings
    */
   public void string(String data) {
-    windwardResponse.write(HttpStatus.OK.value(), MediaType.TEXT_PLAIN_VALUE, data);
+    string(HttpStatus.OK.value(), data);
+  }
+
+  /**
+   * response plain string
+   *
+   * @param code response code
+   * @param data strings
+   */
+  public void string(int code, String data) {
+    windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE, data);
   }
 }
