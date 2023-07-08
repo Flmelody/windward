@@ -16,7 +16,7 @@ public class Windward implements Router {
   // registered function
   private static final List<AbstractRouterGroup> routerGroups = new ArrayList<>();
   // handlers
-  private static final List<Handler> handlers = new ArrayList<>();
+  private static final List<Handler> globalHandlers = new ArrayList<>();
   private HttpServer httpServer;
 
   private Windward(String relativePath) {
@@ -24,7 +24,7 @@ public class Windward implements Router {
   }
 
   public static Windward setup() {
-    return setup(8080);
+    return setup(8080, new LoggingHandler());
   }
 
   /**
@@ -33,8 +33,8 @@ public class Windward implements Router {
    * @param port server port
    * @return core engine of Windward
    */
-  public static Windward setup(int port) {
-    return setup(port, "/");
+  public static Windward setup(int port, Handler... handlers) {
+    return setup(port, "/", handlers);
   }
 
   /**
@@ -44,11 +44,10 @@ public class Windward implements Router {
    * @param relativePath path of default router group
    * @return core engine of Windward
    */
-  public static Windward setup(int port, String relativePath) {
+  public static Windward setup(int port, String relativePath, Handler... handlers) {
     Windward windward = new Windward(relativePath);
     windward.httpServer = new NettyHttpServer(port);
-    windward.registerHandler(new LoggingHandler());
-    return windward;
+    return windward.registerHandler(handlers);
   }
 
   /**
@@ -75,14 +74,14 @@ public class Windward implements Router {
   /**
    * register handler
    *
-   * @param handler handler
+   * @param handlers handler
    * @return current windward
    */
-  public Windward registerHandler(Handler... handler) {
-    if (handler == null) {
+  public Windward registerHandler(Handler... handlers) {
+    if (handlers == null || handlers.length == 0) {
       return this;
     }
-    handlers.addAll(Arrays.asList(handler));
+    globalHandlers.addAll(Arrays.asList(handlers));
     return this;
   }
 
@@ -108,7 +107,7 @@ public class Windward implements Router {
    * @return handlers
    */
   public static List<Handler> handlers() {
-    return handlers;
+    return globalHandlers;
   }
 
   public Windward then() {
