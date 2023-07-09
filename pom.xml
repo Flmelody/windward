@@ -29,12 +29,12 @@
 
     <scm>
         <connection>
-            scm:git:git://github.com:esotericman/windward.git
+            scm:git:git://github.com/Flmelody/windward
         </connection>
         <developerConnection>
-            scm:git:ssh://github.com:esotericman/windward.git
+            scm:git:ssh://github.com/Flmelody/windward
         </developerConnection>
-        <url>https://github.com/esotericman/windward</url>
+        <url>https://github.com/Flmelody/windward</url>
     </scm>
 
     <properties>
