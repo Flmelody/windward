@@ -1,8 +1,10 @@
 package org.flmelody.core;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author esotericman
@@ -14,10 +16,6 @@ public class WindwardRequest {
   private final Map<String, List<String>> headers = new HashMap<>();
   private final Map<String, List<String>> querystring = new HashMap<>();
   private String requestBody;
-
-  public static WindwardRequest empty() {
-    return new WindwardRequest();
-  }
 
   public static WindwardRequestBuilder newBuild() {
     return new WindwardRequestBuilder(new WindwardRequest());
@@ -34,6 +32,18 @@ public class WindwardRequest {
     return method;
   }
 
+  /**
+   * return request header
+   *
+   * @param name headers name
+   * @return headers values
+   */
+  public List<String> getHeader(String name) {
+    if (!headers.containsKey(name)) {
+      return Collections.emptyList();
+    }
+    return headers.get(name);
+  }
   /**
    * request uri
    *
