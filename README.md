@@ -11,7 +11,7 @@ Light web function server for Java
 <dependency>
     <groupId>org.flmelody</groupId>
     <artifactId>windward</artifactId>
-    <version>1.0-RELEASE</version>
+    <version>1.1-RELEASE</version>
 </dependency>
 ```
 
