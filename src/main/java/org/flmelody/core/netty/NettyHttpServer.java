@@ -10,6 +10,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.cors.CorsConfigBuilder;
+import io.netty.handler.codec.http.cors.CorsHandler;
 import org.flmelody.core.HttpServer;
 import org.flmelody.core.netty.handler.HttpServerHandler;
 import org.slf4j.Logger;
@@ -41,6 +43,12 @@ public class NettyHttpServer implements HttpServer {
                 protected void initChannel(SocketChannel ch) throws Exception {
                   ChannelPipeline p = ch.pipeline();
                   p.addLast(new HttpServerCodec());
+                  p.addLast(
+                      new CorsHandler(
+                          CorsConfigBuilder.forAnyOrigin()
+                              .allowNullOrigin()
+                              .allowCredentials()
+                              .build()));
                   p.addLast(new HttpObjectAggregator(65536));
                   p.addLast(new HttpServerHandler());
                 }
