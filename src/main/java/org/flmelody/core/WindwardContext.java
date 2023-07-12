@@ -1,11 +1,10 @@
 package org.flmelody.core;
 
+import java.util.List;
 import org.flmelody.core.exception.NoRequestBodyException;
 import org.flmelody.core.exception.ValidationException;
 import org.flmelody.util.JacksonUtil;
 import org.flmelody.util.ValidationUtil;
-
-import java.util.List;
 
 /**
  * http context
@@ -84,8 +83,8 @@ public class WindwardContext {
    * read request body into new object possibly
    *
    * @param clazz objects class
-   * @return object
    * @param <I> objects type
+   * @return object
    */
   public <I> I readJson(Class<I> clazz) {
     if (windwardRequest.getRequestBody() == null) {
@@ -99,8 +98,8 @@ public class WindwardContext {
    *
    * @param clazz objects class
    * @param groups validate group
-   * @return object
    * @param <I> objects type
+   * @return object
    * @throws NoRequestBodyException if request body is null
    * @throws ValidationException validated failed
    */

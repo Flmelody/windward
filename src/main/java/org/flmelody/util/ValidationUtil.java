@@ -4,12 +4,11 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import java.util.Objects;
+import java.util.Set;
 import org.flmelody.core.exception.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author esotericman
@@ -26,6 +25,7 @@ public final class ValidationUtil {
       throw e;
     }
   }
+
   /**
    * try to convert json content to target object
    *

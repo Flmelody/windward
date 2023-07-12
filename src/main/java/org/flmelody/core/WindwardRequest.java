@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author esotericman
@@ -44,6 +43,7 @@ public class WindwardRequest {
     }
     return headers.get(name);
   }
+
   /**
    * request uri
    *

@@ -13,6 +13,7 @@ public class JacksonUtil {
   static {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
+
   /**
    * convert data into json string
    *
