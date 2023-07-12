@@ -1,5 +1,10 @@
 package org.flmelody.core;
 
+import org.flmelody.core.exception.NoRequestBodyException;
+import org.flmelody.core.exception.ValidationException;
+import org.flmelody.util.JacksonUtil;
+import org.flmelody.util.ValidationUtil;
+
 import java.util.List;
 
 /**
@@ -76,13 +81,45 @@ public class WindwardContext {
   }
 
   /**
+   * read request body into new object possibly
+   *
+   * @param clazz objects class
+   * @return object
+   * @param <I> objects type
+   */
+  public <I> I readJson(Class<I> clazz) {
+    if (windwardRequest.getRequestBody() == null) {
+      return JacksonUtil.toObject("{}", clazz);
+    }
+    return JacksonUtil.toObject(windwardRequest.getRequestBody(), clazz);
+  }
+
+  /**
+   * bind request body to specific class. and return instance of the class
+   *
+   * @param clazz objects class
+   * @param groups validate group
+   * @return object
+   * @param <I> objects type
+   * @throws NoRequestBodyException if request body is null
+   * @throws ValidationException validated failed
+   */
+  public <I> I bindJson(Class<I> clazz, Class<?>... groups)
+      throws NoRequestBodyException, ValidationException {
+    if (windwardRequest.getRequestBody() == null) {
+      throw new NoRequestBodyException();
+    }
+    return ValidationUtil.validate(windwardRequest.getRequestBody(), clazz, groups);
+  }
+
+  /**
    * response json
    *
    * @param data data
    * @param <T> type
    */
-  public <T> void json(T data) {
-    json(HttpStatus.OK.value(), data);
+  public <T> void writeJson(T data) {
+    writeJson(HttpStatus.OK.value(), data);
   }
 
   /**
@@ -92,7 +129,7 @@ public class WindwardContext {
    * @param data data
    * @param <T> type
    */
-  public <T> void json(int code, T data) {
+  public <T> void writeJson(int code, T data) {
     windwardResponse.write(code, MediaType.APPLICATION_JSON_VALUE, data);
   }
 
@@ -101,8 +138,8 @@ public class WindwardContext {
    *
    * @param data strings
    */
-  public void string(String data) {
-    string(HttpStatus.OK.value(), data);
+  public void writeString(String data) {
+    writeString(HttpStatus.OK.value(), data);
   }
 
   /**
@@ -111,7 +148,7 @@ public class WindwardContext {
    * @param code response code
    * @param data strings
    */
-  public void string(int code, String data) {
+  public void writeString(int code, String data) {
     windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE, data);
   }
 }

@@ -1,6 +1,7 @@
 package org.flmelody.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -9,6 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JacksonUtil {
   static final ObjectMapper objectMapper = new ObjectMapper();
 
+  static {
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+  }
   /**
    * convert data into json string
    *

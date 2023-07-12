@@ -20,15 +20,15 @@ Light web function server for Java
 ```shell
   static class Function {
     public static void function1(WindwardContext windwardContext) {
-      windwardContext.string("hello world! function1!");
+      windwardContext.writeString("hello world! function1!");
     }
 
     public void function2(WindwardContext windwardContext) {
-      windwardContext.string("hello world! function2!");
+      windwardContext.writeString("hello world! function2!");
     }
 
     public void function3(WindwardContext windwardContext) {
-      windwardContext.json(new User(1, "esotericman"));
+      windwardContext.writeJson(new User(1, "esotericman"));
     }
   }
 

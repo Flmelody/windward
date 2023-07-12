@@ -50,27 +50,35 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
           handler.invoke(windwardContext);
         } catch (Exception e) {
           logger.error("Handler error", e);
-          windwardContext.string(
+          windwardContext.writeString(
               HttpStatus.INTERNAL_SERVER_ERROR.value(),
               HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
           windwardContext.close();
           return;
         }
       }
-      if (router instanceof Consumer) {
-        @SuppressWarnings("unchecked")
-        final Consumer<WindwardContext> contextConsumer = (Consumer<WindwardContext>) router;
-        contextConsumer.accept(windwardContext);
-      } else if (router instanceof Supplier) {
-        Supplier<?> supplier = (Supplier<?>) router;
-        Object object = supplier.get();
-        if (object instanceof Serializable && !(object instanceof String)) {
-          windwardContext.json(object);
+      try {
+        if (router instanceof Consumer) {
+          @SuppressWarnings("unchecked")
+          final Consumer<WindwardContext> contextConsumer = (Consumer<WindwardContext>) router;
+          contextConsumer.accept(windwardContext);
+        } else if (router instanceof Supplier) {
+          Supplier<?> supplier = (Supplier<?>) router;
+          Object object = supplier.get();
+          if (object instanceof Serializable && !(object instanceof String)) {
+            windwardContext.writeJson(object);
+          } else {
+            windwardContext.writeString(object.toString());
+          }
         } else {
-          windwardContext.string(object.toString());
+          windwardContext.writeString(
+              HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.reasonPhrase());
         }
-      } else {
-        windwardContext.string(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.reasonPhrase());
+      } catch (Exception e) {
+        logger.error("Error occurred", e);
+        windwardContext.writeString(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
       }
     }
   }

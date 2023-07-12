@@ -1,7 +1,13 @@
 package org.flmelody;
 
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.flmelody.core.Windward;
 import org.flmelody.core.WindwardContext;
+import org.flmelody.core.exception.NoRequestBodyException;
+import org.flmelody.core.exception.ValidationException;
 import org.junit.Test;
 
 /**
@@ -30,34 +36,28 @@ public class FunctionTest {
 
   static class Function {
     public static void function1(WindwardContext windwardContext) {
-      windwardContext.string("hello world! function1!");
+      try {
+        User user = windwardContext.bindJson(User.class);
+      } catch (NoRequestBodyException | ValidationException e) {
+        throw new RuntimeException(e);
+      }
+      windwardContext.writeString("hello world! function1!");
     }
 
     public void function2(WindwardContext windwardContext) {
-      windwardContext.string("hello world! function2!");
+      windwardContext.writeString("hello world! function2!");
     }
 
     public void function3(WindwardContext windwardContext) {
-      windwardContext.json(new User(1, "esotericman"));
-      windwardContext.json(new User(1, "esotericman"));
+      windwardContext.writeJson(new User(1, "esotericman"));
     }
   }
 
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
   static class User {
-    private final Integer userId;
-    private final String userName;
-
-    public Integer getUserId() {
-      return userId;
-    }
-
-    public String getUserName() {
-      return userName;
-    }
-
-    public User(Integer userId, String userName) {
-      this.userId = userId;
-      this.userName = userName;
-    }
+    @NotNull private Integer userId;
+    private String userName;
   }
 }
