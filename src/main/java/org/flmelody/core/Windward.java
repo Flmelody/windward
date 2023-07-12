@@ -153,7 +153,7 @@ public class Windward implements Router {
    * @return this
    */
   public Windward put(String relativePath, Consumer<? extends WindwardContext> consumer) {
-    baseRouterGroup.get(relativePath, consumer);
+    baseRouterGroup.put(relativePath, consumer);
     return this;
   }
 
@@ -171,7 +171,7 @@ public class Windward implements Router {
    * @return this
    */
   public Windward post(String relativePath, Consumer<? extends WindwardContext> consumer) {
-    baseRouterGroup.get(relativePath, consumer);
+    baseRouterGroup.post(relativePath, consumer);
     return this;
   }
 
@@ -189,7 +189,7 @@ public class Windward implements Router {
    * @return this
    */
   public Windward delete(String relativePath, Consumer<? extends WindwardContext> consumer) {
-    baseRouterGroup.get(relativePath, consumer);
+    baseRouterGroup.delete(relativePath, consumer);
     return this;
   }
 }
