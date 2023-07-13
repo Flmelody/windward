@@ -9,7 +9,7 @@
 
     <name>windward</name>
     <url>https://windward.flmelody.org</url>
-    <description>Light web function server</description>
+    <description>Light web function framework</description>
 
     <organization>
         <name>flmelody</name>
