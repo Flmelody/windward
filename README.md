@@ -1,6 +1,6 @@
 # windward
 
-Light web function server for Java
+Light web function framework for Java
 
 ## quick start
 
