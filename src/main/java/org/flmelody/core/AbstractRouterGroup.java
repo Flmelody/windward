@@ -1,5 +1,7 @@
 package org.flmelody.core;
 
+import org.flmelody.util.UrlUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -9,17 +11,20 @@ import java.util.function.Supplier;
  * @author esotericman
  */
 public abstract class AbstractRouterGroup implements RouterGroup {
-  private final String groupPath;
-  private static final String SLASH = "/";
+  private String groupPath;
   private final Map<String, Map<String, ? super Object>> routers = new HashMap<>();
 
-  public AbstractRouterGroup() {
+  protected AbstractRouterGroup() {
     this("/");
   }
 
   protected AbstractRouterGroup(String groupPath) {
-    if (!groupPath.startsWith(SLASH)) {
-      groupPath = SLASH + groupPath;
+    setGroupPath(groupPath);
+  }
+
+  protected void setGroupPath(String groupPath) {
+    if (!groupPath.startsWith(UrlUtil.SLASH)) {
+      groupPath = UrlUtil.SLASH + groupPath;
     }
     this.groupPath = groupPath;
   }
@@ -77,7 +82,7 @@ public abstract class AbstractRouterGroup implements RouterGroup {
     if (!relativePath.startsWith(groupPath)) {
       return null;
     }
-    if (relativePath.endsWith(SLASH)) {
+    if (relativePath.endsWith(UrlUtil.SLASH)) {
       relativePath = relativePath.replaceFirst("/$", "");
     }
     if (!routers.containsKey(relativePath)) {
@@ -88,7 +93,7 @@ public abstract class AbstractRouterGroup implements RouterGroup {
   }
 
   private <I> void registerRouter(String relativePath, String method, I i) {
-    String path = combinePath(groupPath, relativePath);
+    String path = UrlUtil.buildUrl(groupPath, relativePath);
     if (routers.containsKey(path)) {
       routers.get(path).put(method, i);
     } else {
@@ -96,26 +101,5 @@ public abstract class AbstractRouterGroup implements RouterGroup {
       routerMap.put(method, i);
       routers.put(path, routerMap);
     }
-  }
-
-  private String combinePath(String... path) {
-    if (path == null || path.length == 0) {
-      throw new IllegalArgumentException();
-    }
-    StringBuilder stringBuilder = new StringBuilder();
-    for (int i = 0; i < path.length; i++) {
-      if (i == 0) {
-        if (!path[i].startsWith(SLASH)) {
-          path[i] = SLASH + path[i];
-        }
-        if (!path[i].endsWith(SLASH)) {
-          path[i] += SLASH;
-        }
-      } else if (path[i].startsWith(SLASH)) {
-        path[i] = path[i].replaceFirst("/", "");
-      }
-      stringBuilder.append(path[i]);
-    }
-    return stringBuilder.toString();
   }
 }

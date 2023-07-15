@@ -13,6 +13,7 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.cors.CorsConfigBuilder;
 import io.netty.handler.codec.http.cors.CorsHandler;
 import org.flmelody.core.HttpServer;
+import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.handler.HttpServerHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class NettyHttpServer implements HttpServer {
   }
 
   @Override
-  public void run() throws Exception {
+  public void run() throws ServerException {
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     EventLoopGroup workerGroup = new NioEventLoopGroup();
     try {
@@ -53,10 +54,14 @@ public class NettyHttpServer implements HttpServer {
                   p.addLast(new HttpServerHandler());
                 }
               });
-
-      ChannelFuture f = b.bind(port).sync();
-      logger.info("Server started success on port {}", port);
-      f.channel().closeFuture().sync();
+      try {
+        ChannelFuture f = b.bind(port).sync();
+        logger.info("Server started success on port {}", port);
+        f.channel().closeFuture().sync();
+      } catch (InterruptedException e) {
+        logger.info("Server run error", e);
+        throw new ServerException("Server run error");
+      }
     } finally {
       bossGroup.shutdownGracefully();
       workerGroup.shutdownGracefully();

@@ -14,6 +14,8 @@ public class JacksonUtil {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
+  private JacksonUtil() {}
+
   /**
    * convert data into json string
    *
@@ -25,7 +27,7 @@ public class JacksonUtil {
     try {
       return objectMapper.writeValueAsString(data);
     } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
+      return null;
     }
   }
 
@@ -41,7 +43,7 @@ public class JacksonUtil {
     try {
       return objectMapper.readValue(json, clazz);
     } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
+      return null;
     }
   }
 }

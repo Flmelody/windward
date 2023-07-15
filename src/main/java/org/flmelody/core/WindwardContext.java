@@ -1,10 +1,11 @@
 package org.flmelody.core;
 
 import java.util.List;
-import org.flmelody.core.exception.NoRequestBodyException;
 import org.flmelody.core.exception.ValidationException;
 import org.flmelody.util.JacksonUtil;
 import org.flmelody.util.ValidationUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * http context
@@ -12,6 +13,7 @@ import org.flmelody.util.ValidationUtil;
  * @author esotericman
  */
 public class WindwardContext {
+  private static final Logger LOGGER = LoggerFactory.getLogger(WindwardContext.class);
   private final WindwardRequest windwardRequest;
   private final WindwardResponse windwardResponse;
   private Boolean closed = Boolean.FALSE;
@@ -100,15 +102,21 @@ public class WindwardContext {
    * @param groups validate group
    * @param <I> objects type
    * @return object
-   * @throws NoRequestBodyException if request body is null
-   * @throws ValidationException validated failed
    */
-  public <I> I bindJson(Class<I> clazz, Class<?>... groups)
-      throws NoRequestBodyException, ValidationException {
-    if (windwardRequest.getRequestBody() == null) {
-      throw new NoRequestBodyException();
+  public <I> I bindJson(Class<I> clazz, Class<?>... groups) {
+    try {
+      if (windwardRequest.getRequestBody() == null) {
+        throw new ValidationException("Body is empty");
+      }
+      return ValidationUtil.validate(windwardRequest.getRequestBody(), clazz, groups);
+    } catch (ValidationException e) {
+      LOGGER.error("Validated failed", e);
+      this.writeString(
+          HttpStatus.INTERNAL_SERVER_ERROR.value(),
+          HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
+      this.close();
     }
-    return ValidationUtil.validate(windwardRequest.getRequestBody(), clazz, groups);
+    return null;
   }
 
   /**

@@ -6,6 +6,10 @@ package org.flmelody.core;
  * @author esotericman
  */
 public class DefaultRouterGroup extends AbstractRouterGroup {
+  public DefaultRouterGroup() {
+    super();
+  }
+
   public DefaultRouterGroup(String relativePath) {
     super(relativePath);
   }

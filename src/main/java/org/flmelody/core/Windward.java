@@ -5,22 +5,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.NettyHttpServer;
+import org.flmelody.util.UrlUtil;
 
 /**
  * @author esotericman
  */
 public class Windward implements Router {
-  // predefined router group
-  private static AbstractRouterGroup baseRouterGroup;
+  private final String contextPath;
   // registered function
   private static final List<AbstractRouterGroup> routerGroups = new ArrayList<>();
   // handlers
   private static final List<Handler> globalHandlers = new ArrayList<>();
   private HttpServer httpServer;
 
-  private Windward(String relativePath) {
-    baseRouterGroup = new DefaultRouterGroup(relativePath);
+  private Windward(String contextPath) {
+    this.contextPath = contextPath;
   }
 
   public static Windward setup() {
@@ -34,18 +36,18 @@ public class Windward implements Router {
    * @return core engine of Windward
    */
   public static Windward setup(int port, Handler... handlers) {
-    return setup(port, "/", handlers);
+    return setup(port, UrlUtil.SLASH, handlers);
   }
 
   /**
    * prepare core engine of Windward
    *
    * @param port server port
-   * @param relativePath path of default router group
+   * @param contextPath path of root
    * @return core engine of Windward
    */
-  public static Windward setup(int port, String relativePath, Handler... handlers) {
-    Windward windward = new Windward(relativePath);
+  public static Windward setup(int port, String contextPath, Handler... handlers) {
+    Windward windward = new Windward(contextPath);
     windward.httpServer = new NettyHttpServer(port);
     return windward.registerHandler(handlers);
   }
@@ -53,9 +55,9 @@ public class Windward implements Router {
   /**
    * run server
    *
-   * @throws Exception exception
+   * @throws ServerException exception
    */
-  public void run() throws Exception {
+  public void run() throws ServerException {
     httpServer.run();
   }
 
@@ -66,7 +68,8 @@ public class Windward implements Router {
    * @return routerGroup
    */
   public RouterGroup group(String relativePath) {
-    DefaultRouterGroup defaultRouterGroup = new DefaultRouterGroup(relativePath);
+    DefaultRouterGroup defaultRouterGroup =
+        new DefaultRouterGroup(UrlUtil.buildUrl(contextPath, relativePath));
     routerGroups.add(defaultRouterGroup);
     return defaultRouterGroup;
   }
@@ -98,7 +101,7 @@ public class Windward implements Router {
         return o;
       }
     }
-    return baseRouterGroup.matchRouter(relativePath, method);
+    return null;
   }
 
   /**
@@ -123,7 +126,7 @@ public class Windward implements Router {
    * @return this
    */
   public <R> Windward get(String relativePath, Supplier<R> supplier) {
-    baseRouterGroup.get(relativePath, supplier);
+    group(UrlUtil.SLASH).get(relativePath, supplier);
     return this;
   }
 
@@ -135,13 +138,13 @@ public class Windward implements Router {
    * @return this
    */
   public Windward get(String relativePath, Consumer<? extends WindwardContext> consumer) {
-    baseRouterGroup.get(relativePath, consumer);
+    group(UrlUtil.SLASH).get(relativePath, consumer);
     return this;
   }
 
   @Override
   public <R> Router put(String relativePath, Supplier<R> supplier) {
-    baseRouterGroup.put(relativePath, supplier);
+    group(UrlUtil.SLASH).put(relativePath, supplier);
     return this;
   }
 
@@ -153,13 +156,13 @@ public class Windward implements Router {
    * @return this
    */
   public Windward put(String relativePath, Consumer<? extends WindwardContext> consumer) {
-    baseRouterGroup.put(relativePath, consumer);
+    group(UrlUtil.SLASH).put(relativePath, consumer);
     return this;
   }
 
   @Override
   public <R> Router post(String relativePath, Supplier<R> supplier) {
-    baseRouterGroup.post(relativePath, supplier);
+    group(UrlUtil.SLASH).post(relativePath, supplier);
     return this;
   }
 
@@ -171,13 +174,13 @@ public class Windward implements Router {
    * @return this
    */
   public Windward post(String relativePath, Consumer<? extends WindwardContext> consumer) {
-    baseRouterGroup.post(relativePath, consumer);
+    group(UrlUtil.SLASH).post(relativePath, consumer);
     return this;
   }
 
   @Override
   public <R> Router delete(String relativePath, Supplier<R> supplier) {
-    baseRouterGroup.delete(relativePath, supplier);
+    group(UrlUtil.SLASH).delete(relativePath, supplier);
     return this;
   }
 
@@ -189,7 +192,7 @@ public class Windward implements Router {
    * @return this
    */
   public Windward delete(String relativePath, Consumer<? extends WindwardContext> consumer) {
-    baseRouterGroup.delete(relativePath, consumer);
+    group(UrlUtil.SLASH).delete(relativePath, consumer);
     return this;
   }
 }

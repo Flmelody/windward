@@ -32,7 +32,7 @@ public interface ResponseWriter {
    * @param close close connection
    * @param <T> data type
    */
-  <T> void write(int code, String contentType, T data, Boolean close);
+  <T> void write(int code, String contentType, T data, boolean close);
 
   /**
    * write response data

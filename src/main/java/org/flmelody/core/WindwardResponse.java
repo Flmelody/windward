@@ -4,7 +4,7 @@ package org.flmelody.core;
  * @author esotericman
  */
 public class WindwardResponse {
-  private Boolean keepConnection;
+  private boolean keepConnection;
   private ResponseWriter responseWriter;
 
   /**

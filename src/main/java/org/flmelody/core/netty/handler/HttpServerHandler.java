@@ -45,41 +45,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
       Object router =
           Windward.findRouter(
               windwardContext.windwardRequest().getUri(), fullHttpRequest.method().name());
-      for (Handler handler : Windward.handlers()) {
-        try {
-          handler.invoke(windwardContext);
-        } catch (Exception e) {
-          logger.error("Handler error", e);
-          windwardContext.writeString(
-              HttpStatus.INTERNAL_SERVER_ERROR.value(),
-              HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
-          windwardContext.close();
-          return;
-        }
-      }
-      try {
-        if (router instanceof Consumer) {
-          @SuppressWarnings("unchecked")
-          final Consumer<WindwardContext> contextConsumer = (Consumer<WindwardContext>) router;
-          contextConsumer.accept(windwardContext);
-        } else if (router instanceof Supplier) {
-          Supplier<?> supplier = (Supplier<?>) router;
-          Object object = supplier.get();
-          if (object instanceof Serializable && !(object instanceof String)) {
-            windwardContext.writeJson(object);
-          } else {
-            windwardContext.writeString(object.toString());
-          }
-        } else {
-          windwardContext.writeString(
-              HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.reasonPhrase());
-        }
-      } catch (Exception e) {
-        logger.error("Error occurred", e);
-        windwardContext.writeString(
-            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
-      }
+      handle(router, windwardContext);
     }
   }
 
@@ -128,5 +94,47 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
             .keepConnection(keepAlive)
             .responseWriter(new NettyResponseWriter(ctx));
     return new WindwardContext(windwardRequestBuilder.build(), windwardResponseBuild.build());
+  }
+
+  private void handle(Object router, WindwardContext windwardContext) {
+    for (Handler handler : Windward.handlers()) {
+      try {
+        handler.invoke(windwardContext);
+      } catch (Exception e) {
+        logger.error("Handler error", e);
+        windwardContext.writeString(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
+        windwardContext.close();
+        return;
+      }
+    }
+    execute(router, windwardContext);
+  }
+
+  private void execute(Object router, WindwardContext windwardContext) {
+    try {
+      if (router instanceof Consumer) {
+        @SuppressWarnings("unchecked")
+        final Consumer<WindwardContext> contextConsumer = (Consumer<WindwardContext>) router;
+        contextConsumer.accept(windwardContext);
+      } else if (router instanceof Supplier) {
+        Supplier<?> supplier = (Supplier<?>) router;
+        Object object = supplier.get();
+        if (object instanceof Serializable && !(object instanceof String)) {
+          windwardContext.writeJson(object);
+        } else {
+          windwardContext.writeString(object.toString());
+        }
+      } else {
+        windwardContext.writeString(
+            HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.reasonPhrase());
+      }
+    } catch (Exception e) {
+      logger.error("Error occurred", e);
+      windwardContext.writeString(
+          HttpStatus.INTERNAL_SERVER_ERROR.value(),
+          HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
+    }
   }
 }

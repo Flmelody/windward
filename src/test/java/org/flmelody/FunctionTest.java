@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.flmelody.core.Windward;
 import org.flmelody.core.WindwardContext;
 import org.flmelody.core.exception.NoRequestBodyException;
+import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.exception.ValidationException;
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ import org.junit.Test;
  */
 public class FunctionTest {
   @Test
-  public void test() throws Exception {
+  public void test() throws ServerException {
     Windward windward = Windward.setup();
     // register static  function
     windward.get("/function1", Function::function1);
@@ -36,11 +37,7 @@ public class FunctionTest {
 
   static class Function {
     public static void function1(WindwardContext windwardContext) {
-      try {
-        User user = windwardContext.bindJson(User.class);
-      } catch (NoRequestBodyException | ValidationException e) {
-        throw new RuntimeException(e);
-      }
+      User user = windwardContext.bindJson(User.class);
       windwardContext.writeString("hello world! function1!");
     }
 

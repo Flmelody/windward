@@ -33,11 +33,11 @@ public class NettyResponseWriter implements ResponseWriter {
 
   @Override
   public <T> void write(int code, String contentType, T data) {
-    write(code, contentType, data, Boolean.TRUE);
+    write(code, contentType, data, true);
   }
 
   @Override
-  public <T> void write(int code, String contentType, T data, Boolean close) {
+  public <T> void write(int code, String contentType, T data, boolean close) {
     Channel channel = ctx.channel();
     if (!channel.isActive()) {
       return;
