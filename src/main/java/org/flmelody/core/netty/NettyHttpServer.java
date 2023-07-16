@@ -60,6 +60,7 @@ public class NettyHttpServer implements HttpServer {
         f.channel().closeFuture().sync();
       } catch (InterruptedException e) {
         logger.info("Server run error", e);
+        Thread.currentThread().interrupt();
         throw new ServerException("Server run error");
       }
     } finally {

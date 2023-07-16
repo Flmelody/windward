@@ -16,6 +16,8 @@ public final class ValidationUtil {
   private static final ValidatorFactory validatorFactory =
       Validation.buildDefaultValidatorFactory();
 
+  private ValidationUtil() {}
+
   /**
    * try to convert json content to target object
    *
