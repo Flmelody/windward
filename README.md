@@ -1,4 +1,6 @@
 # windward
+![GitHub](https://img.shields.io/github/license/Flmelody/windward)
+![Maven Central](https://img.shields.io/maven-central/v/org.flmelody/windward)
 
 Light web function framework for Java
 
