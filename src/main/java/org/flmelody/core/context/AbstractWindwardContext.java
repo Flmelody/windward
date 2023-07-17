@@ -16,7 +16,7 @@ import java.util.List;
  * @author esotericman
  */
 public class AbstractWindwardContext implements WindwardContext {
-  private static final Logger LOGGER = LoggerFactory.getLogger(WindwardContext.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWindwardContext.class);
   private final WindwardRequest windwardRequest;
   private final WindwardResponse windwardResponse;
   private Boolean closed = Boolean.FALSE;
@@ -34,6 +34,7 @@ public class AbstractWindwardContext implements WindwardContext {
    * @param <P> class type
    * @return parameter
    */
+  @Override
   public <P> P getRequestParameter(String parameterName) {
     List<String> parameters = this.windwardRequest.getQuerystring().get(parameterName);
     if (parameters == null || parameters.isEmpty()) {
@@ -49,6 +50,7 @@ public class AbstractWindwardContext implements WindwardContext {
    * @param parameterName parameterName
    * @return parameters list
    */
+  @Override
   public List<String> getRequestParameters(String parameterName) {
     return this.windwardRequest.getQuerystring().get(parameterName);
   }
@@ -58,6 +60,7 @@ public class AbstractWindwardContext implements WindwardContext {
    *
    * @return request body
    */
+  @Override
   public String getRequestBody() {
     return this.windwardRequest.getRequestBody();
   }
@@ -67,11 +70,13 @@ public class AbstractWindwardContext implements WindwardContext {
    *
    * @return windwardRequest
    */
+  @Override
   public WindwardRequest windwardRequest() {
     return this.windwardRequest;
   }
 
   /** close context */
+  @Override
   public void close() {
     this.closed = Boolean.TRUE;
   }
@@ -81,6 +86,7 @@ public class AbstractWindwardContext implements WindwardContext {
    *
    * @return is closed
    */
+  @Override
   public Boolean isClosed() {
     return this.closed;
   }
@@ -92,6 +98,7 @@ public class AbstractWindwardContext implements WindwardContext {
    * @param <I> objects type
    * @return object
    */
+  @Override
   public <I> I readJson(Class<I> clazz) {
     if (windwardRequest.getRequestBody() == null) {
       return JacksonUtil.toObject("{}", clazz);
@@ -107,6 +114,7 @@ public class AbstractWindwardContext implements WindwardContext {
    * @param <I> objects type
    * @return object
    */
+  @Override
   public <I> I bindJson(Class<I> clazz, Class<?>... groups) {
     try {
       if (windwardRequest.getRequestBody() == null) {
@@ -127,6 +135,7 @@ public class AbstractWindwardContext implements WindwardContext {
    * @param data data
    * @param <T> type
    */
+  @Override
   public <T> void writeJson(T data) {
     writeJson(HttpStatus.OK.value(), data);
   }
@@ -138,6 +147,7 @@ public class AbstractWindwardContext implements WindwardContext {
    * @param data data
    * @param <T> type
    */
+  @Override
   public <T> void writeJson(int code, T data) {
     windwardResponse.write(code, MediaType.APPLICATION_JSON_VALUE, data);
   }
@@ -147,6 +157,7 @@ public class AbstractWindwardContext implements WindwardContext {
    *
    * @param data strings
    */
+  @Override
   public void writeString(String data) {
     writeString(HttpStatus.OK.value(), data);
   }
@@ -157,6 +168,7 @@ public class AbstractWindwardContext implements WindwardContext {
    * @param code response code
    * @param data strings
    */
+  @Override
   public void writeString(int code, String data) {
     windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE, data);
   }

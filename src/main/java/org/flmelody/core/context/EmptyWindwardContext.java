@@ -2,6 +2,7 @@ package org.flmelody.core.context;
 
 import org.flmelody.core.WindwardRequest;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public class EmptyWindwardContext implements WindwardContext {
 
   @Override
   public List<String> getRequestParameters(String parameterName) {
-    return null;
+    return Collections.emptyList();
   }
 
   @Override
