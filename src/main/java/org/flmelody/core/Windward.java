@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.flmelody.core.context.EnhancedWindwardContext;
+import org.flmelody.core.context.SimpleWindwardContext;
+import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.exception.ServerException;
+import org.flmelody.core.function.EnhancedConsumer;
 import org.flmelody.core.netty.NettyHttpServer;
 import org.flmelody.util.UrlUtil;
 
@@ -94,11 +98,11 @@ public class Windward implements Router {
    * @param relativePath relativePath
    * @return registered function
    */
-  public static Object findRouter(String relativePath, String method) {
+  public static <I> FunctionMetaInfo<I> findRouter(String relativePath, String method) {
     for (AbstractRouterGroup routerGroup : routerGroups) {
-      Object o = routerGroup.matchRouter(relativePath, method);
-      if (o != null) {
-        return o;
+      FunctionMetaInfo<I> functionMetaInfo = routerGroup.matchRouter(relativePath, method);
+      if (functionMetaInfo != null) {
+        return functionMetaInfo;
       }
     }
     return null;
@@ -137,7 +141,13 @@ public class Windward implements Router {
    * @param consumer function to consume
    * @return this
    */
-  public Windward get(String relativePath, Consumer<? extends WindwardContext> consumer) {
+  public Windward get(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+    group(UrlUtil.SLASH).get(relativePath, consumer);
+    return this;
+  }
+
+  @Override
+  public Router get(String relativePath, EnhancedConsumer<EnhancedWindwardContext, ?> consumer) {
     group(UrlUtil.SLASH).get(relativePath, consumer);
     return this;
   }
@@ -155,7 +165,7 @@ public class Windward implements Router {
    * @param consumer function to consume
    * @return this
    */
-  public Windward put(String relativePath, Consumer<? extends WindwardContext> consumer) {
+  public Windward put(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     group(UrlUtil.SLASH).put(relativePath, consumer);
     return this;
   }
@@ -173,7 +183,7 @@ public class Windward implements Router {
    * @param consumer function to consume
    * @return this
    */
-  public Windward post(String relativePath, Consumer<? extends WindwardContext> consumer) {
+  public Windward post(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     group(UrlUtil.SLASH).post(relativePath, consumer);
     return this;
   }
@@ -191,7 +201,7 @@ public class Windward implements Router {
    * @param consumer function to consume
    * @return this
    */
-  public Windward delete(String relativePath, Consumer<? extends WindwardContext> consumer) {
+  public Windward delete(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     group(UrlUtil.SLASH).delete(relativePath, consumer);
     return this;
   }

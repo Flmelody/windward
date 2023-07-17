@@ -9,6 +9,7 @@ import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.util.CharsetUtil;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,12 +17,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import org.flmelody.core.AbstractRouterGroup;
+import org.flmelody.core.FunctionMetaInfo;
 import org.flmelody.core.Handler;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.Windward;
-import org.flmelody.core.WindwardContext;
+import org.flmelody.core.context.EmptyWindwardContext;
+import org.flmelody.core.context.EnhancedWindwardContext;
+import org.flmelody.core.context.SimpleWindwardContext;
+import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
+import org.flmelody.core.function.EnhancedConsumer;
 import org.flmelody.core.netty.NettyResponseWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +49,11 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
   protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
     if (msg instanceof FullHttpRequest) {
       FullHttpRequest fullHttpRequest = (FullHttpRequest) msg;
-      WindwardContext windwardContext = initContext(ctx, fullHttpRequest);
-      Object router =
-          Windward.findRouter(
-              windwardContext.windwardRequest().getUri(), fullHttpRequest.method().name());
-      handle(router, windwardContext);
+      String uri = fullHttpRequest.uri().split("\\?")[0];
+      FunctionMetaInfo<?> functionMetaInfo =
+          Windward.findRouter(uri, fullHttpRequest.method().name());
+      WindwardContext windwardContext = initContext(ctx, fullHttpRequest, functionMetaInfo);
+      handle(functionMetaInfo, windwardContext);
     }
   }
 
@@ -70,7 +78,10 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
     return headers;
   }
 
-  private WindwardContext initContext(ChannelHandlerContext ctx, FullHttpRequest fullHttpRequest) {
+  private <I> WindwardContext initContext(
+      ChannelHandlerContext ctx,
+      FullHttpRequest fullHttpRequest,
+      FunctionMetaInfo<I> functionMetaInfo) {
     String uri = fullHttpRequest.uri();
     ByteBuf content = fullHttpRequest.content();
     boolean keepAlive = HttpUtil.isKeepAlive(fullHttpRequest);
@@ -93,10 +104,25 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         WindwardResponse.newBuilder()
             .keepConnection(keepAlive)
             .responseWriter(new NettyResponseWriter(ctx));
-    return new WindwardContext(windwardRequestBuilder.build(), windwardResponseBuild.build());
+    if (functionMetaInfo == null) {
+      windwardResponseBuild
+          .build()
+          .write(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.reasonPhrase());
+    } else {
+      try {
+        Class<? extends WindwardContext> clazz = functionMetaInfo.getClazz();
+        Constructor<?> constructor =
+            clazz.getConstructor(WindwardRequest.class, WindwardResponse.class);
+        return (WindwardContext)
+            constructor.newInstance(windwardRequestBuilder.build(), windwardResponseBuild.build());
+      } catch (Exception e) {
+        logger.error("Failed to construct context");
+      }
+    }
+    return new EmptyWindwardContext();
   }
 
-  private void handle(Object router, WindwardContext windwardContext) {
+  private void handle(FunctionMetaInfo<?> functionMetaInfo, WindwardContext windwardContext) {
     for (Handler handler : Windward.handlers()) {
       try {
         handler.invoke(windwardContext);
@@ -109,17 +135,23 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         return;
       }
     }
-    execute(router, windwardContext);
+    execute(functionMetaInfo, windwardContext);
   }
 
-  private void execute(Object router, WindwardContext windwardContext) {
+  private void execute(FunctionMetaInfo<?> functionMetaInfo, WindwardContext windwardContext) {
     try {
-      if (router instanceof Consumer) {
+      Object function = functionMetaInfo.getFunction();
+      if (function instanceof Consumer) {
         @SuppressWarnings("unchecked")
-        final Consumer<WindwardContext> contextConsumer = (Consumer<WindwardContext>) router;
+        final Consumer<WindwardContext> contextConsumer = (Consumer<WindwardContext>) function;
         contextConsumer.accept(windwardContext);
-      } else if (router instanceof Supplier) {
-        Supplier<?> supplier = (Supplier<?>) router;
+      } else if (function instanceof EnhancedConsumer) {
+        @SuppressWarnings("unchecked")
+        final EnhancedConsumer<WindwardContext, ?> contextConsumer =
+            (EnhancedConsumer<WindwardContext, ?>) function;
+        contextConsumer.accept(windwardContext);
+      } else if (function instanceof Supplier) {
+        Supplier<?> supplier = (Supplier<?>) function;
         Object object = supplier.get();
         if (object instanceof Serializable && !(object instanceof String)) {
           windwardContext.writeJson(object);

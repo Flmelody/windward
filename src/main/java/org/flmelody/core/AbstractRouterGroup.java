@@ -1,7 +1,15 @@
 package org.flmelody.core;
 
+import org.flmelody.core.context.EmptyWindwardContext;
+import org.flmelody.core.context.EnhancedWindwardContext;
+import org.flmelody.core.context.SimpleWindwardContext;
+import org.flmelody.core.context.WindwardContext;
+import org.flmelody.core.function.EnhancedConsumer;
 import org.flmelody.util.UrlUtil;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -31,49 +39,55 @@ public abstract class AbstractRouterGroup implements RouterGroup {
 
   @Override
   public <R> Router get(String relativePath, Supplier<R> supplier) {
-    registerRouter(relativePath, HttpMethod.GET.name(), supplier);
+    registerRouter(relativePath, HttpMethod.GET.name(), supplier, EmptyWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router get(String relativePath, Consumer<? extends WindwardContext> consumer) {
-    registerRouter(relativePath, HttpMethod.GET.name(), consumer);
+  public Router get(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+    registerRouter(relativePath, HttpMethod.GET.name(), consumer, SimpleWindwardContext.class);
+    return this;
+  }
+
+  @Override
+  public Router get(String relativePath, EnhancedConsumer<EnhancedWindwardContext, ?> consumer) {
+    registerRouter(relativePath, HttpMethod.GET.name(), consumer, EnhancedWindwardContext.class);
     return this;
   }
 
   @Override
   public <R> Router put(String relativePath, Supplier<R> supplier) {
-    registerRouter(relativePath, HttpMethod.PUT.name(), supplier);
+    registerRouter(relativePath, HttpMethod.PUT.name(), supplier, EmptyWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router put(String relativePath, Consumer<? extends WindwardContext> consumer) {
-    registerRouter(relativePath, HttpMethod.PUT.name(), consumer);
+  public Router put(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+    registerRouter(relativePath, HttpMethod.PUT.name(), consumer, SimpleWindwardContext.class);
     return this;
   }
 
   @Override
   public <R> Router post(String relativePath, Supplier<R> supplier) {
-    registerRouter(relativePath, HttpMethod.POST.name(), supplier);
+    registerRouter(relativePath, HttpMethod.POST.name(), supplier, EmptyWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router post(String relativePath, Consumer<? extends WindwardContext> consumer) {
-    registerRouter(relativePath, HttpMethod.POST.name(), consumer);
+  public Router post(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+    registerRouter(relativePath, HttpMethod.POST.name(), consumer, SimpleWindwardContext.class);
     return this;
   }
 
   @Override
   public <R> Router delete(String relativePath, Supplier<R> supplier) {
-    registerRouter(relativePath, HttpMethod.DELETE.name(), supplier);
+    registerRouter(relativePath, HttpMethod.DELETE.name(), supplier, EmptyWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router delete(String relativePath, Consumer<? extends WindwardContext> consumer) {
-    registerRouter(relativePath, HttpMethod.DELETE.name(), consumer);
+  public Router delete(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+    registerRouter(relativePath, HttpMethod.DELETE.name(), consumer, SimpleWindwardContext.class);
     return this;
   }
 
@@ -92,13 +106,15 @@ public abstract class AbstractRouterGroup implements RouterGroup {
     return (R) routers.get(relativePath).get(method);
   }
 
-  private <I> void registerRouter(String relativePath, String method, I i) {
+  private <I> void registerRouter(
+      String relativePath, String method, I i, Class<? extends WindwardContext> clazz) {
     String path = UrlUtil.buildUrl(groupPath, relativePath);
+    FunctionMetaInfo<I> functionMetaInfo = new FunctionMetaInfo<>(i, clazz);
     if (routers.containsKey(path)) {
-      routers.get(path).put(method, i);
+      routers.get(path).put(method, functionMetaInfo);
     } else {
       Map<String, Object> routerMap = new HashMap<>(2 << 3);
-      routerMap.put(method, i);
+      routerMap.put(method, functionMetaInfo);
       routers.put(path, routerMap);
     }
   }

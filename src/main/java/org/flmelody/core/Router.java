@@ -1,5 +1,10 @@
 package org.flmelody.core;
 
+import org.flmelody.core.context.EnhancedWindwardContext;
+import org.flmelody.core.context.SimpleWindwardContext;
+import org.flmelody.core.context.WindwardContext;
+import org.flmelody.core.function.EnhancedConsumer;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -24,7 +29,16 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router get(String relativePath, Consumer<? extends WindwardContext> consumer);
+  Router get(String relativePath, Consumer<SimpleWindwardContext> consumer);
+
+  /**
+   * register function with get method
+   *
+   * @param relativePath relativePath
+   * @param consumer function to consume
+   * @return this
+   */
+  Router get(String relativePath, EnhancedConsumer<EnhancedWindwardContext, ?> consumer);
 
   /**
    * register function with put method
@@ -43,7 +57,7 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router put(String relativePath, Consumer<? extends WindwardContext> consumer);
+  Router put(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
    * register function with post method
@@ -62,7 +76,7 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router post(String relativePath, Consumer<? extends WindwardContext> consumer);
+  Router post(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
    * register function with delete method
@@ -81,5 +95,5 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router delete(String relativePath, Consumer<? extends WindwardContext> consumer);
+  Router delete(String relativePath, Consumer<SimpleWindwardContext> consumer);
 }

@@ -1,24 +1,28 @@
-package org.flmelody.core;
+package org.flmelody.core.context;
 
-import java.util.List;
+import org.flmelody.core.HttpStatus;
+import org.flmelody.core.MediaType;
+import org.flmelody.core.WindwardRequest;
+import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.exception.ValidationException;
 import org.flmelody.util.JacksonUtil;
 import org.flmelody.util.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
- * http context
- *
  * @author esotericman
  */
-public class WindwardContext {
+public class AbstractWindwardContext implements WindwardContext {
   private static final Logger LOGGER = LoggerFactory.getLogger(WindwardContext.class);
   private final WindwardRequest windwardRequest;
   private final WindwardResponse windwardResponse;
   private Boolean closed = Boolean.FALSE;
 
-  public WindwardContext(WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
+  protected AbstractWindwardContext(
+      WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
     this.windwardRequest = windwardRequest;
     this.windwardResponse = windwardResponse;
   }
@@ -111,9 +115,7 @@ public class WindwardContext {
       return ValidationUtil.validate(windwardRequest.getRequestBody(), clazz, groups);
     } catch (ValidationException e) {
       LOGGER.error("Validated failed", e);
-      this.writeString(
-          HttpStatus.INTERNAL_SERVER_ERROR.value(),
-          HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
+      this.writeString(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.reasonPhrase());
       this.close();
     }
     return null;
