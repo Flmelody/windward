@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.exception.ServerException;
-import org.flmelody.core.function.EnhancedConsumer;
 import org.flmelody.core.netty.NettyHttpServer;
 import org.flmelody.util.UrlUtil;
 
@@ -20,8 +20,10 @@ public class Windward implements Router {
   private final String contextPath;
   // registered function
   private static final List<AbstractRouterGroup> routerGroups = new ArrayList<>();
-  // handlers
-  private static final List<Handler> globalHandlers = new ArrayList<>();
+  // filters
+  private static final List<Filter> globalFilters = new ArrayList<>();
+  // handlers for exception
+  private static final List<ExceptionHandler> exceptionHandlers = new ArrayList<>();
   private HttpServer httpServer;
 
   private Windward(String contextPath) {
@@ -29,7 +31,7 @@ public class Windward implements Router {
   }
 
   public static Windward setup() {
-    return setup(8080, new LoggingHandler());
+    return setup(8080, new LoggingFilter());
   }
 
   /**
@@ -38,8 +40,8 @@ public class Windward implements Router {
    * @param port server port
    * @return core engine of Windward
    */
-  public static Windward setup(int port, Handler... handlers) {
-    return setup(port, UrlUtil.SLASH, handlers);
+  public static Windward setup(int port, Filter... filters) {
+    return setup(port, UrlUtil.SLASH, filters);
   }
 
   /**
@@ -49,10 +51,10 @@ public class Windward implements Router {
    * @param contextPath path of root
    * @return core engine of Windward
    */
-  public static Windward setup(int port, String contextPath, Handler... handlers) {
+  public static Windward setup(int port, String contextPath, Filter... filters) {
     Windward windward = new Windward(contextPath);
     windward.httpServer = new NettyHttpServer(port);
-    return windward.registerHandler(handlers);
+    return windward.registerFilter(filters);
   }
 
   /**
@@ -80,14 +82,14 @@ public class Windward implements Router {
   /**
    * register handler
    *
-   * @param handlers handler
+   * @param filters handler
    * @return current windward
    */
-  public Windward registerHandler(Handler... handlers) {
-    if (handlers == null || handlers.length == 0) {
+  public Windward registerFilter(Filter... filters) {
+    if (filters == null || filters.length == 0) {
       return this;
     }
-    globalHandlers.addAll(Arrays.asList(handlers));
+    globalFilters.addAll(Arrays.asList(filters));
     return this;
   }
 
@@ -112,42 +114,27 @@ public class Windward implements Router {
    *
    * @return handlers
    */
-  public static List<Handler> handlers() {
-    return globalHandlers;
+  public static List<Filter> filters() {
+    return globalFilters;
   }
 
   public Windward then() {
     return this;
   }
 
-  /**
-   * register function with get method
-   *
-   * @param relativePath relativePath
-   * @param supplier supplier
-   * @param <R> response data
-   * @return this
-   */
   public <R> Windward get(String relativePath, Supplier<R> supplier) {
     group(UrlUtil.SLASH).get(relativePath, supplier);
     return this;
   }
 
-  /**
-   * register function with get method
-   *
-   * @param relativePath relativePath
-   * @param consumer function to consume
-   * @return this
-   */
   public Windward get(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     group(UrlUtil.SLASH).get(relativePath, consumer);
     return this;
   }
 
   @Override
-  public Router get(String relativePath, EnhancedConsumer<EnhancedWindwardContext, ?> consumer) {
-    group(UrlUtil.SLASH).get(relativePath, consumer);
+  public Router get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+    group(UrlUtil.SLASH).get(relativePath, function);
     return this;
   }
 
@@ -157,15 +144,14 @@ public class Windward implements Router {
     return this;
   }
 
-  /**
-   * register function with put method
-   *
-   * @param relativePath relativePath
-   * @param consumer function to consume
-   * @return this
-   */
   public Windward put(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     group(UrlUtil.SLASH).put(relativePath, consumer);
+    return this;
+  }
+
+  @Override
+  public Router put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+    group(UrlUtil.SLASH).put(relativePath, function);
     return this;
   }
 
@@ -175,15 +161,14 @@ public class Windward implements Router {
     return this;
   }
 
-  /**
-   * register function with post method
-   *
-   * @param relativePath relativePath
-   * @param consumer function to consume
-   * @return this
-   */
   public Windward post(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     group(UrlUtil.SLASH).post(relativePath, consumer);
+    return this;
+  }
+
+  @Override
+  public Router post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+    group(UrlUtil.SLASH).post(relativePath, function);
     return this;
   }
 
@@ -193,15 +178,14 @@ public class Windward implements Router {
     return this;
   }
 
-  /**
-   * register function with delete method
-   *
-   * @param relativePath relativePath
-   * @param consumer function to consume
-   * @return this
-   */
   public Windward delete(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     group(UrlUtil.SLASH).delete(relativePath, consumer);
+    return this;
+  }
+
+  @Override
+  public Router delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+    group(UrlUtil.SLASH).delete(relativePath, function);
     return this;
   }
 }

@@ -2,9 +2,9 @@ package org.flmelody.core;
 
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
-import org.flmelody.core.function.EnhancedConsumer;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -34,10 +34,10 @@ public interface Router {
    * register function with get method
    *
    * @param relativePath relativePath
-   * @param consumer function to consume
+   * @param function function to consume
    * @return this
    */
-  Router get(String relativePath, EnhancedConsumer<EnhancedWindwardContext, ?> consumer);
+  Router get(String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
    * register function with put method
@@ -59,6 +59,15 @@ public interface Router {
   Router put(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
+   * register function with put method
+   *
+   * @param relativePath relativePath
+   * @param function function to consume
+   * @return this
+   */
+  Router put(String relativePath, Function<EnhancedWindwardContext, ?> function);
+
+  /**
    * register function with post method
    *
    * @param relativePath relativePath
@@ -78,6 +87,15 @@ public interface Router {
   Router post(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
+   * register function with post method
+   *
+   * @param relativePath relativePath
+   * @param function function to consume
+   * @return this
+   */
+  Router post(String relativePath, Function<EnhancedWindwardContext, ?> function);
+
+  /**
    * register function with delete method
    *
    * @param relativePath relativePath
@@ -95,4 +113,13 @@ public interface Router {
    * @return this
    */
   Router delete(String relativePath, Consumer<SimpleWindwardContext> consumer);
+
+  /**
+   * register function with delete method
+   *
+   * @param relativePath relativePath
+   * @param function function to consume
+   * @return this
+   */
+  Router delete(String relativePath, Function<EnhancedWindwardContext, ?> function);
 }

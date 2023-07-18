@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory;
 /**
  * @author esotericman
  */
-public class LoggingHandler implements Handler {
-  private static final Logger logger = LoggerFactory.getLogger(LoggingHandler.class);
+public class LoggingFilter implements Filter {
+  private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
 
   @Override
-  public void invoke(WindwardContext windwardContext) {
+  public void filter(WindwardContext windwardContext) {
     logger.info("Accepted request {}", windwardContext.windwardRequest().getUri());
   }
 }

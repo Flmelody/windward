@@ -4,15 +4,12 @@ import org.flmelody.core.context.EmptyWindwardContext;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
-import org.flmelody.core.function.EnhancedConsumer;
 import org.flmelody.util.UrlUtil;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -50,8 +47,8 @@ public abstract class AbstractRouterGroup implements RouterGroup {
   }
 
   @Override
-  public Router get(String relativePath, EnhancedConsumer<EnhancedWindwardContext, ?> consumer) {
-    registerRouter(relativePath, HttpMethod.GET.name(), consumer, EnhancedWindwardContext.class);
+  public Router get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+    registerRouter(relativePath, HttpMethod.GET.name(), function, EnhancedWindwardContext.class);
     return this;
   }
 
@@ -68,6 +65,12 @@ public abstract class AbstractRouterGroup implements RouterGroup {
   }
 
   @Override
+  public Router put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+    registerRouter(relativePath, HttpMethod.PUT.name(), function, EnhancedWindwardContext.class);
+    return this;
+  }
+
+  @Override
   public <R> Router post(String relativePath, Supplier<R> supplier) {
     registerRouter(relativePath, HttpMethod.POST.name(), supplier, EmptyWindwardContext.class);
     return this;
@@ -80,6 +83,12 @@ public abstract class AbstractRouterGroup implements RouterGroup {
   }
 
   @Override
+  public Router post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+    registerRouter(relativePath, HttpMethod.POST.name(), function, EnhancedWindwardContext.class);
+    return this;
+  }
+
+  @Override
   public <R> Router delete(String relativePath, Supplier<R> supplier) {
     registerRouter(relativePath, HttpMethod.DELETE.name(), supplier, EmptyWindwardContext.class);
     return this;
@@ -88,6 +97,12 @@ public abstract class AbstractRouterGroup implements RouterGroup {
   @Override
   public Router delete(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     registerRouter(relativePath, HttpMethod.DELETE.name(), consumer, SimpleWindwardContext.class);
+    return this;
+  }
+
+  @Override
+  public Router delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+    registerRouter(relativePath, HttpMethod.DELETE.name(), function, EnhancedWindwardContext.class);
     return this;
   }
 

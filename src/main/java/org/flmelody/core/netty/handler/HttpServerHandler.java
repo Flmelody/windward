@@ -16,17 +16,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.flmelody.core.FunctionMetaInfo;
-import org.flmelody.core.Handler;
+import org.flmelody.core.Filter;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.Windward;
 import org.flmelody.core.context.EmptyWindwardContext;
 import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
-import org.flmelody.core.function.EnhancedConsumer;
 import org.flmelody.core.netty.NettyResponseWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,9 +120,12 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
   }
 
   private void handle(FunctionMetaInfo<?> functionMetaInfo, WindwardContext windwardContext) {
-    for (Handler handler : Windward.handlers()) {
+    if (windwardContext.isClosed()) {
+      return;
+    }
+    for (Filter filter : Windward.filters()) {
       try {
-        handler.invoke(windwardContext);
+        filter.filter(windwardContext);
       } catch (Exception e) {
         logger.error("Handler error", e);
         windwardContext.writeString(
@@ -142,11 +145,11 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         @SuppressWarnings("unchecked")
         final Consumer<WindwardContext> contextConsumer = (Consumer<WindwardContext>) function;
         contextConsumer.accept(windwardContext);
-      } else if (function instanceof EnhancedConsumer) {
+      } else if (function instanceof Function) {
         @SuppressWarnings("unchecked")
-        final EnhancedConsumer<WindwardContext, ?> contextConsumer =
-            (EnhancedConsumer<WindwardContext, ?>) function;
-        contextConsumer.accept(windwardContext);
+        final Function<WindwardContext, ?> contextConsumer =
+            (Function<WindwardContext, ?>) function;
+        contextConsumer.apply(windwardContext);
       } else if (function instanceof Supplier) {
         Supplier<?> supplier = (Supplier<?>) function;
         Object object = supplier.get();

@@ -3,6 +3,8 @@ package org.flmelody.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.flmelody.core.exception.JsonDeserializeException;
+import org.flmelody.core.exception.JsonSerializeException;
 
 /**
  * @author esotericman
@@ -27,7 +29,7 @@ public class JacksonUtil {
     try {
       return objectMapper.writeValueAsString(data);
     } catch (JsonProcessingException e) {
-      return null;
+      throw new JsonSerializeException(e);
     }
   }
 
@@ -43,7 +45,7 @@ public class JacksonUtil {
     try {
       return objectMapper.readValue(json, clazz);
     } catch (JsonProcessingException e) {
-      return null;
+      throw new JsonDeserializeException(e);
     }
   }
 }

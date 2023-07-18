@@ -5,6 +5,6 @@ import org.flmelody.core.context.WindwardContext;
 /**
  * @author esotericman
  */
-public interface Handler {
-  void invoke(WindwardContext windwardContext);
+public interface Filter {
+  void filter(WindwardContext windwardContext);
 }

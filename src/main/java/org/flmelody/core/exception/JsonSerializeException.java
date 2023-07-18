@@ -3,7 +3,7 @@ package org.flmelody.core.exception;
 /**
  * @author esotericman
  */
-public class JsonSerializeException extends Throwable {
+public class JsonSerializeException extends RuntimeException {
 
   public JsonSerializeException(Throwable cause) {
     super(cause);

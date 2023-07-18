@@ -2,7 +2,6 @@ package org.flmelody.core.context;
 
 import org.flmelody.core.WindwardRequest;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -11,45 +10,51 @@ import java.util.List;
 public class EmptyWindwardContext implements WindwardContext {
   @Override
   public <P> P getRequestParameter(String parameterName) {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public List<String> getRequestParameters(String parameterName) {
-    return Collections.emptyList();
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public String getRequestBody() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public WindwardRequest windwardRequest() {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
-  public void close() {}
+  public void close() {
+    throw new UnsupportedOperationException();
+  }
 
   @Override
   public Boolean isClosed() {
-    return null;
+    return Boolean.TRUE;
   }
 
   @Override
   public <I> I readJson(Class<I> clazz) {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public <I> I bindJson(Class<I> clazz, Class<?>... groups) {
-    return null;
+    throw new UnsupportedOperationException();
   }
 
   @Override
-  public <T> void writeJson(int code, T data) {}
+  public <T> void writeJson(int code, T data) {
+    throw new UnsupportedOperationException();
+  }
 
   @Override
-  public void writeString(int code, String data) {}
+  public void writeString(int code, String data) {
+    throw new UnsupportedOperationException();
+  }
 }

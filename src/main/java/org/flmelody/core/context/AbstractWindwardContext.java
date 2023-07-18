@@ -116,17 +116,10 @@ public class AbstractWindwardContext implements WindwardContext {
    */
   @Override
   public <I> I bindJson(Class<I> clazz, Class<?>... groups) {
-    try {
-      if (windwardRequest.getRequestBody() == null) {
-        throw new ValidationException("Body is empty");
-      }
-      return ValidationUtil.validate(windwardRequest.getRequestBody(), clazz, groups);
-    } catch (ValidationException e) {
-      LOGGER.error("Validated failed", e);
-      this.writeString(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.reasonPhrase());
-      this.close();
+    if (windwardRequest.getRequestBody() == null) {
+      throw new ValidationException("Body is empty");
     }
-    return null;
+    return ValidationUtil.validate(windwardRequest.getRequestBody(), clazz, groups);
   }
 
   /**
