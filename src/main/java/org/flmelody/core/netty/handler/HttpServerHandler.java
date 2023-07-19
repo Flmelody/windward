@@ -19,6 +19,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.flmelody.core.ExceptionHandler;
 import org.flmelody.core.FunctionMetaInfo;
 import org.flmelody.core.Filter;
 import org.flmelody.core.HttpStatus;
@@ -164,9 +165,22 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
       }
     } catch (Exception e) {
       logger.error("Error occurred", e);
-      windwardContext.writeString(
-          HttpStatus.INTERNAL_SERVER_ERROR.value(),
-          HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
+      if (!handleException(windwardContext, e)) {
+        windwardContext.writeString(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
+      }
     }
+  }
+
+  private boolean handleException(WindwardContext windwardContext, Exception e) {
+    List<ExceptionHandler> exceptionHandlers = Windward.exceptionHandlers();
+    for (ExceptionHandler exceptionHandler : exceptionHandlers) {
+      if (exceptionHandler.supported(e)) {
+        exceptionHandler.handle(windwardContext);
+        return true;
+      }
+    }
+    return false;
   }
 }

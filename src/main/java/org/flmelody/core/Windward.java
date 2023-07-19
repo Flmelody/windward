@@ -23,7 +23,7 @@ public class Windward implements Router {
   // filters
   private static final List<Filter> globalFilters = new ArrayList<>();
   // handlers for exception
-  private static final List<ExceptionHandler> exceptionHandlers = new ArrayList<>();
+  private static final List<ExceptionHandler> globalExceptionHandlers = new ArrayList<>();
   private HttpServer httpServer;
 
   private Windward(String contextPath) {
@@ -80,9 +80,9 @@ public class Windward implements Router {
   }
 
   /**
-   * register handler
+   * register filter
    *
-   * @param filters handler
+   * @param filters filter
    * @return current windward
    */
   public Windward registerFilter(Filter... filters) {
@@ -90,6 +90,20 @@ public class Windward implements Router {
       return this;
     }
     globalFilters.addAll(Arrays.asList(filters));
+    return this;
+  }
+
+  /**
+   * register exception handler
+   *
+   * @param exceptionHandlers exception handler
+   * @return current windward
+   */
+  public Windward registerExceptionHandler(ExceptionHandler... exceptionHandlers) {
+    if (exceptionHandlers == null || exceptionHandlers.length == 0) {
+      return this;
+    }
+    globalExceptionHandlers.addAll(Arrays.asList(exceptionHandlers));
     return this;
   }
 
@@ -110,12 +124,21 @@ public class Windward implements Router {
   }
 
   /**
-   * get handlers
+   * get filters
    *
-   * @return handlers
+   * @return filters
    */
   public static List<Filter> filters() {
     return globalFilters;
+  }
+
+  /**
+   * get exception handlers
+   *
+   * @return exception handlers
+   */
+  public static List<ExceptionHandler> exceptionHandlers() {
+    return globalExceptionHandlers;
   }
 
   public Windward then() {

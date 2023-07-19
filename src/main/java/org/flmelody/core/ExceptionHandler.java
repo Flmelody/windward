@@ -8,5 +8,5 @@ import org.flmelody.core.context.WindwardContext;
 public interface ExceptionHandler {
   void handle(WindwardContext windwardContext);
 
-  boolean supported(RuntimeException runtimeException);
+  boolean supported(Exception e);
 }
