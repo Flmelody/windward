@@ -175,12 +175,13 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
 
   private boolean handleException(WindwardContext windwardContext, Exception e) {
     List<ExceptionHandler> exceptionHandlers = Windward.exceptionHandlers();
+    boolean alreadyDone = false;
     for (ExceptionHandler exceptionHandler : exceptionHandlers) {
       if (exceptionHandler.supported(e)) {
         exceptionHandler.handle(windwardContext);
-        return true;
+        alreadyDone = true;
       }
     }
-    return false;
+    return alreadyDone;
   }
 }
