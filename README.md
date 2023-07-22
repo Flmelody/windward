@@ -13,7 +13,7 @@ Light web function framework for Java
 <dependency>
     <groupId>org.flmelody</groupId>
     <artifactId>windward</artifactId>
-    <version>1.1-RELEASE</version>
+    <version>1.3-RELEASE</version>
 </dependency>
 ```
 
@@ -21,15 +21,15 @@ Light web function framework for Java
 
 ```shell
   static class Function {
-    public static void function1(WindwardContext windwardContext) {
+    public static void function1(SimpleWindwardContext windwardContext) {
       windwardContext.writeString("hello world! function1!");
     }
 
-    public void function2(WindwardContext windwardContext) {
+    public void function2(SimpleWindwardContext windwardContext) {
       windwardContext.writeString("hello world! function2!");
     }
 
-    public void function3(WindwardContext windwardContext) {
+    public void function3(SimpleWindwardContext windwardContext) {
       windwardContext.writeJson(new User(1, "esotericman"));
     }
   }
