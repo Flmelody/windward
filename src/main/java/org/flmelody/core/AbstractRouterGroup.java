@@ -4,10 +4,12 @@ import org.flmelody.core.context.EmptyWindwardContext;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
+import org.flmelody.core.exception.RouterMappingException;
 import org.flmelody.util.UrlUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -17,7 +19,9 @@ import java.util.function.Supplier;
  */
 public abstract class AbstractRouterGroup implements RouterGroup {
   private String groupPath;
-  private final Map<String, Map<String, ? super Object>> routers = new HashMap<>();
+  private final Map<String, Map<String, ? super Object>> routers = new HashMap<>(2 << 3);
+  private final char leftBrace = '{';
+  private final char rightBrace = '}';
 
   protected AbstractRouterGroup() {
     this("/");
@@ -114,7 +118,16 @@ public abstract class AbstractRouterGroup implements RouterGroup {
     if (relativePath.endsWith(UrlUtil.SLASH)) {
       relativePath = relativePath.replaceFirst("/$", "");
     }
+    relativePath = relativePath.replaceAll("[{}]", "");
     if (!routers.containsKey(relativePath)) {
+      Set<String> routerKeys = routers.keySet();
+      for (String routerKey : routerKeys) {
+        String routerRegex = routerKey.replaceAll("\\{.*}", "(.+)");
+        if (relativePath.matches(routerRegex)) {
+          //noinspection unchecked
+          return (R) routers.get(routerKey).get(method);
+        }
+      }
       return null;
     }
     //noinspection unchecked
@@ -124,6 +137,7 @@ public abstract class AbstractRouterGroup implements RouterGroup {
   private <I> void registerRouter(
       String relativePath, String method, I i, Class<? extends WindwardContext> clazz) {
     String path = UrlUtil.buildUrl(groupPath, relativePath);
+    checkPlaceholder(path);
     FunctionMetaInfo<I> functionMetaInfo = new FunctionMetaInfo<>(i, clazz);
     if (routers.containsKey(path)) {
       routers.get(path).put(method, functionMetaInfo);
@@ -131,6 +145,22 @@ public abstract class AbstractRouterGroup implements RouterGroup {
       Map<String, Object> routerMap = new HashMap<>(2 << 3);
       routerMap.put(method, functionMetaInfo);
       routers.put(path, routerMap);
+    }
+  }
+
+  private void checkPlaceholder(String path) {
+    int countLeft = 0;
+    int countRight = 0;
+    for (int i = 0; i < path.length(); i++) {
+      if (path.charAt(i) == leftBrace) {
+        countLeft++;
+      } else if (path.charAt(i) == rightBrace) {
+        countRight++;
+      }
+    }
+    if (countLeft != countRight) {
+      throw new RouterMappingException(
+          "Missed brace" + (countLeft > countRight ? rightBrace : leftBrace));
     }
   }
 }
