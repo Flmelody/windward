@@ -50,6 +50,7 @@
         <jakarta.el.version>4.0.2</jakarta.el.version>
         <lombok.version>1.18.28</lombok.version>
         <mockito.version>4.11.0</mockito.version>
+        <slf4j-api.version>1.7.36</slf4j-api.version>
     </properties>
 
     <dependencies>
@@ -64,9 +65,9 @@
             <version>${jackson-databind.version}</version>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback-classic.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
