@@ -125,7 +125,7 @@ public abstract class AbstractRouterGroup implements RouterGroup {
     if (!routers.containsKey(relativePath)) {
       Set<String> routerKeys = routers.keySet();
       for (String routerKey : routerKeys) {
-        if (!routerKey.matches(".*\\{.*}.*")) {
+        if (!routerKey.matches("(.*\\{.*}.*)+")) {
           continue;
         }
         String routerRegex = routerKey.replaceAll("\\{(.*?)}", "(.+)");
