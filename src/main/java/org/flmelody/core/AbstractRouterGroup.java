@@ -42,73 +42,73 @@ public abstract class AbstractRouterGroup implements RouterGroup {
   }
 
   @Override
-  public <R> Router get(String relativePath, Supplier<R> supplier) {
+  public <R> RouterGroup get(String relativePath, Supplier<R> supplier) {
     registerRouter(relativePath, HttpMethod.GET.name(), supplier, EmptyWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router get(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+  public RouterGroup get(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     registerRouter(relativePath, HttpMethod.GET.name(), consumer, SimpleWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public RouterGroup get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     registerRouter(relativePath, HttpMethod.GET.name(), function, EnhancedWindwardContext.class);
     return this;
   }
 
   @Override
-  public <R> Router put(String relativePath, Supplier<R> supplier) {
+  public <R> RouterGroup put(String relativePath, Supplier<R> supplier) {
     registerRouter(relativePath, HttpMethod.PUT.name(), supplier, EmptyWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router put(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+  public RouterGroup put(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     registerRouter(relativePath, HttpMethod.PUT.name(), consumer, SimpleWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public RouterGroup put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     registerRouter(relativePath, HttpMethod.PUT.name(), function, EnhancedWindwardContext.class);
     return this;
   }
 
   @Override
-  public <R> Router post(String relativePath, Supplier<R> supplier) {
+  public <R> RouterGroup post(String relativePath, Supplier<R> supplier) {
     registerRouter(relativePath, HttpMethod.POST.name(), supplier, EmptyWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router post(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+  public RouterGroup post(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     registerRouter(relativePath, HttpMethod.POST.name(), consumer, SimpleWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public RouterGroup post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     registerRouter(relativePath, HttpMethod.POST.name(), function, EnhancedWindwardContext.class);
     return this;
   }
 
   @Override
-  public <R> Router delete(String relativePath, Supplier<R> supplier) {
+  public <R> RouterGroup delete(String relativePath, Supplier<R> supplier) {
     registerRouter(relativePath, HttpMethod.DELETE.name(), supplier, EmptyWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router delete(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+  public RouterGroup delete(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     registerRouter(relativePath, HttpMethod.DELETE.name(), consumer, SimpleWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public RouterGroup delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     registerRouter(relativePath, HttpMethod.DELETE.name(), function, EnhancedWindwardContext.class);
     return this;
   }
@@ -125,7 +125,7 @@ public abstract class AbstractRouterGroup implements RouterGroup {
     if (!routers.containsKey(relativePath)) {
       Set<String> routerKeys = routers.keySet();
       for (String routerKey : routerKeys) {
-        if (!routerKey.matches("\\{.*}")) {
+        if (!routerKey.matches(".*\\{.*}.*")) {
           continue;
         }
         String routerRegex = routerKey.replaceAll("\\{(.*?)}", "(.+)");
