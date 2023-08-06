@@ -12,14 +12,13 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.util.CharsetUtil;
+import org.flmelody.core.AbstractResponseWriter;
 import org.flmelody.core.MediaType;
-import org.flmelody.core.ResponseWriter;
-import org.flmelody.util.JacksonUtil;
 
 /**
  * @author esotericman
  */
-public class NettyResponseWriter implements ResponseWriter {
+public class NettyResponseWriter extends AbstractResponseWriter {
   private final ChannelHandlerContext ctx;
 
   public NettyResponseWriter(ChannelHandlerContext ctx) {
@@ -44,7 +43,7 @@ public class NettyResponseWriter implements ResponseWriter {
     }
     String response = null;
     if (MediaType.APPLICATION_JSON_VALUE.equals(contentType)) {
-      response = JacksonUtil.toJson(data);
+      response = jsonPlugin.toJson(data);
 
     } else if (MediaType.TEXT_PLAIN_VALUE.equals(contentType)) {
       response = String.valueOf(data);
