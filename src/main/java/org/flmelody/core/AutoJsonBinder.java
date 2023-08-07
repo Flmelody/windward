@@ -1,20 +1,20 @@
 package org.flmelody.core;
 
 import org.flmelody.core.exception.JsonException;
-import org.flmelody.json.GsonPlugin;
-import org.flmelody.json.JacksonPlugin;
-import org.flmelody.json.JsonPlugin;
+import org.flmelody.core.plugin.json.GsonPlugin;
+import org.flmelody.core.plugin.json.JacksonPlugin;
+import org.flmelody.core.plugin.json.JsonPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author esotericman
  */
-public abstract class AbstractResponseWriter implements ResponseWriter {
-  protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
-  protected JsonPlugin jsonPlugin;
+public class AutoJsonBinder {
+  protected static final Logger LOGGER = LoggerFactory.getLogger(AutoJsonBinder.class);
+  public static JsonPlugin jsonPlugin;
 
-  {
+  static {
     try {
       Class.forName("com.fasterxml.jackson.databind.ObjectMapper");
       jsonPlugin = new JacksonPlugin();
@@ -31,4 +31,5 @@ public abstract class AbstractResponseWriter implements ResponseWriter {
       throw new JsonException("No suitable json library");
     }
   }
+
 }

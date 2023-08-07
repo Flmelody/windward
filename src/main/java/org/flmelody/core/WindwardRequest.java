@@ -15,6 +15,7 @@ public class WindwardRequest {
   private final Map<String, List<String>> headers = new HashMap<>();
   private final Map<String, List<String>> querystring = new HashMap<>();
   private String requestBody;
+  private final RequestReader requestReader = new DefaultRequestReader();
 
   public static WindwardRequestBuilder newBuild() {
     return new WindwardRequestBuilder(new WindwardRequest());
@@ -69,6 +70,22 @@ public class WindwardRequest {
    */
   public String getRequestBody() {
     return requestBody;
+  }
+
+  public <I> I readJson(Class<I> clazz) {
+    return requestReader.readJson(this.getRequestBody(), clazz);
+  }
+
+  /**
+   * bind request body to specific class. and return instance of the class
+   *
+   * @param clazz objects class
+   * @param groups validate group
+   * @param <I> objects type
+   * @return object
+   */
+  public <I> I bindJson(Class<I> clazz, Class<?>... groups) {
+    return requestReader.bindJson(this.getRequestBody(), clazz, groups);
   }
 
   /** builder for WindwardRequest */

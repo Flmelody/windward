@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.flmelody.core.exception.ValidationException;
+import org.flmelody.core.plugin.json.JsonPlugin;
 
 /**
  * @author esotericman
@@ -27,10 +28,11 @@ public final class ValidationUtil {
    * @param <T> return type
    * @return object that convert from json content
    */
-  public static <T> T validate(String content, Class<T> targetClass, Class<?>... groups)
+  public static <T> T validate(
+      JsonPlugin jsonPlugin, String content, Class<T> targetClass, Class<?>... groups)
       throws ValidationException {
     Validator validator = validatorFactory.getValidator();
-    T target = JacksonUtil.toObject(content, targetClass);
+    T target = jsonPlugin.toObject(content, targetClass);
     Set<ConstraintViolation<T>> validate;
     if (Objects.isNull(groups)) {
       validate = validator.validate(target);

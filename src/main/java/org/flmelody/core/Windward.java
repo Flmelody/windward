@@ -2,15 +2,20 @@ package org.flmelody.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
+import org.flmelody.core.exception.PluginMissException;
 import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.NettyHttpServer;
+import org.flmelody.core.plugin.Plugin;
+import org.flmelody.core.plugin.json.JsonPlugin;
 import org.flmelody.util.UrlUtil;
 
 /**
@@ -24,6 +29,8 @@ public class Windward implements Router {
   private static final List<Filter> globalFilters = new ArrayList<>();
   // handlers for exception
   private static final List<ExceptionHandler> globalExceptionHandlers = new ArrayList<>();
+  // plugins
+  private static final Map<Class<?>, Plugin> globalPlugins = new HashMap<>();
   private HttpServer httpServer;
 
   private Windward(String contextPath) {
@@ -54,7 +61,9 @@ public class Windward implements Router {
   public static Windward setup(int port, String contextPath, Filter... filters) {
     Windward windward = new Windward(contextPath);
     windward.httpServer = new NettyHttpServer(port);
-    return windward.registerFilter(filters);
+    return windward
+        .registerFilter(filters)
+        .registerPlugin(JsonPlugin.class, AutoJsonBinder.jsonPlugin);
   }
 
   /**
@@ -108,6 +117,18 @@ public class Windward implements Router {
   }
 
   /**
+   * register plugin or overwrite existed
+   *
+   * @param clazz plugin class
+   * @param plugin plugin
+   * @return current windward
+   */
+  public Windward registerPlugin(Class<?> clazz, Plugin plugin) {
+    globalPlugins.put(clazz, plugin);
+    return this;
+  }
+
+  /**
    * find out registered function by specific path
    *
    * @param relativePath relativePath
@@ -139,6 +160,21 @@ public class Windward implements Router {
    */
   public static List<ExceptionHandler> exceptionHandlers() {
     return globalExceptionHandlers;
+  }
+
+  /**
+   * get plugin
+   *
+   * @param clazz class of plugin
+   * @return plugin
+   * @param <T> plugin type
+   */
+  public static <T> T plugin(Class<T> clazz) {
+    if (!globalPlugins.containsKey(clazz)) {
+      throw new PluginMissException(String.format("Plugin [%s] not found", clazz.getName()));
+    }
+    //noinspection unchecked
+    return (T) globalPlugins.get(clazz);
   }
 
   public Windward then() {

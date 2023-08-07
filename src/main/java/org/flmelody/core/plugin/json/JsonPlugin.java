@@ -1,11 +1,13 @@
-package org.flmelody.json;
+package org.flmelody.core.plugin.json;
+
+import org.flmelody.core.plugin.Plugin;
 
 /**
  * base interface for serializing or deserializing json
  *
  * @author esotericman
  */
-public interface JsonPlugin {
+public interface JsonPlugin extends Plugin {
 
   /**
    * convert data into json string

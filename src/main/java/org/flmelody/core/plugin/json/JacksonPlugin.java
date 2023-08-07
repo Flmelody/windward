@@ -1,4 +1,4 @@
-package org.flmelody.json;
+package org.flmelody.core.plugin.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;

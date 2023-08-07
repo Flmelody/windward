@@ -4,9 +4,6 @@ import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
-import org.flmelody.core.exception.ValidationException;
-import org.flmelody.util.JacksonUtil;
-import org.flmelody.util.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,10 +97,7 @@ public class AbstractWindwardContext implements WindwardContext {
    */
   @Override
   public <I> I readJson(Class<I> clazz) {
-    if (windwardRequest.getRequestBody() == null) {
-      return JacksonUtil.toObject("{}", clazz);
-    }
-    return JacksonUtil.toObject(windwardRequest.getRequestBody(), clazz);
+    return windwardRequest.readJson(clazz);
   }
 
   /**
@@ -116,10 +110,7 @@ public class AbstractWindwardContext implements WindwardContext {
    */
   @Override
   public <I> I bindJson(Class<I> clazz, Class<?>... groups) {
-    if (windwardRequest.getRequestBody() == null) {
-      throw new ValidationException("Body is empty");
-    }
-    return ValidationUtil.validate(windwardRequest.getRequestBody(), clazz, groups);
+    return windwardRequest.bindJson(clazz, groups);
   }
 
   /**

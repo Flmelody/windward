@@ -1,4 +1,4 @@
-package org.flmelody.json;
+package org.flmelody.core.plugin.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
