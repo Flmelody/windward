@@ -123,7 +123,7 @@ public class Windward implements Router {
    * @param plugin plugin
    * @return current windward
    */
-  public Windward registerPlugin(Class<?> clazz, Plugin plugin) {
+  public Windward registerPlugin(Class<? extends Plugin> clazz, Plugin plugin) {
     globalPlugins.put(clazz, plugin);
     return this;
   }
@@ -169,7 +169,7 @@ public class Windward implements Router {
    * @return plugin
    * @param <T> plugin type
    */
-  public static <T> T plugin(Class<T> clazz) {
+  public static <T extends Plugin> T plugin(Class<T> clazz) {
     if (!globalPlugins.containsKey(clazz)) {
       throw new PluginMissException(String.format("Plugin [%s] not found", clazz.getName()));
     }
