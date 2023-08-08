@@ -134,6 +134,9 @@ public abstract class AbstractRouterGroup implements RouterGroup {
         if (relativePath.matches(routerRegex)) {
           FunctionMetaInfo<?> functionMetaInfo =
               (FunctionMetaInfo<?>) routers.get(routerKey).get(method);
+          if (functionMetaInfo == null) {
+            return null;
+          }
           Map<String, Object> pathVariables = functionMetaInfo.getPathVariables();
           List<String> keys = new ArrayList<>(pathVariables.keySet());
           Pattern pattern = Pattern.compile(routerRegex);
