@@ -4,7 +4,7 @@
 
     <groupId>org.flmelody</groupId>
     <artifactId>windward</artifactId>
-    <version>1.4-RELEASE</version>
+    <version>1.4.1-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>windward</name>
