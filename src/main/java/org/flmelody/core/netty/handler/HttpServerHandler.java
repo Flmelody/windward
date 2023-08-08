@@ -112,7 +112,9 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         Constructor<?> constructor =
             clazz.getConstructor(WindwardRequest.class, WindwardResponse.class);
         return (WindwardContext)
-            constructor.newInstance(windwardRequestBuilder.build(), windwardResponseBuild.build());
+            constructor.newInstance(
+                windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
+                windwardResponseBuild.build());
       } catch (Exception e) {
         logger.error("Failed to construct context");
       }

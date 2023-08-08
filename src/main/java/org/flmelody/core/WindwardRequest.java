@@ -12,8 +12,9 @@ public class WindwardRequest {
   private String method;
   private String uri;
   private Boolean keepAlive;
-  private final Map<String, List<String>> headers = new HashMap<>();
-  private final Map<String, List<String>> querystring = new HashMap<>();
+  private final Map<String, List<String>> headers = new HashMap<>(2 << 3);
+  private final Map<String, List<String>> querystring = new HashMap<>(2 << 3);
+  private final Map<String, Object> pathVariables = new HashMap<>(2 << 3);
   private String requestBody;
   private final RequestReader requestReader = new DefaultRequestReader();
 
@@ -61,6 +62,15 @@ public class WindwardRequest {
    */
   public Map<String, List<String>> getQuerystring() {
     return querystring;
+  }
+
+  /**
+   * get path variables
+   *
+   * @return path variables
+   */
+  public Map<String, Object> getPathVariables() {
+    return pathVariables;
   }
 
   /**
@@ -118,6 +128,11 @@ public class WindwardRequest {
 
     public WindwardRequestBuilder querystring(Map<String, List<String>> querystring) {
       windwardRequest.querystring.putAll(querystring);
+      return this;
+    }
+
+    public WindwardRequestBuilder pathVariables(Map<String, Object> pathVariables) {
+      windwardRequest.pathVariables.putAll(pathVariables);
       return this;
     }
 
