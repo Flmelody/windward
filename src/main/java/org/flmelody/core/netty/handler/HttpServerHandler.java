@@ -22,7 +22,6 @@ import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.util.CharsetUtil;
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,6 +37,8 @@ import org.flmelody.core.Filter;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.Windward;
 import org.flmelody.core.context.EmptyWindwardContext;
+import org.flmelody.core.context.EnhancedWindwardContext;
+import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
@@ -122,12 +123,15 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
     } else {
       try {
         Class<? extends WindwardContext> clazz = functionMetaInfo.getClazz();
-        Constructor<?> constructor =
-            clazz.getConstructor(WindwardRequest.class, WindwardResponse.class);
-        return (WindwardContext)
-            constructor.newInstance(
-                windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
-                windwardResponseBuild.build());
+        if (clazz.isAssignableFrom(SimpleWindwardContext.class)) {
+          return new SimpleWindwardContext(
+              windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
+              windwardResponseBuild.build());
+        } else if (clazz.isAssignableFrom(EnhancedWindwardContext.class)) {
+          return new EnhancedWindwardContext(
+              windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
+              windwardResponseBuild.build());
+        }
       } catch (Exception e) {
         logger.error("Failed to construct context");
       }
