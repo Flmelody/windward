@@ -11,16 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.flmelody.core.context;
 
+import java.util.HashMap;
+import java.util.List;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * @author esotericman
@@ -168,5 +169,32 @@ public class AbstractWindwardContext implements WindwardContext {
   @Override
   public void writeString(int code, String data) {
     windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE, data);
+  }
+
+  /**
+   * redirect
+   *
+   * @param redirectUrl location for redirecting
+   */
+  @Override
+  public void redirect(String redirectUrl) {
+    redirect(HttpStatus.FOUND.value(), redirectUrl);
+  }
+
+  /**
+   * redirect
+   *
+   * @param code http code of redirecting
+   * @param redirectUrl location for redirecting
+   */
+  @Override
+  public void redirect(int code, String redirectUrl) {
+    if (HttpStatus.MOVED_PERMANENTLY.value() == code || HttpStatus.FOUND.value() == code) {
+      HashMap<String, Object> headerMap = new HashMap<>();
+      headerMap.put("location", redirectUrl);
+      windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE, headerMap, null);
+      return;
+    }
+    throw new IllegalArgumentException("Illegal redirecting code" + code);
   }
 }

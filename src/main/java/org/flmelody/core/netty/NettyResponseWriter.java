@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.flmelody.core.netty;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -24,7 +25,10 @@ import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
+import java.util.Collections;
+import java.util.Map;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.ResponseWriter;
 import org.flmelody.core.Windward;
@@ -52,6 +56,12 @@ public class NettyResponseWriter implements ResponseWriter {
 
   @Override
   public <T> void write(int code, String contentType, T data, boolean close) {
+    write(code, contentType, Collections.emptyMap(), data, close);
+  }
+
+  @Override
+  public <T> void write(
+      int code, String contentType, Map<String, Object> headers, T data, boolean close) {
     Channel channel = ctx.channel();
     if (!channel.isActive()) {
       return;
@@ -71,6 +81,10 @@ public class NettyResponseWriter implements ResponseWriter {
         new DefaultFullHttpResponse(
             HTTP_1_1, OK, Unpooled.copiedBuffer(response, CharsetUtil.UTF_8));
     httpResponse.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
+    httpResponse.setStatus(HttpResponseStatus.valueOf(code));
+    if (headers != null && !headers.isEmpty()) {
+      headers.keySet().forEach(key -> httpResponse.headers().set(key, headers.get(key)));
+    }
     if (!close) {
       httpResponse
           .headers()

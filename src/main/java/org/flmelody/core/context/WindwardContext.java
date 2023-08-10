@@ -11,10 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.flmelody.core.context;
 
 import java.util.List;
-
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.WindwardRequest;
 
@@ -120,4 +120,19 @@ public interface WindwardContext {
    * @param data strings
    */
   void writeString(int code, String data);
+
+  /**
+   * redirect
+   *
+   * @param redirectUrl location for redirecting
+   */
+  void redirect(String redirectUrl);
+
+  /**
+   * redirect
+   *
+   * @param code http code of redirecting
+   * @param redirectUrl location for redirecting
+   */
+  void redirect(int code, String redirectUrl);
 }

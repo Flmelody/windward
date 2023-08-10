@@ -18,6 +18,8 @@ package org.flmelody.core;
  */
 public enum HttpStatus {
   OK(200, "OK"),
+  MOVED_PERMANENTLY(301, "Moved Permanently"),
+  FOUND(302, "Found"),
   BAD_REQUEST(400, "Bad Request"),
   UNAUTHORIZED(401, "Unauthorized"),
   FORBIDDEN(403, "Forbidden"),

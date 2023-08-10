@@ -11,7 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.flmelody.core;
+
+import java.util.Map;
 
 /**
  * @author esotericman
@@ -44,6 +47,19 @@ public class WindwardResponse {
    */
   public <T> void write(int code, String contentType, T data) {
     responseWriter.write(code, contentType, data);
+  }
+
+  /**
+   * write data into response
+   *
+   * @param code http code
+   * @param contentType response contentType
+   * @param headers responses headers
+   * @param data data
+   * @param <T> data type
+   */
+  public <T> void write(int code, String contentType, Map<String, Object> headers, T data) {
+    responseWriter.write(code, contentType, headers, data, true);
   }
 
   public static WindwardResponseBuild newBuilder() {

@@ -11,7 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.flmelody.core;
+
+import java.util.Map;
 
 /**
  * @author esotericman
@@ -46,6 +49,16 @@ public interface ResponseWriter {
    * @param <T> data type
    */
   <T> void write(int code, String contentType, T data, boolean close);
+
+  /**
+   * write response data
+   *
+   * @param code http code
+   * @param contentType contentType
+   * @param data data
+   * @param <T> data type
+   */
+  <T> void write(int code, String contentType, Map<String, Object> headers, T data, boolean close);
 
   /**
    * write response data

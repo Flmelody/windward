@@ -11,11 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.flmelody.core.context;
 
-import org.flmelody.core.WindwardRequest;
-
 import java.util.List;
+import org.flmelody.core.WindwardRequest;
 
 /**
  * @author esotericman
@@ -68,6 +68,16 @@ public class EmptyWindwardContext implements WindwardContext {
 
   @Override
   public void writeString(int code, String data) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void redirect(String redirectUrl) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void redirect(int code, String redirectUrl) {
     throw new UnsupportedOperationException();
   }
 }

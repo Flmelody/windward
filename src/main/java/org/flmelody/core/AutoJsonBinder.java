@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.flmelody.core;
 
 import org.flmelody.core.exception.JsonException;
@@ -34,15 +35,16 @@ public class AutoJsonBinder {
     } catch (ClassNotFoundException e) {
       LOGGER.info("Jackson lib not exist, will try gson instead");
     }
-    try {
-      Class.forName("com.google.gson.Gson");
-      jsonPlugin = new GsonPlugin();
-    } catch (ClassNotFoundException e) {
-      LOGGER.info("Gson lib not find, error throw");
+    if (jsonPlugin == null) {
+      try {
+        Class.forName("com.google.gson.Gson");
+        jsonPlugin = new GsonPlugin();
+      } catch (ClassNotFoundException e) {
+        LOGGER.info("Gson lib not find, error throw");
+      }
     }
     if (jsonPlugin == null) {
       throw new JsonException("No suitable json library");
     }
   }
-
 }
