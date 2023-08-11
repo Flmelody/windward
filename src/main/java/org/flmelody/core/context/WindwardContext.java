@@ -48,7 +48,7 @@ public interface WindwardContext {
    *
    * @return path variables
    */
-  public Map<String, Object> getPathVariables();
+  Map<String, Object> getPathVariables();
 
   /**
    * get request body
