@@ -5,7 +5,7 @@
 
 Light web function framework for Java
 <div>
-    <img src="https://github.com/Flmelody/windward-guide/blob/main/docs/.vuepress/public/windward.png" alt="windward" width="800" height="600">
+    <img src="https://github.com/Flmelody/windward-guide/blob/main/docs/.vuepress/public/windward.png" alt="windward" width="600" height="400">
 </div>
 
 ## Quick start
