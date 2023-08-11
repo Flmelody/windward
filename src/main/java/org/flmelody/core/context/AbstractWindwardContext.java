@@ -16,6 +16,7 @@ package org.flmelody.core.context;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.WindwardRequest;
@@ -64,6 +65,16 @@ public class AbstractWindwardContext implements WindwardContext {
   @Override
   public List<String> getRequestParameters(String parameterName) {
     return this.windwardRequest.getQuerystring().get(parameterName);
+  }
+
+  /**
+   * get path variables
+   *
+   * @return path variables
+   */
+  @Override
+  public Map<String, Object> getPathVariables() {
+    return this.windwardRequest.getPathVariables();
   }
 
   /**

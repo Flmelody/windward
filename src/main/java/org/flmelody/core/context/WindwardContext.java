@@ -15,6 +15,7 @@
 package org.flmelody.core.context;
 
 import java.util.List;
+import java.util.Map;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.WindwardRequest;
 
@@ -41,6 +42,13 @@ public interface WindwardContext {
    * @return parameters list
    */
   List<String> getRequestParameters(String parameterName);
+
+  /**
+   * get path variables
+   *
+   * @return path variables
+   */
+  public Map<String, Object> getPathVariables();
 
   /**
    * get request body

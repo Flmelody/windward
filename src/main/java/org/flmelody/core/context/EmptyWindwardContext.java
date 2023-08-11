@@ -15,6 +15,7 @@
 package org.flmelody.core.context;
 
 import java.util.List;
+import java.util.Map;
 import org.flmelody.core.WindwardRequest;
 
 /**
@@ -28,6 +29,11 @@ public class EmptyWindwardContext implements WindwardContext {
 
   @Override
   public List<String> getRequestParameters(String parameterName) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Map<String, Object> getPathVariables() {
     throw new UnsupportedOperationException();
   }
 
