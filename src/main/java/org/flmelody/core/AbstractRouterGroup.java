@@ -15,12 +15,12 @@
 package org.flmelody.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -37,7 +37,8 @@ import org.flmelody.util.UrlUtil;
  */
 public abstract class AbstractRouterGroup implements RouterGroup {
   private String groupPath;
-  private final Map<String, Map<String, ? super Object>> routers = new ConcurrentHashMap<>(2 << 3);
+  private final Map<String, Map<String, ? super Object>> routers =
+      Collections.synchronizedMap(new LinkedHashMap<>(2 << 3));
 
   protected AbstractRouterGroup() {
     this("/");
