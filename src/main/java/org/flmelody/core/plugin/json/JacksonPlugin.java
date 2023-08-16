@@ -14,6 +14,7 @@
 
 package org.flmelody.core.plugin.json;
 
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,12 +28,24 @@ public class JacksonPlugin implements JsonPlugin {
   final ObjectMapper objectMapper = new ObjectMapper();
 
   {
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, true);
   }
 
   @Override
   public <I> String toJson(I data) {
     try {
+      // whether string is json string already
+      if (data instanceof String) {
+        try {
+          String result = String.valueOf(data);
+          objectMapper.readTree(result);
+          return result;
+        } catch (JacksonException ignored) {
+          // do nothing
+        }
+      }
       return objectMapper.writeValueAsString(data);
     } catch (JsonProcessingException e) {
       throw new JsonSerializeException(e);

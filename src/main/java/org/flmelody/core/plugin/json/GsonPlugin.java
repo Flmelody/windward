@@ -16,6 +16,7 @@ package org.flmelody.core.plugin.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import org.flmelody.core.exception.JsonDeserializeException;
 import org.flmelody.core.exception.JsonSerializeException;
 
@@ -32,6 +33,16 @@ public class GsonPlugin implements JsonPlugin {
   @Override
   public <I> String toJson(I data) {
     try {
+      // whether string is json string already
+      if (data instanceof String) {
+        String result = String.valueOf(data);
+        try {
+          gson.getAdapter(JsonElement.class).fromJson(result);
+          return result;
+        } catch (Exception ignored) {
+          // do nothing
+        }
+      }
       return gson.toJson(data);
     } catch (Exception e) {
       throw new JsonSerializeException(e);
