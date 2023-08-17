@@ -190,7 +190,7 @@ public abstract class AbstractRouterGroup implements RouterGroup {
     Pattern pattern = Pattern.compile("(\\{(.*?)})");
     Matcher matcher = pattern.matcher(path);
     while (matcher.find()) {
-      String variable = matcher.group(1);
+      String variable = matcher.group(2);
       if (variable.trim().isEmpty()) {
         throw new RouterMappingException("Path variable name is empty!");
       }
