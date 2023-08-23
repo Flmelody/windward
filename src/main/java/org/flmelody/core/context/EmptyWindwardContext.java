@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2023 Flmelody.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -84,6 +86,11 @@ public class EmptyWindwardContext implements WindwardContext {
 
   @Override
   public void redirect(int code, String redirectUrl) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public <M> void html(String viewUrl, M model) {
     throw new UnsupportedOperationException();
   }
 }

@@ -143,4 +143,12 @@ public interface WindwardContext {
    * @param redirectUrl location for redirecting
    */
   void redirect(int code, String redirectUrl);
+
+  /**
+   * response html directly
+   *
+   * @param viewUrl templates location
+   * @param model templates data
+   */
+  <M> void html(String viewUrl, M model);
 }

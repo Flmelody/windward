@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package org.flmelody.core;
+package org.flmelody.view;
 
-import org.flmelody.core.context.WindwardContext;
+import java.util.Map;
 
 /**
  * @author esotericman
  */
-public interface ExceptionHandler {
-  void handle(WindwardContext windwardContext);
-
-  boolean supported(Exception e);
+public interface View {
+  String render(String viewUrl, Map<String, Object> model) throws Exception;
 }

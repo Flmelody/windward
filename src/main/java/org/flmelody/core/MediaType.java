@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2023 Flmelody.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +23,7 @@ public class MediaType {
   public static final String APPLICATION_JSON_VALUE = "application/json;charset=UTF-8";
   public static final String MULTIPART_FORM_DATA_VALUE = "multipart/form-data";
   public static final String TEXT_PLAIN_VALUE = "text/plain;charset=UTF-8";
+  public static final String TEXT_HTML_VALUE = "text/html;charset=UTF-8";
 
   private MediaType() {}
 }
