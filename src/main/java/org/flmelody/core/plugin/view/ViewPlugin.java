@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.flmelody.view;
+package org.flmelody.core.plugin.view;
 
 import java.util.Map;
+import org.flmelody.core.plugin.Plugin;
 
 /**
  * @author esotericman
  */
-public interface View {
+public interface ViewPlugin extends Plugin {
   String render(String viewUrl, Map<String, Object> model) throws Exception;
 }

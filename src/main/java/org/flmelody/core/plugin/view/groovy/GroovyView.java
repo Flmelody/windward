@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package org.flmelody.view.groovy;
+package org.flmelody.core.plugin.view.groovy;
 
 import groovy.text.Template;
 import groovy.text.markup.MarkupTemplateEngine;
 import java.io.StringWriter;
 import java.util.Map;
-import org.flmelody.view.View;
+import org.flmelody.core.plugin.view.ViewPlugin;
 
 /**
  * @author esotericman
  */
-public class GroovyView implements View {
+public class GroovyView implements ViewPlugin {
   private final MarkupTemplateEngine templateEngine;
 
   public GroovyView() {

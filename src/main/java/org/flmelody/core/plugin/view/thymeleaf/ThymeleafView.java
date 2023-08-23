@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.flmelody.view.thymeleaf;
+package org.flmelody.core.plugin.view.thymeleaf;
 
 import java.util.Map;
-import org.flmelody.view.View;
+import org.flmelody.core.plugin.view.ViewPlugin;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -25,7 +25,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 /**
  * @author esotericman
  */
-public class ThymeleafView implements View {
+public class ThymeleafView implements ViewPlugin {
   private final TemplateEngine templateEngine;
 
   public ThymeleafView() {
