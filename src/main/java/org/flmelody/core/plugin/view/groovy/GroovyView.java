@@ -26,10 +26,16 @@ import org.flmelody.core.plugin.view.ViewPlugin;
  * @author esotericman
  */
 public class GroovyView implements ViewPlugin {
-  private final MarkupTemplateEngine templateEngine;
+  protected final MarkupTemplateEngine templateEngine;
+  protected final String defaultExtension = "tpl";
 
   public GroovyView() {
     this.templateEngine = new MarkupTemplateEngine();
+  }
+
+  @Override
+  public boolean supportedExtension(String extension) {
+    return defaultExtension.equalsIgnoreCase(extension);
   }
 
   @Override

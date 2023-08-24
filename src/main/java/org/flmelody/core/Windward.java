@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.exception.PluginMissException;
@@ -181,8 +182,8 @@ public class Windward implements Router {
    * get plugin
    *
    * @param clazz class of plugin
-   * @return plugin
    * @param <T> plugin type
+   * @return plugin
    */
   public static <T extends Plugin> T plugin(Class<T> clazz) {
     if (!globalPlugins.containsKey(clazz)) {
@@ -190,6 +191,24 @@ public class Windward implements Router {
     }
     //noinspection unchecked
     return (T) globalPlugins.get(clazz);
+  }
+
+  /**
+   * get plugins by super or self
+   *
+   * @param clazz super or self class
+   * @param <T> class type
+   * @return plugins
+   */
+  public static <T extends Plugin> List<T> plugins(Class<T> clazz) {
+    return globalPlugins.values().stream()
+        .filter(plugin -> clazz.isAssignableFrom(plugin.getClass()))
+        .map(
+            plugin -> {
+              //noinspection unchecked
+              return (T) plugin;
+            })
+        .collect(Collectors.toList());
   }
 
   public Windward then() {

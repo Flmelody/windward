@@ -26,11 +26,17 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
  * @author esotericman
  */
 public class ThymeleafView implements ViewPlugin {
-  private final TemplateEngine templateEngine;
+  protected final TemplateEngine templateEngine;
+  protected final String defaultExtension = "ftl";
 
   public ThymeleafView() {
     this.templateEngine = new TemplateEngine();
     this.templateEngine.setTemplateResolver(new ClassLoaderTemplateResolver());
+  }
+
+  @Override
+  public boolean supportedExtension(String extension) {
+    return defaultExtension.equalsIgnoreCase(extension);
   }
 
   @Override

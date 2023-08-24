@@ -23,5 +23,21 @@ import org.flmelody.core.plugin.Plugin;
  * @author esotericman
  */
 public interface ViewPlugin extends Plugin {
+  /**
+   * if extension is supported
+   *
+   * @param extension resources extension
+   * @return whether extension is supported
+   */
+  boolean supportedExtension(String extension);
+
+  /**
+   * try to render template
+   *
+   * @param viewUrl templates url
+   * @param model templates data
+   * @return rendered result
+   * @throws Exception exception
+   */
   String render(String viewUrl, Map<String, Object> model) throws Exception;
 }
