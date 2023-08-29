@@ -32,6 +32,8 @@ import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.NettyHttpServer;
 import org.flmelody.core.plugin.Plugin;
 import org.flmelody.core.plugin.json.JsonPlugin;
+import org.flmelody.core.plugin.view.groovy.GroovyView;
+import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
 import org.flmelody.util.UrlUtil;
 
 /**
@@ -79,7 +81,9 @@ public class Windward implements Router {
     windward.httpServer = new NettyHttpServer(port);
     return windward
         .registerFilter(filters)
-        .registerPlugin(JsonPlugin.class, AutoJsonBinder.jsonPlugin);
+        .registerPlugin(JsonPlugin.class, AutoJsonBinder.jsonPlugin)
+        .registerPlugin(GroovyView.class, new GroovyView())
+        .registerPlugin(ThymeleafView.class, new ThymeleafView());
   }
 
   /**

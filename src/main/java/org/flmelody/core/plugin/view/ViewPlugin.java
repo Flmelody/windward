@@ -23,6 +23,8 @@ import org.flmelody.core.plugin.Plugin;
  * @author esotericman
  */
 public interface ViewPlugin extends Plugin {
+  String templateLocationPrefix = "/template";
+
   /**
    * if extension is supported
    *

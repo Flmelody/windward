@@ -27,7 +27,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
  */
 public class ThymeleafView implements ViewPlugin {
   protected final TemplateEngine templateEngine;
-  protected final String defaultExtension = "ftl";
+  protected final String defaultExtension = "html";
 
   public ThymeleafView() {
     this.templateEngine = new TemplateEngine();

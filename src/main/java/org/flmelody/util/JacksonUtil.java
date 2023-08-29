@@ -19,6 +19,7 @@ package org.flmelody.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
 import org.flmelody.core.exception.JsonDeserializeException;
 import org.flmelody.core.exception.JsonSerializeException;
 
@@ -63,5 +64,10 @@ public class JacksonUtil {
     } catch (JsonProcessingException e) {
       throw new JsonDeserializeException(e);
     }
+  }
+
+  public static <I> HashMap<String, Object> toMap(I data) {
+    //noinspection unchecked
+    return objectMapper.convertValue(data, HashMap.class);
   }
 }

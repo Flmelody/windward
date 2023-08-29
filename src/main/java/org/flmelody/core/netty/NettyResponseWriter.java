@@ -68,11 +68,10 @@ public class NettyResponseWriter implements ResponseWriter {
     if (!channel.isActive()) {
       return;
     }
-    String response = null;
+    String response;
     if (MediaType.APPLICATION_JSON_VALUE.equals(contentType)) {
       response = Windward.plugin(JsonPlugin.class).toJson(data);
-
-    } else if (MediaType.TEXT_PLAIN_VALUE.equals(contentType)) {
+    } else {
       response = String.valueOf(data);
     }
     if (response == null) {

@@ -16,13 +16,19 @@
 
 package org.flmelody.core.context;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
+import org.flmelody.core.Windward;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
+import org.flmelody.core.exception.WindwardException;
+import org.flmelody.core.plugin.view.ViewPlugin;
+import org.flmelody.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -208,9 +214,38 @@ public class AbstractWindwardContext implements WindwardContext {
       windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE, headerMap, null);
       return;
     }
-    throw new IllegalArgumentException("Illegal redirecting code" + code);
+    throw new WindwardException("Illegal redirecting code" + code);
   }
 
   @Override
-  public <M> void html(String viewUrl, M model) {}
+  public <M> void html(String viewUrl, M model) {
+    if (viewUrl == null || viewUrl.isEmpty()) {
+      throw new WindwardException("View name is empty!");
+    }
+    String extension;
+    int i = viewUrl.lastIndexOf(".");
+    if (i > 0) {
+      extension = viewUrl.substring(i + 1);
+    } else {
+      throw new WindwardException("Unknown View extension!");
+    }
+    Optional<ViewPlugin> view =
+        Windward.plugins(ViewPlugin.class).stream()
+            .filter(viewPlugin -> viewPlugin.supportedExtension(extension))
+            .findFirst();
+    if (view.isPresent()) {
+      ViewPlugin viewPlugin = view.get();
+      try {
+        String renderedView =
+            viewPlugin.render(
+                ViewPlugin.templateLocationPrefix + "/" + viewUrl, JacksonUtil.toMap(model));
+        windwardResponse.write(
+            HttpStatus.OK.value(), MediaType.TEXT_HTML_VALUE, Collections.emptyMap(), renderedView);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    } else {
+      throw new WindwardException("Unsupported View extension!");
+    }
+  }
 }
