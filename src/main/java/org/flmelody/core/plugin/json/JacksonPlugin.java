@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.lang.reflect.Type;
 import org.flmelody.core.exception.JsonDeserializeException;
 import org.flmelody.core.exception.JsonSerializeException;
 
@@ -35,6 +36,7 @@ public class JacksonPlugin implements JsonPlugin {
         .configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, true);
   }
 
+  /** {@inheritDoc} */
   @Override
   public <I> String toJson(I data) {
     try {
@@ -54,10 +56,21 @@ public class JacksonPlugin implements JsonPlugin {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public <O> O toObject(String json, Class<O> clazz) {
     try {
       return objectMapper.readValue(json, clazz);
+    } catch (JsonProcessingException e) {
+      throw new JsonDeserializeException(e);
+    }
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public <I, O> O toObject(I data, Type type) {
+    try {
+      return objectMapper.readValue(toJson(data), objectMapper.constructType(type));
     } catch (JsonProcessingException e) {
       throw new JsonDeserializeException(e);
     }

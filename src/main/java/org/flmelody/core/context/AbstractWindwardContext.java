@@ -27,8 +27,8 @@ import org.flmelody.core.Windward;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.exception.WindwardException;
+import org.flmelody.core.plugin.json.JsonPlugin;
 import org.flmelody.core.plugin.view.ViewPlugin;
-import org.flmelody.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -238,7 +238,8 @@ public class AbstractWindwardContext implements WindwardContext {
       try {
         String renderedView =
             viewPlugin.render(
-                ViewPlugin.templateLocationPrefix + "/" + viewUrl, JacksonUtil.toMap(model));
+                ViewPlugin.templateLocationPrefix + "/" + viewUrl,
+                Windward.plugin(JsonPlugin.class).toObject(model, HashMap.class));
         windwardResponse.write(
             HttpStatus.OK.value(), MediaType.TEXT_HTML_VALUE, Collections.emptyMap(), renderedView);
       } catch (Exception e) {

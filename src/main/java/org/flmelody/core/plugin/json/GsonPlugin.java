@@ -19,6 +19,8 @@ package org.flmelody.core.plugin.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import org.flmelody.core.exception.JsonDeserializeException;
 import org.flmelody.core.exception.JsonSerializeException;
 
@@ -32,6 +34,7 @@ public class GsonPlugin implements JsonPlugin {
     gson = new GsonBuilder().serializeNulls().create();
   }
 
+  /** {@inheritDoc} */
   @Override
   public <I> String toJson(I data) {
     try {
@@ -51,6 +54,7 @@ public class GsonPlugin implements JsonPlugin {
     }
   }
 
+  /** {@inheritDoc} */
   @Override
   public <O> O toObject(String json, Class<O> clazz) {
     try {
@@ -58,5 +62,12 @@ public class GsonPlugin implements JsonPlugin {
     } catch (Exception e) {
       throw new JsonDeserializeException(e);
     }
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public <I, O> O toObject(I data, Type type) {
+    //noinspection unchecked
+    return (O) gson.fromJson(toJson(data), TypeToken.get(type));
   }
 }

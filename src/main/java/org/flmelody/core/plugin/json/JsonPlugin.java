@@ -16,6 +16,7 @@
 
 package org.flmelody.core.plugin.json;
 
+import java.lang.reflect.Type;
 import org.flmelody.core.plugin.Plugin;
 
 /**
@@ -43,4 +44,14 @@ public interface JsonPlugin extends Plugin {
    * @return converted object
    */
   <O> O toObject(String json, Class<O> clazz);
+
+  /**
+   * convert json string into specific type
+   *
+   * @param data data
+   * @param type type
+   * @param <O> type
+   * @return converted object
+   */
+  <I, O> O toObject(I data, Type type);
 }
