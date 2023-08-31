@@ -16,6 +16,7 @@
 
 package org.flmelody.core.context;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import org.flmelody.core.WindwardRequest;
@@ -65,7 +66,17 @@ public class EmptyWindwardContext implements WindwardContext {
   }
 
   @Override
+  public <I> I readJson(Type type) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public <I> I bindJson(Class<I> clazz, Class<?>... groups) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public <I> I bindJson(Type type, Class<?>... groups) {
     throw new UnsupportedOperationException();
   }
 

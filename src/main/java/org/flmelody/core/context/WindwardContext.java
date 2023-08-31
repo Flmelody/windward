@@ -14,6 +14,7 @@
 
 package org.flmelody.core.context;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import org.flmelody.core.HttpStatus;
@@ -84,6 +85,15 @@ public interface WindwardContext {
   <I> I readJson(Class<I> clazz);
 
   /**
+   * read request body into new object possibly
+   *
+   * @param type objects type
+   * @param <I> objects type
+   * @return object
+   */
+  <I> I readJson(Type type);
+
+  /**
    * bind request body to specific class. and return instance of the class
    *
    * @param clazz objects class
@@ -92,6 +102,16 @@ public interface WindwardContext {
    * @return object
    */
   <I> I bindJson(Class<I> clazz, Class<?>... groups);
+
+  /**
+   * bind request body to specific class. and return instance of the class
+   *
+   * @param type objects type
+   * @param groups validate group
+   * @param <I> objects type
+   * @return object
+   */
+  <I> I bindJson(Type type, Class<?>... groups);
 
   /**
    * response json

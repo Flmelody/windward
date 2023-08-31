@@ -16,6 +16,7 @@
 
 package org.flmelody.core;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.Map;
 /**
  * @author esotericman
  */
-public class WindwardRequest {
+public class WindwardRequest implements RequestReader {
   private String method;
   private String uri;
   private Boolean keepAlive;
@@ -98,20 +99,28 @@ public class WindwardRequest {
     return requestBody;
   }
 
-  public <I> I readJson(Class<I> clazz) {
-    return requestReader.readJson(this.getRequestBody(), clazz);
+  /** {@inheritDoc} */
+  @Override
+  public <I> I readJson(String body, Class<I> clazz) {
+    return requestReader.readJson(body, clazz);
   }
 
-  /**
-   * bind request body to specific class. and return instance of the class
-   *
-   * @param clazz objects class
-   * @param groups validate group
-   * @param <I> objects type
-   * @return object
-   */
-  public <I> I bindJson(Class<I> clazz, Class<?>... groups) {
-    return requestReader.bindJson(this.getRequestBody(), clazz, groups);
+  /** {@inheritDoc} */
+  @Override
+  public <I> I readJson(String body, Type type) {
+    return requestReader.readJson(body, type);
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public <I> I bindJson(String body, Class<I> clazz, Class<?>... groups) {
+    return requestReader.bindJson(body, clazz, groups);
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public <I> I bindJson(String body, Type type, Class<?>... groups) {
+    return requestReader.bindJson(body, type, groups);
   }
 
   /** builder for WindwardRequest */

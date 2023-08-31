@@ -20,6 +20,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -47,8 +48,25 @@ public final class ValidationUtil {
   public static <T> T validate(
       JsonPlugin jsonPlugin, String content, Class<T> targetClass, Class<?>... groups)
       throws ValidationException {
+    return validate(jsonPlugin, jsonPlugin.toObject(content, targetClass), groups);
+  }
+
+  /**
+   * try to convert json content to target object
+   *
+   * @param content json
+   * @param type type of target class
+   * @param groups validator group
+   * @param <T> return type
+   * @return object that convert from json content
+   */
+  public static <T> T validate(JsonPlugin jsonPlugin, String content, Type type, Class<?>... groups)
+      throws ValidationException {
+    return validate(jsonPlugin, jsonPlugin.toObject(content, type), groups);
+  }
+
+  private static <T> T validate(JsonPlugin jsonPlugin, T target, Class<?>... groups) {
     Validator validator = validatorFactory.getValidator();
-    T target = jsonPlugin.toObject(content, targetClass);
     Set<ConstraintViolation<T>> validate;
     if (Objects.isNull(groups)) {
       validate = validator.validate(target);

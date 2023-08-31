@@ -16,6 +16,7 @@
 
 package org.flmelody.core.context;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -121,29 +122,28 @@ public class AbstractWindwardContext implements WindwardContext {
     return this.closed;
   }
 
-  /**
-   * read request body into new object possibly
-   *
-   * @param clazz objects class
-   * @param <I> objects type
-   * @return object
-   */
+  /** {@inheritDoc} */
   @Override
   public <I> I readJson(Class<I> clazz) {
-    return windwardRequest.readJson(clazz);
+    return windwardRequest.readJson(windwardRequest.getRequestBody(), clazz);
   }
 
-  /**
-   * bind request body to specific class. and return instance of the class
-   *
-   * @param clazz objects class
-   * @param groups validate group
-   * @param <I> objects type
-   * @return object
-   */
+  /** {@inheritDoc} */
+  @Override
+  public <I> I readJson(Type type) {
+    return windwardRequest.readJson(windwardRequest.getRequestBody(), type);
+  }
+
+  /** {@inheritDoc} */
   @Override
   public <I> I bindJson(Class<I> clazz, Class<?>... groups) {
-    return windwardRequest.bindJson(clazz, groups);
+    return windwardRequest.bindJson(windwardRequest.getRequestBody(), clazz, groups);
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public <I> I bindJson(Type type, Class<?>... groups) {
+    return windwardRequest.bindJson(windwardRequest.getRequestBody(), type, groups);
   }
 
   /**
