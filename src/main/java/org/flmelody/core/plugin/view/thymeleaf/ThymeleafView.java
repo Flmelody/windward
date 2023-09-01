@@ -17,7 +17,7 @@
 package org.flmelody.core.plugin.view.thymeleaf;
 
 import java.util.Map;
-import org.flmelody.core.plugin.view.ViewPlugin;
+import org.flmelody.core.plugin.view.AbstractViewPlugin;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -25,11 +25,12 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 /**
  * @author esotericman
  */
-public class ThymeleafView implements ViewPlugin {
+public class ThymeleafView extends AbstractViewPlugin {
   protected final TemplateEngine templateEngine;
   protected final String defaultExtension = "html";
 
-  public ThymeleafView() {
+  public ThymeleafView(String templateLocation) {
+    super(templateLocation);
     this.templateEngine = new TemplateEngine();
     this.templateEngine.setTemplateResolver(new ClassLoaderTemplateResolver());
   }

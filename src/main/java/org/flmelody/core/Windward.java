@@ -32,6 +32,7 @@ import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.NettyHttpServer;
 import org.flmelody.core.plugin.Plugin;
 import org.flmelody.core.plugin.json.JsonPlugin;
+import org.flmelody.core.plugin.view.AbstractViewPlugin;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
 import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
 import org.flmelody.util.UrlUtil;
@@ -41,6 +42,7 @@ import org.flmelody.util.UrlUtil;
  */
 public class Windward implements Router {
   private final String contextPath;
+  private final String resourceRoot;
   // registered function
   private static final List<AbstractRouterGroup> routerGroups = new ArrayList<>();
   // filters
@@ -51,8 +53,9 @@ public class Windward implements Router {
   private static final Map<Class<?>, Plugin> globalPlugins = new HashMap<>();
   private HttpServer httpServer;
 
-  private Windward(String contextPath) {
+  private Windward(String contextPath, String resourceRoot) {
     this.contextPath = contextPath;
+    this.resourceRoot = resourceRoot;
   }
 
   public static Windward setup() {
@@ -63,6 +66,7 @@ public class Windward implements Router {
    * prepare core engine of Windward
    *
    * @param port server port
+   * @param filters request filters
    * @return core engine of Windward
    */
   public static Windward setup(int port, Filter... filters) {
@@ -74,16 +78,31 @@ public class Windward implements Router {
    *
    * @param port server port
    * @param contextPath path of root
+   * @param filters request filters
    * @return core engine of Windward
    */
   public static Windward setup(int port, String contextPath, Filter... filters) {
-    Windward windward = new Windward(contextPath);
+    return setup(port, contextPath, "/template", filters);
+  }
+
+  /**
+   * prepare core engine of Windward
+   *
+   * @param port server port
+   * @param contextPath path of root
+   * @param resourceRoot root for resource
+   * @param filters request filters
+   * @return core engine of Windward
+   */
+  public static Windward setup(
+      int port, String contextPath, String resourceRoot, Filter... filters) {
+    Windward windward = new Windward(contextPath, resourceRoot);
     windward.httpServer = new NettyHttpServer(port);
     return windward
         .registerFilter(filters)
         .registerPlugin(JsonPlugin.class, AutoJsonBinder.jsonPlugin)
-        .registerPlugin(GroovyView.class, new GroovyView())
-        .registerPlugin(ThymeleafView.class, new ThymeleafView());
+        .registerPlugin(GroovyView.class, new GroovyView(resourceRoot))
+        .registerPlugin(ThymeleafView.class, new ThymeleafView(resourceRoot));
   }
 
   /**
@@ -145,6 +164,10 @@ public class Windward implements Router {
    */
   public Windward registerPlugin(Class<? extends Plugin> clazz, Plugin plugin) {
     globalPlugins.put(clazz, plugin);
+    // try to bind resource root
+    if (plugin instanceof AbstractViewPlugin) {
+      ((AbstractViewPlugin) plugin).setTemplateLocationPrefix(this.resourceRoot);
+    }
     return this;
   }
 

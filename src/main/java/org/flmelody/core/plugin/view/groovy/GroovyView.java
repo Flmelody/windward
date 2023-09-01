@@ -20,16 +20,17 @@ import groovy.text.Template;
 import groovy.text.markup.MarkupTemplateEngine;
 import java.io.StringWriter;
 import java.util.Map;
-import org.flmelody.core.plugin.view.ViewPlugin;
+import org.flmelody.core.plugin.view.AbstractViewPlugin;
 
 /**
  * @author esotericman
  */
-public class GroovyView implements ViewPlugin {
+public class GroovyView extends AbstractViewPlugin {
   protected final MarkupTemplateEngine templateEngine;
   protected final String defaultExtension = "tpl";
 
-  public GroovyView() {
+  public GroovyView(String templateLocation) {
+    super(templateLocation);
     this.templateEngine = new MarkupTemplateEngine();
   }
 
