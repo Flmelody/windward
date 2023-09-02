@@ -32,7 +32,8 @@ import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.NettyHttpServer;
 import org.flmelody.core.plugin.Plugin;
 import org.flmelody.core.plugin.json.JsonPlugin;
-import org.flmelody.core.plugin.view.AbstractViewPlugin;
+import org.flmelody.core.plugin.resolver.CompositePluginResolver;
+import org.flmelody.core.plugin.resolver.PluginResolver;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
 import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
 import org.flmelody.util.UrlUtil;
@@ -41,8 +42,6 @@ import org.flmelody.util.UrlUtil;
  * @author esotericman
  */
 public class Windward implements Router {
-  private final String contextPath;
-  private final String resourceRoot;
   // registered function
   private static final List<AbstractRouterGroup> routerGroups = new ArrayList<>();
   // filters
@@ -51,6 +50,9 @@ public class Windward implements Router {
   private static final List<ExceptionHandler> globalExceptionHandlers = new ArrayList<>();
   // plugins
   private static final Map<Class<?>, Plugin> globalPlugins = new HashMap<>();
+  private final String contextPath;
+  private final String resourceRoot;
+  private final PluginResolver pluginResolver = new CompositePluginResolver();
   private HttpServer httpServer;
 
   private Windward(String contextPath, String resourceRoot) {
@@ -163,11 +165,10 @@ public class Windward implements Router {
    * @return current windward
    */
   public Windward registerPlugin(Class<? extends Plugin> clazz, Plugin plugin) {
+    // resolve plugin
+    pluginResolver.resolve(this, plugin);
+    // bind plugin
     globalPlugins.put(clazz, plugin);
-    // try to bind resource root
-    if (plugin instanceof AbstractViewPlugin) {
-      ((AbstractViewPlugin) plugin).setTemplateLocationPrefix(this.resourceRoot);
-    }
     return this;
   }
 
@@ -238,71 +239,91 @@ public class Windward implements Router {
         .collect(Collectors.toList());
   }
 
+  public String getContextPath() {
+    return contextPath;
+  }
+
+  public String getResourceRoot() {
+    return resourceRoot;
+  }
+
   public Windward then() {
     return this;
   }
 
+  /** {@inheritDoc} */
   public <R> Windward get(String relativePath, Supplier<R> supplier) {
     group(UrlUtil.SLASH).get(relativePath, supplier);
     return this;
   }
 
+  /** {@inheritDoc} */
   public Windward get(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     group(UrlUtil.SLASH).get(relativePath, consumer);
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public Router get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     group(UrlUtil.SLASH).get(relativePath, function);
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public <R> Router put(String relativePath, Supplier<R> supplier) {
     group(UrlUtil.SLASH).put(relativePath, supplier);
     return this;
   }
 
+  /** {@inheritDoc} */
   public Windward put(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     group(UrlUtil.SLASH).put(relativePath, consumer);
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public Router put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     group(UrlUtil.SLASH).put(relativePath, function);
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public <R> Router post(String relativePath, Supplier<R> supplier) {
     group(UrlUtil.SLASH).post(relativePath, supplier);
     return this;
   }
 
+  /** {@inheritDoc} */
   public Windward post(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     group(UrlUtil.SLASH).post(relativePath, consumer);
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public Router post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     group(UrlUtil.SLASH).post(relativePath, function);
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public <R> Router delete(String relativePath, Supplier<R> supplier) {
     group(UrlUtil.SLASH).delete(relativePath, supplier);
     return this;
   }
 
+  /** {@inheritDoc} */
   public Windward delete(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     group(UrlUtil.SLASH).delete(relativePath, consumer);
     return this;
   }
 
+  /** {@inheritDoc} */
   @Override
   public Router delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     group(UrlUtil.SLASH).delete(relativePath, function);
