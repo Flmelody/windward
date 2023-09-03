@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package org.flmelody.core;
+package org.flmelody.core.plugin.json;
 
 import org.flmelody.core.exception.JsonException;
-import org.flmelody.core.plugin.json.GsonPlugin;
-import org.flmelody.core.plugin.json.JacksonPlugin;
-import org.flmelody.core.plugin.json.JsonPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

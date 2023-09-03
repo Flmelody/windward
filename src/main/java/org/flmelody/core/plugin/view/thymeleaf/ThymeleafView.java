@@ -29,6 +29,10 @@ public class ThymeleafView extends AbstractViewPlugin {
   protected final TemplateEngine templateEngine;
   protected final String defaultExtension = "html";
 
+  public ThymeleafView() {
+    this(null);
+  }
+
   public ThymeleafView(String templateLocation) {
     super(templateLocation);
     this.templateEngine = new TemplateEngine();
