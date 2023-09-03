@@ -29,6 +29,10 @@ public class GroovyView extends AbstractViewPlugin {
   protected final MarkupTemplateEngine templateEngine;
   protected final String defaultExtension = "tpl";
 
+  public GroovyView() {
+    this(null);
+  }
+
   public GroovyView(String templateLocation) {
     super(templateLocation);
     this.templateEngine = new MarkupTemplateEngine();

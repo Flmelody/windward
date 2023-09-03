@@ -31,9 +31,11 @@ import org.flmelody.core.exception.PluginMissException;
 import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.NettyHttpServer;
 import org.flmelody.core.plugin.Plugin;
+import org.flmelody.core.plugin.json.AutoJsonBinder;
 import org.flmelody.core.plugin.json.JsonPlugin;
 import org.flmelody.core.plugin.resolver.CompositePluginResolver;
 import org.flmelody.core.plugin.resolver.PluginResolver;
+import org.flmelody.core.plugin.view.ViewEngineDetector;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
 import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
 import org.flmelody.util.UrlUtil;
@@ -100,11 +102,19 @@ public class Windward implements Router {
       int port, String contextPath, String resourceRoot, Filter... filters) {
     Windward windward = new Windward(contextPath, resourceRoot);
     windward.httpServer = new NettyHttpServer(port);
-    return windward
-        .registerFilter(filters)
-        .registerPlugin(JsonPlugin.class, AutoJsonBinder.jsonPlugin)
-        .registerPlugin(GroovyView.class, new GroovyView(resourceRoot))
-        .registerPlugin(ThymeleafView.class, new ThymeleafView(resourceRoot));
+    windward.registerFilter(filters).registerPlugin(JsonPlugin.class, AutoJsonBinder.jsonPlugin);
+    return prepareDefault(windward);
+  }
+
+  // prepare template engine
+  private static Windward prepareDefault(Windward windward) {
+    if (ViewEngineDetector.AVAILABLE_GROOVY_ENGINE) {
+      windward.registerPlugin(GroovyView.class, new GroovyView());
+    }
+    if (ViewEngineDetector.AVAILABLE_THYMELEAF_ENGINE) {
+      windward.registerPlugin(ThymeleafView.class, new ThymeleafView());
+    }
+    return windward;
   }
 
   /**
