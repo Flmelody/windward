@@ -21,6 +21,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
+import org.flmelody.core.ws.WebsocketWindwardContext;
 
 /**
  * @author flmelody
@@ -137,4 +138,13 @@ public interface Router {
    * @return this
    */
   Router delete(String relativePath, Function<EnhancedWindwardContext, ?> function);
+
+  /**
+   * register websocket function
+   *
+   * @param relativePath relativePath
+   * @param consumer function to consume
+   * @return this
+   */
+  Router ws(String relativePath, Consumer<WebsocketWindwardContext> consumer);
 }

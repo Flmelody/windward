@@ -76,6 +76,15 @@ public interface WindwardContext {
   Boolean isClosed();
 
   /**
+   * whether context can be cached
+   *
+   * @return cacheable flag
+   */
+  default Boolean isCacheable() {
+    return Boolean.FALSE;
+  }
+
+  /**
    * read request body into new object possibly
    *
    * @param clazz objects class

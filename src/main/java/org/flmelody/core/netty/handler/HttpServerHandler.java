@@ -45,6 +45,7 @@ import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.netty.NettyResponseWriter;
+import org.flmelody.core.ws.WebsocketWindwardContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,8 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
   private static final Logger logger = LoggerFactory.getLogger(HttpServerHandler.class);
+  private FunctionMetaInfo<?> cachedfunctionMetaInfo;
+  private WindwardContext cachedWindwardContext;
 
   @Override
   public void channelReadComplete(ChannelHandlerContext ctx) {
@@ -64,10 +67,18 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
     if (msg instanceof FullHttpRequest) {
       FullHttpRequest fullHttpRequest = (FullHttpRequest) msg;
       String uri = fullHttpRequest.uri().split("\\?")[0];
-      FunctionMetaInfo<?> functionMetaInfo =
-          Windward.findRouter(uri, fullHttpRequest.method().name());
-      WindwardContext windwardContext = initContext(ctx, fullHttpRequest, functionMetaInfo);
-      handle(functionMetaInfo, windwardContext);
+      if (cachedfunctionMetaInfo == null) {
+        cachedfunctionMetaInfo = Windward.findRouter(uri, fullHttpRequest.method().name());
+      }
+      if (cachedWindwardContext == null) {
+        WindwardContext windwardContext = initContext(ctx, fullHttpRequest, cachedfunctionMetaInfo);
+        if (windwardContext.isCacheable()) {
+          cachedWindwardContext = windwardContext;
+        }
+        handle(cachedfunctionMetaInfo, windwardContext);
+      } else {
+        handle(cachedfunctionMetaInfo, cachedWindwardContext);
+      }
     }
   }
 
@@ -131,6 +142,10 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
               windwardResponseBuild.build());
         } else if (clazz.isAssignableFrom(EnhancedWindwardContext.class)) {
           return new EnhancedWindwardContext(
+              windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
+              windwardResponseBuild.build());
+        } else if (clazz.isAssignableFrom(WebsocketWindwardContext.class)) {
+          return new WebsocketWindwardContext(
               windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
               windwardResponseBuild.build());
         }
