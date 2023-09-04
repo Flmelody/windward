@@ -54,7 +54,6 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
   private static final Logger logger = LoggerFactory.getLogger(HttpServerHandler.class);
-  private FunctionMetaInfo<?> cachedfunctionMetaInfo;
   private WindwardContext cachedWindwardContext;
 
   @Override
@@ -67,17 +66,16 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
     if (msg instanceof FullHttpRequest) {
       FullHttpRequest fullHttpRequest = (FullHttpRequest) msg;
       String uri = fullHttpRequest.uri().split("\\?")[0];
-      if (cachedfunctionMetaInfo == null) {
-        cachedfunctionMetaInfo = Windward.findRouter(uri, fullHttpRequest.method().name());
-      }
+      FunctionMetaInfo<?> functionMetaInfo =
+          Windward.findRouter(uri, fullHttpRequest.method().name());
       if (cachedWindwardContext == null) {
-        WindwardContext windwardContext = initContext(ctx, fullHttpRequest, cachedfunctionMetaInfo);
+        WindwardContext windwardContext = initContext(ctx, fullHttpRequest, functionMetaInfo);
         if (windwardContext.isCacheable()) {
           cachedWindwardContext = windwardContext;
         }
-        handle(cachedfunctionMetaInfo, windwardContext);
+        handle(functionMetaInfo, windwardContext);
       } else {
-        handle(cachedfunctionMetaInfo, cachedWindwardContext);
+        handle(functionMetaInfo, cachedWindwardContext);
       }
     }
   }
