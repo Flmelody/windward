@@ -35,8 +35,8 @@ import org.flmelody.core.plugin.view.AbstractViewPlugin;
  * @author esotericman
  */
 public class AbstractWindwardContext implements WindwardContext {
-  private final WindwardRequest windwardRequest;
-  private final WindwardResponse windwardResponse;
+  protected final WindwardRequest windwardRequest;
+  protected final WindwardResponse windwardResponse;
   private Boolean closed = Boolean.FALSE;
 
   protected AbstractWindwardContext(

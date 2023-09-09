@@ -21,7 +21,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
-import org.flmelody.core.ws.WebsocketWindwardContext;
+import org.flmelody.core.ws.WebSocketWindwardContext;
 
 /**
  * @author flmelody
@@ -146,5 +146,5 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router ws(String relativePath, Consumer<WebsocketWindwardContext> consumer);
+  Router ws(String relativePath, Consumer<WebSocketWindwardContext> consumer);
 }

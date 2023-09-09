@@ -22,7 +22,6 @@ import java.util.Map;
  * @author esotericman
  */
 public class WindwardResponse {
-  private boolean keepConnection;
   private ResponseWriter responseWriter;
 
   /**
@@ -34,9 +33,6 @@ public class WindwardResponse {
    */
   public <T> void write(int code, T data) {
     responseWriter.write(code, data);
-    if (!keepConnection) {
-      responseWriter.close();
-    }
   }
 
   /**
@@ -61,7 +57,7 @@ public class WindwardResponse {
    * @param <T> data type
    */
   public <T> void write(int code, String contentType, Map<String, Object> headers, T data) {
-    responseWriter.write(code, contentType, headers, data, true);
+    responseWriter.write(code, contentType, headers, data);
   }
 
   public static WindwardResponseBuild newBuilder() {
@@ -76,11 +72,6 @@ public class WindwardResponse {
 
     private WindwardResponseBuild(WindwardResponse windwardResponse) {
       this.windwardResponse = windwardResponse;
-    }
-
-    public WindwardResponseBuild keepConnection(Boolean keepConnection) {
-      this.windwardResponse.keepConnection = keepConnection;
-      return this;
     }
 
     public WindwardResponseBuild responseWriter(ResponseWriter responseWriter) {

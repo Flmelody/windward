@@ -19,7 +19,7 @@ package org.flmelody.core.ws;
 /**
  * @author esotericman
  */
-public enum WebsocketEvent {
+public enum WebSocketEvent {
   ON_CONNECT,
   ON_ERROR,
   ON_MESSAGE,

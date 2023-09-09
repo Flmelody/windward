@@ -17,12 +17,17 @@
 package org.flmelody.core.netty.handler;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.util.CharsetUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -45,7 +50,9 @@ import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.netty.NettyResponseWriter;
-import org.flmelody.core.ws.WebsocketWindwardContext;
+import org.flmelody.core.ws.WebSocketEvent;
+import org.flmelody.core.ws.WebSocketFireEvent;
+import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +62,7 @@ import org.slf4j.LoggerFactory;
 public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
   private static final Logger logger = LoggerFactory.getLogger(HttpServerHandler.class);
   private WindwardContext cachedWindwardContext;
+  private FunctionMetaInfo<?> cachedFunctionMetaInfo;
 
   @Override
   public void channelReadComplete(ChannelHandlerContext ctx) {
@@ -68,21 +76,65 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
       String uri = fullHttpRequest.uri().split("\\?")[0];
       FunctionMetaInfo<?> functionMetaInfo =
           Windward.findRouter(uri, fullHttpRequest.method().name());
-      if (cachedWindwardContext == null) {
-        WindwardContext windwardContext = initContext(ctx, fullHttpRequest, functionMetaInfo);
+      WindwardContext windwardContext = cachedWindwardContext;
+      if (windwardContext == null) {
+        windwardContext = initContext(ctx, fullHttpRequest, functionMetaInfo);
         if (windwardContext.isCacheable()) {
           cachedWindwardContext = windwardContext;
+          cachedFunctionMetaInfo = functionMetaInfo;
         }
-        handle(functionMetaInfo, windwardContext);
-      } else {
-        handle(functionMetaInfo, cachedWindwardContext);
       }
+      if (isWebsocketUpgrade(fullHttpRequest.headers()) && cachedWindwardContext != null) {
+        ctx.pipeline()
+            .addBefore(
+                ctx.name(),
+                WebSocketServerCompressionHandler.class.getSimpleName(),
+                new WebSocketServerCompressionHandler());
+        ctx.pipeline()
+            .addBefore(ctx.name(), WebSocketHandler.class.getSimpleName(), new WebSocketHandler());
+        ctx.pipeline()
+            .addAfter(
+                ctx.name(),
+                WebSocketServerProtocolHandler.class.getSimpleName(),
+                new WebSocketServerProtocolHandler(fullHttpRequest.uri(), null, true));
+        ctx.pipeline().addLast(new SocketTailHandler());
+        ctx.fireChannelRead(fullHttpRequest.retain());
+        return;
+      }
+      handle(functionMetaInfo, windwardContext);
+    }
+  }
+
+  @Override
+  public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+    // websocket context should always be cached
+    if (evt instanceof WebSocketFireEvent
+        && cachedWindwardContext instanceof WebSocketWindwardContext) {
+      WebSocketFireEvent webSocketFireEvent = (WebSocketFireEvent) evt;
+      WebSocketWindwardContext websocketWindwardContext =
+          (WebSocketWindwardContext) cachedWindwardContext;
+      websocketWindwardContext.setWebSocketEvent(webSocketFireEvent.getEvent());
+      websocketWindwardContext.setWebSocketData(webSocketFireEvent.getData());
+      handle(cachedFunctionMetaInfo, websocketWindwardContext);
+    } else {
+      super.userEventTriggered(ctx, evt);
     }
   }
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-    ctx.close();
+    ctx.close()
+        .addListener(
+            (ChannelFutureListener)
+                future -> {
+                  if (cachedWindwardContext instanceof WebSocketWindwardContext) {
+                    WebSocketWindwardContext webSocketWindwardContext =
+                        (WebSocketWindwardContext) cachedWindwardContext;
+                    webSocketWindwardContext.setWebSocketEvent(WebSocketEvent.ON_CLOSE);
+                    webSocketWindwardContext.setWebSocketData(null);
+                    handle(cachedFunctionMetaInfo, webSocketWindwardContext);
+                  }
+                });
   }
 
   private Map<String, List<String>> prepareHeaders(HttpHeaders httpHeaders) {
@@ -124,9 +176,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
       windwardRequestBuilder.requestBody(string);
     }
     WindwardResponse.WindwardResponseBuild windwardResponseBuild =
-        WindwardResponse.newBuilder()
-            .keepConnection(keepAlive)
-            .responseWriter(new NettyResponseWriter(ctx));
+        WindwardResponse.newBuilder().responseWriter(new NettyResponseWriter(ctx, keepAlive));
     if (functionMetaInfo == null) {
       windwardResponseBuild
           .build()
@@ -142,8 +192,8 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
           return new EnhancedWindwardContext(
               windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
               windwardResponseBuild.build());
-        } else if (clazz.isAssignableFrom(WebsocketWindwardContext.class)) {
-          return new WebsocketWindwardContext(
+        } else if (clazz.isAssignableFrom(WebSocketWindwardContext.class)) {
+          return new WebSocketWindwardContext(
               windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
               windwardResponseBuild.build());
         }
@@ -222,5 +272,11 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
       }
     }
     return alreadyDone;
+  }
+
+  private static boolean isWebsocketUpgrade(HttpHeaders headers) {
+    return headers.contains(HttpHeaderNames.UPGRADE)
+        && headers.containsValue(HttpHeaderNames.CONNECTION, HttpHeaderValues.UPGRADE, true)
+        && headers.contains(HttpHeaderNames.UPGRADE, HttpHeaderValues.WEBSOCKET, true);
   }
 }

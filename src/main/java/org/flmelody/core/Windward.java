@@ -38,7 +38,7 @@ import org.flmelody.core.plugin.resolver.PluginResolver;
 import org.flmelody.core.plugin.view.ViewEngineDetector;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
 import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
-import org.flmelody.core.ws.WebsocketWindwardContext;
+import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.util.UrlUtil;
 
 /**
@@ -343,7 +343,7 @@ public class Windward implements Router {
 
   /** {@inheritDoc} */
   @Override
-  public Router ws(String relativePath, Consumer<WebsocketWindwardContext> consumer) {
+  public Router ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
     group(UrlUtil.SLASH).ws(relativePath, consumer);
     return this;
   }

@@ -21,6 +21,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -41,9 +42,11 @@ import org.flmelody.core.plugin.json.JsonPlugin;
  */
 public class NettyResponseWriter implements ResponseWriter {
   private final ChannelHandlerContext ctx;
+  private final boolean keepConnection;
 
-  public NettyResponseWriter(ChannelHandlerContext ctx) {
+  public NettyResponseWriter(ChannelHandlerContext ctx, boolean keepConnection) {
     this.ctx = ctx;
+    this.keepConnection = keepConnection;
   }
 
   @Override
@@ -53,7 +56,12 @@ public class NettyResponseWriter implements ResponseWriter {
 
   @Override
   public <T> void write(int code, String contentType, T data) {
-    write(code, contentType, data, true);
+    write(code, contentType, data, !keepConnection);
+  }
+
+  @Override
+  public <T> void write(int code, String contentType, Map<String, Object> headers, T data) {
+    write(code, contentType, Collections.emptyMap(), data, !keepConnection);
   }
 
   @Override
@@ -92,7 +100,7 @@ public class NettyResponseWriter implements ResponseWriter {
           .setInt(HttpHeaderNames.CONTENT_LENGTH, httpResponse.content().readableBytes());
       httpResponse.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
     }
-    ctx.write(httpResponse);
+    ctx.writeAndFlush(httpResponse);
     if (close) {
       close();
     }

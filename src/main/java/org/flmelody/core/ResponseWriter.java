@@ -46,6 +46,17 @@ public interface ResponseWriter {
    *
    * @param code http code
    * @param contentType contentType
+   * @param headers responses header
+   * @param data data
+   * @param <T> data type
+   */
+  <T> void write(int code, String contentType, Map<String, Object> headers, T data);
+
+  /**
+   * write response data
+   *
+   * @param code http code
+   * @param contentType contentType
    * @param data data
    * @param close close connection
    * @param <T> data type
@@ -57,6 +68,7 @@ public interface ResponseWriter {
    *
    * @param code http code
    * @param contentType contentType
+   * @param headers responses header
    * @param data data
    * @param <T> data type
    */

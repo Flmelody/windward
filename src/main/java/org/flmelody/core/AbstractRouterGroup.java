@@ -32,7 +32,7 @@ import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.exception.RouterMappingException;
-import org.flmelody.core.ws.WebsocketWindwardContext;
+import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.util.UrlUtil;
 
 /**
@@ -131,8 +131,8 @@ public abstract class AbstractRouterGroup implements RouterGroup {
   }
 
   @Override
-  public Router ws(String relativePath, Consumer<WebsocketWindwardContext> consumer) {
-    registerRouter(relativePath, HttpMethod.GET.name(), consumer, WebsocketWindwardContext.class);
+  public Router ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
+    registerRouter(relativePath, HttpMethod.GET.name(), consumer, WebSocketWindwardContext.class);
     return this;
   }
 
