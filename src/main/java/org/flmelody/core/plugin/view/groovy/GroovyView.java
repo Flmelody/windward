@@ -45,7 +45,7 @@ public class GroovyView extends AbstractViewPlugin {
 
   @Override
   public String render(String viewUrl, Map<String, Object> model) throws Exception {
-    Template template = this.templateEngine.createTemplateByPath(viewUrl);
+    Template template = this.templateEngine.createTemplate(this.getClass().getResource(viewUrl));
     StringWriter stringWriter = new StringWriter();
     template.make(model).writeTo(stringWriter);
     return stringWriter.toString();
