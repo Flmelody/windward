@@ -87,7 +87,7 @@ public class Windward implements Router {
    * @return core engine of Windward
    */
   public static Windward setup(int port, String contextPath, Filter... filters) {
-    return setup(port, contextPath, "/template", filters);
+    return setup(port, contextPath, "/templates", filters);
   }
 
   /**
