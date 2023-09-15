@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @author esotericman
  */
 public class WebSocketWindwardContext extends AbstractWindwardContext {
-  private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketWindwardContext.class);
+  private static final Logger logger = LoggerFactory.getLogger(WebSocketWindwardContext.class);
   private WebSocketEvent webSocketEvent;
   private Object webSocketData;
   private boolean upgradedContext;
@@ -167,7 +167,7 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
     if (upgradedContext) {
       return true;
     }
-    LOGGER.warn("Context not upgraded!");
+    logger.warn("Context not upgraded!");
     return false;
   }
 

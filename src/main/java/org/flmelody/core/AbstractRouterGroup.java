@@ -141,10 +141,8 @@ public abstract class AbstractRouterGroup implements RouterGroup {
     if (!relativePath.startsWith(groupPath)) {
       return null;
     }
-    if (relativePath.endsWith(UrlUtil.SLASH)) {
-      if (!UrlUtil.SLASH.equals(relativePath)) {
-        relativePath = relativePath.replaceFirst("/$", "");
-      }
+    if (relativePath.endsWith(UrlUtil.SLASH) && !UrlUtil.SLASH.equals(relativePath)) {
+      relativePath = relativePath.replaceFirst("/$", "");
     }
     relativePath = relativePath.replaceAll("[{}]", "");
     if (!routers.containsKey(relativePath)) {

@@ -53,6 +53,7 @@
         <mockito.version>4.11.0</mockito.version>
         <slf4j-api.version>2.0.7</slf4j-api.version>
         <thymeleaf.version>3.1.2.RELEASE</thymeleaf.version>
+        <thymeleaf-layout-dialect.version>3.2.1</thymeleaf-layout-dialect.version>
         <groovy-templates.version>4.0.14</groovy-templates.version>
     </properties>
 
@@ -98,6 +99,12 @@
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf</artifactId>
             <version>${thymeleaf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+            <version>${thymeleaf-layout-dialect.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -17,6 +17,7 @@
 package org.flmelody.core.plugin.view.thymeleaf;
 
 import java.util.Map;
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.flmelody.core.plugin.view.AbstractViewPlugin;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -28,6 +29,18 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 public class ThymeleafView extends AbstractViewPlugin {
   protected final TemplateEngine templateEngine;
   protected final String defaultExtension = "html";
+  private final boolean useDialect;
+
+  {
+    boolean existDialect;
+    try {
+      Class.forName("nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect");
+      existDialect = true;
+    } catch (ClassNotFoundException ignored) {
+      existDialect = false;
+    }
+    useDialect = existDialect;
+  }
 
   public ThymeleafView() {
     this(null);
@@ -37,6 +50,10 @@ public class ThymeleafView extends AbstractViewPlugin {
     super(templateLocation);
     this.templateEngine = new TemplateEngine();
     this.templateEngine.setTemplateResolver(new ClassLoaderTemplateResolver());
+    // use LayoutDialect
+    if (useDialect) {
+      this.templateEngine.setDialect(new LayoutDialect());
+    }
   }
 
   @Override
