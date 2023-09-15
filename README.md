@@ -5,7 +5,7 @@
 
 Light web function framework for Java
 <div>
-    <img src="https://github.com/Flmelody/windward-guide/blob/main/docs/.vuepress/public/windward.png" alt="windward" width="600" height="400">
+    <img src="https://github.com/Flmelody/windward-guide/blob/main/docs/.vuepress/public/windward.png" alt="windward" width="360" height="240">
 </div>
 
 ## Quick start
@@ -45,53 +45,18 @@ or gson
 
 ### Coding
 
-We need to define our functions at first
-
 ```java
-public class Controller {
-  public void simpleFunction(SimpleWindwardContext simpleWindwardContext) {
-    simpleWindwardContext.writeString("Simple Hello World!");
-  }
-
-  public static void staticFunction(SimpleWindwardContext simpleWindwardContext) {
-    simpleWindwardContext.writeString("static Hello World!");
-  }
-
-  public void dynamicFunction(SimpleWindwardContext simpleWindwardContext) {
-    Map<String, Object> pathVariables = simpleWindwardContext.windwardRequest().getPathVariables();
-    pathVariables.keySet().forEach(key -> System.out.println(key + "->" + pathVariables.get(key)));
-    simpleWindwardContext.writeString("Dynamic Hello World!");
-  }
-
-  public void redirectFunction(SimpleWindwardContext simpleWindwardContext) {
-    simpleWindwardContext.redirect("https://github.com/Flmelody/windward");
-  }
-
-  public String enhancedFunction(EnhancedWindwardContext enhancedWindwardContext) {
-    enhancedWindwardContext.writeString("Enhanced Hello World!");
-    return "";
-  }
-}
-
-```
-
-Now, We just start it
-
-```java
-public class WindwardMain {
-  public static void main(String[] args) {
-    Windward windward = Windward.setup();
-    Controller controller = new Controller();
-    windward
-        .get("/simple", controller::simpleFunction)
-        .get("/static", Controller::staticFunction)
-        .get("/dynamic/{name}/{age}", controller::dynamicFunction)
-        .get("/redirect", controller::redirectFunction)
-        .get("/enhanced", controller::enhancedFunction);
-    windward.run();
-  }
+public class Application {
+    public static void main(String[] args) {
+        // started at 8080 default
+        Windward.setup().get("/", () -> "Hello World!").run();
+    }
 }
 
 ```
 
 Everything is fine!😇
+
+### Benchmark
+
+![rps.png](rps.png)
