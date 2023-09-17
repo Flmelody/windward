@@ -276,14 +276,14 @@ public class Windward implements Router {
 
   /** {@inheritDoc} */
   @Override
-  public Router get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public Windward get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     group(UrlUtil.SLASH).get(relativePath, function);
     return this;
   }
 
   /** {@inheritDoc} */
   @Override
-  public <R> Router put(String relativePath, Supplier<R> supplier) {
+  public <R> Windward put(String relativePath, Supplier<R> supplier) {
     group(UrlUtil.SLASH).put(relativePath, supplier);
     return this;
   }
@@ -296,14 +296,14 @@ public class Windward implements Router {
 
   /** {@inheritDoc} */
   @Override
-  public Router put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public Windward put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     group(UrlUtil.SLASH).put(relativePath, function);
     return this;
   }
 
   /** {@inheritDoc} */
   @Override
-  public <R> Router post(String relativePath, Supplier<R> supplier) {
+  public <R> Windward post(String relativePath, Supplier<R> supplier) {
     group(UrlUtil.SLASH).post(relativePath, supplier);
     return this;
   }
@@ -316,14 +316,14 @@ public class Windward implements Router {
 
   /** {@inheritDoc} */
   @Override
-  public Router post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public Windward post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     group(UrlUtil.SLASH).post(relativePath, function);
     return this;
   }
 
   /** {@inheritDoc} */
   @Override
-  public <R> Router delete(String relativePath, Supplier<R> supplier) {
+  public <R> Windward delete(String relativePath, Supplier<R> supplier) {
     group(UrlUtil.SLASH).delete(relativePath, supplier);
     return this;
   }
@@ -336,14 +336,14 @@ public class Windward implements Router {
 
   /** {@inheritDoc} */
   @Override
-  public Router delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public Windward delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     group(UrlUtil.SLASH).delete(relativePath, function);
     return this;
   }
 
   /** {@inheritDoc} */
   @Override
-  public Router ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
+  public Windward ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
     group(UrlUtil.SLASH).ws(relativePath, consumer);
     return this;
   }
