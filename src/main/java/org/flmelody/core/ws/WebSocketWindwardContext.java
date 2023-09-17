@@ -16,13 +16,11 @@
 
 package org.flmelody.core.ws;
 
-import java.lang.reflect.Type;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.AbstractWindwardContext;
-import org.flmelody.core.exception.WindwardException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,26 +66,6 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
   }
 
   @Override
-  public <I> I readJson(Class<I> clazz) {
-    throw new WindwardException("Unsupported operation!");
-  }
-
-  @Override
-  public <I> I readJson(Type type) {
-    throw new WindwardException("Unsupported operation!");
-  }
-
-  @Override
-  public <I> I bindJson(Class<I> clazz, Class<?>... groups) {
-    throw new WindwardException("Unsupported operation!");
-  }
-
-  @Override
-  public <I> I bindJson(Type type, Class<?>... groups) {
-    throw new WindwardException("Unsupported operation!");
-  }
-
-  @Override
   public <T> void writeJson(T data) {
     if (processCheck()) {
       super.writeJson(data);
@@ -125,21 +103,6 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
     if (processCheck()) {
       windwardResponse.write(HttpStatus.OK.value(), MediaType.WEB_SOCKET_BINARY, data);
     }
-  }
-
-  @Override
-  public void redirect(String redirectUrl) {
-    throw new WindwardException("Unsupported operation!");
-  }
-
-  @Override
-  public void redirect(int code, String redirectUrl) {
-    throw new WindwardException("Unsupported operation!");
-  }
-
-  @Override
-  public <M> void html(String viewUrl, M model) {
-    throw new WindwardException("Unsupported operation!");
   }
 
   /**

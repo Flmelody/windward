@@ -14,7 +14,6 @@
 
 package org.flmelody.core.context;
 
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import org.flmelody.core.HttpStatus;
@@ -85,44 +84,6 @@ public interface WindwardContext {
   }
 
   /**
-   * read request body into new object possibly
-   *
-   * @param clazz objects class
-   * @param <I> objects type
-   * @return object
-   */
-  <I> I readJson(Class<I> clazz);
-
-  /**
-   * read request body into new object possibly
-   *
-   * @param type objects type
-   * @param <I> objects type
-   * @return object
-   */
-  <I> I readJson(Type type);
-
-  /**
-   * bind request body to specific class. and return instance of the class
-   *
-   * @param clazz objects class
-   * @param groups validate group
-   * @param <I> objects type
-   * @return object
-   */
-  <I> I bindJson(Class<I> clazz, Class<?>... groups);
-
-  /**
-   * bind request body to specific class. and return instance of the class
-   *
-   * @param type objects type
-   * @param groups validate group
-   * @param <I> objects type
-   * @return object
-   */
-  <I> I bindJson(Type type, Class<?>... groups);
-
-  /**
    * response json
    *
    * @param data data
@@ -157,27 +118,4 @@ public interface WindwardContext {
    * @param data strings
    */
   void writeString(int code, String data);
-
-  /**
-   * redirect
-   *
-   * @param redirectUrl location for redirecting
-   */
-  void redirect(String redirectUrl);
-
-  /**
-   * redirect
-   *
-   * @param code http code of redirecting
-   * @param redirectUrl location for redirecting
-   */
-  void redirect(int code, String redirectUrl);
-
-  /**
-   * response html directly
-   *
-   * @param viewUrl templates location
-   * @param model templates data
-   */
-  <M> void html(String viewUrl, M model);
 }
