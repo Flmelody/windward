@@ -101,6 +101,13 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         ctx.fireChannelRead(fullHttpRequest.retain());
         return;
       }
+      if (cachedWindwardContext != null
+          && cachedWindwardContext instanceof WebSocketWindwardContext) {
+        WebSocketWindwardContext websocketWindwardContext =
+            (WebSocketWindwardContext) cachedWindwardContext;
+        websocketWindwardContext.setHttpResponse(true);
+      }
+
       handle(functionMetaInfo, windwardContext);
     }
   }

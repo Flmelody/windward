@@ -31,6 +31,7 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
   private static final Logger logger = LoggerFactory.getLogger(WebSocketWindwardContext.class);
   private WebSocketEvent webSocketEvent;
   private Object webSocketData;
+  private boolean httpResponse;
   private boolean upgradedContext;
 
   public WebSocketWindwardContext(
@@ -45,6 +46,10 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
 
   public void setWebSocketData(Object webSocketData) {
     this.webSocketData = webSocketData;
+  }
+
+  public void setHttpResponse(boolean httpResponse) {
+    this.httpResponse = httpResponse;
   }
 
   public WebSocketEvent getWebSocketEvent() {
@@ -63,6 +68,7 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
     if (WebSocketEvent.ON_CONNECT.equals(webSocketEvent)) {
       upgradedContext = true;
     }
+    this.httpResponse = false;
   }
 
   @Override
@@ -127,7 +133,7 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
    * @return result
    */
   private boolean processCheck() {
-    if (upgradedContext) {
+    if (upgradedContext || httpResponse) {
       return true;
     }
     logger.warn("Context not upgraded!");
