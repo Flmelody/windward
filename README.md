@@ -17,7 +17,7 @@ Light web function framework for Java
 <dependency>
     <groupId>org.flmelody</groupId>
     <artifactId>windward</artifactId>
-    <version>1.4.3-RELEASE</version>
+    <version>1.4.4-RELEASE</version>
 </dependency>
 ```
 
@@ -49,8 +49,6 @@ or gson
 public class Application {
     public static void main(String[] args) {
         // started at 8080 default
-        // still a BUG in `1.4.3-RELEASE` , will be fixed in next release
-        // use Windward.setup().get("/home", () -> "Hello World!").run();
         Windward.setup().get("/", () -> "Hello World!").run();
     }
 }
