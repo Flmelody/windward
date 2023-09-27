@@ -43,15 +43,19 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter {
       } else if (msg instanceof TextWebSocketFrame) {
         ctx.fireUserEventTriggered(
             WebSocketFireEvent.builder()
+                .reset()
                 .event(WebSocketEvent.ON_MESSAGE)
                 .data(((TextWebSocketFrame) msg).text())
                 .build());
       } else {
+        // BinaryWebSocketFrame
+        // PingWebSocketFrame
+        // PongWebSocketFrame
         ctx.fireUserEventTriggered(
             WebSocketFireEvent.builder()
                 .reset()
                 .event(WebSocketEvent.ON_MESSAGE)
-                .data(msg.toString())
+                .data(msg)
                 .build());
       }
     }
