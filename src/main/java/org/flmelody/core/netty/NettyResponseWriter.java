@@ -113,6 +113,8 @@ public class NettyResponseWriter implements ResponseWriter {
 
   @Override
   public void close() {
-    ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+    if (ctx.channel().isActive()) {
+      ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+    }
   }
 }

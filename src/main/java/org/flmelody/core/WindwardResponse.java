@@ -60,6 +60,11 @@ public class WindwardResponse {
     responseWriter.write(code, contentType, headers, data);
   }
 
+  /** close connection */
+  public void close() {
+    responseWriter.close();
+  }
+
   public static WindwardResponseBuild newBuilder() {
     return new WindwardResponseBuild(new WindwardResponse());
   }

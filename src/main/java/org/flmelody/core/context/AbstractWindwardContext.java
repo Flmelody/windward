@@ -99,6 +99,7 @@ public abstract class AbstractWindwardContext implements WindwardContext {
   @Override
   public void close() {
     this.closed = Boolean.TRUE;
+    windwardResponse.close();
   }
 
   /**
