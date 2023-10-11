@@ -16,7 +16,7 @@ public class DefaultRouterGroupTest {
         defaultRouterGroup
             .get("/dev/v1/{name}", () -> "hello world")
             .matchRouter("/dev/v1/esotericman", HttpMethod.GET.name());
-    assertEquals(functionMetaInfo.getPathVariables().get("{name}"), "esotericman");
+    assertEquals(functionMetaInfo.getPathVariables().get("name"), "esotericman");
   }
 
   @Test
@@ -26,7 +26,7 @@ public class DefaultRouterGroupTest {
         defaultRouterGroup
             .post("/dev/{version}/{name}/post", () -> "hello world")
             .matchRouter("/dev/v1/esotericman/post", HttpMethod.POST.name());
-    assertEquals(functionMetaInfo.getPathVariables().get("{version}"), "v1");
-    assertEquals(functionMetaInfo.getPathVariables().get("{name}"), "esotericman");
+    assertEquals(functionMetaInfo.getPathVariables().get("version"), "v1");
+    assertEquals(functionMetaInfo.getPathVariables().get("name"), "esotericman");
   }
 }
