@@ -21,7 +21,12 @@ package org.flmelody.core;
  */
 public enum HttpMethod {
   GET,
+  HEAD,
   PUT,
   POST,
-  DELETE;
+  DELETE,
+  CONNECT,
+  OPTIONS,
+  TRACE,
+  PATCH;
 }

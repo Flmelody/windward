@@ -263,6 +263,29 @@ public class Windward implements Router {
   }
 
   /** {@inheritDoc} */
+  @Override
+  public <R> Windward method(HttpMethod httpMethod, String relativePath, Supplier<R> supplier) {
+    group(UrlUtil.SLASH).method(httpMethod, relativePath, supplier);
+    return this;
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public Windward method(
+      HttpMethod httpMethod, String relativePath, Consumer<SimpleWindwardContext> consumer) {
+    group(UrlUtil.SLASH).method(httpMethod, relativePath, consumer);
+    return this;
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public Windward method(
+      HttpMethod httpMethod, String relativePath, Function<EnhancedWindwardContext, ?> function) {
+    group(UrlUtil.SLASH).method(httpMethod, relativePath, function);
+    return this;
+  }
+
+  /** {@inheritDoc} */
   public <R> Windward get(String relativePath, Supplier<R> supplier) {
     group(UrlUtil.SLASH).get(relativePath, supplier);
     return this;

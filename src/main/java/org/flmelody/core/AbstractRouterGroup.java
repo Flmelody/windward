@@ -60,79 +60,87 @@ public abstract class AbstractRouterGroup implements RouterGroup {
 
   @Override
   public <R> RouterGroup get(String relativePath, Supplier<R> supplier) {
-    registerRouter(relativePath, HttpMethod.GET.name(), supplier, SimpleWindwardContext.class);
-    return this;
+    return method(HttpMethod.GET, relativePath, supplier);
   }
 
   @Override
   public RouterGroup get(String relativePath, Consumer<SimpleWindwardContext> consumer) {
-    registerRouter(relativePath, HttpMethod.GET.name(), consumer, SimpleWindwardContext.class);
-    return this;
+    return method(HttpMethod.GET, relativePath, consumer);
   }
 
   @Override
   public RouterGroup get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
-    registerRouter(relativePath, HttpMethod.GET.name(), function, EnhancedWindwardContext.class);
-    return this;
+    return method(HttpMethod.GET, relativePath, function);
   }
 
   @Override
   public <R> RouterGroup put(String relativePath, Supplier<R> supplier) {
-    registerRouter(relativePath, HttpMethod.PUT.name(), supplier, SimpleWindwardContext.class);
-    return this;
+    return method(HttpMethod.PUT, relativePath, supplier);
   }
 
   @Override
   public RouterGroup put(String relativePath, Consumer<SimpleWindwardContext> consumer) {
-    registerRouter(relativePath, HttpMethod.PUT.name(), consumer, SimpleWindwardContext.class);
-    return this;
+    return method(HttpMethod.PUT, relativePath, consumer);
   }
 
   @Override
   public RouterGroup put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
-    registerRouter(relativePath, HttpMethod.PUT.name(), function, EnhancedWindwardContext.class);
-    return this;
+    return method(HttpMethod.PUT, relativePath, function);
   }
 
   @Override
   public <R> RouterGroup post(String relativePath, Supplier<R> supplier) {
-    registerRouter(relativePath, HttpMethod.POST.name(), supplier, SimpleWindwardContext.class);
-    return this;
+    return method(HttpMethod.POST, relativePath, supplier);
   }
 
   @Override
   public RouterGroup post(String relativePath, Consumer<SimpleWindwardContext> consumer) {
-    registerRouter(relativePath, HttpMethod.POST.name(), consumer, SimpleWindwardContext.class);
-    return this;
+    return method(HttpMethod.POST, relativePath, consumer);
   }
 
   @Override
   public RouterGroup post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
-    registerRouter(relativePath, HttpMethod.POST.name(), function, EnhancedWindwardContext.class);
-    return this;
+    return method(HttpMethod.POST, relativePath, function);
   }
 
   @Override
   public <R> RouterGroup delete(String relativePath, Supplier<R> supplier) {
-    registerRouter(relativePath, HttpMethod.DELETE.name(), supplier, SimpleWindwardContext.class);
-    return this;
+    return method(HttpMethod.DELETE, relativePath, supplier);
   }
 
   @Override
   public RouterGroup delete(String relativePath, Consumer<SimpleWindwardContext> consumer) {
-    registerRouter(relativePath, HttpMethod.DELETE.name(), consumer, SimpleWindwardContext.class);
-    return this;
+    return method(HttpMethod.DELETE, relativePath, consumer);
   }
 
   @Override
   public RouterGroup delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
-    registerRouter(relativePath, HttpMethod.DELETE.name(), function, EnhancedWindwardContext.class);
+    return method(HttpMethod.DELETE, relativePath, function);
+  }
+
+  @Override
+  public RouterGroup ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
+    registerRouter(relativePath, HttpMethod.GET.name(), consumer, WebSocketWindwardContext.class);
     return this;
   }
 
   @Override
-  public Router ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
-    registerRouter(relativePath, HttpMethod.GET.name(), consumer, WebSocketWindwardContext.class);
+  public <R> RouterGroup method(HttpMethod httpMethod, String relativePath, Supplier<R> supplier) {
+    registerRouter(relativePath, httpMethod.name(), supplier, SimpleWindwardContext.class);
+    return this;
+  }
+
+  @Override
+  public RouterGroup method(
+      HttpMethod httpMethod, String relativePath, Consumer<SimpleWindwardContext> consumer) {
+    registerRouter(relativePath, httpMethod.name(), consumer, SimpleWindwardContext.class);
+    return this;
+  }
+
+  @Override
+  public RouterGroup method(
+      HttpMethod httpMethod, String relativePath, Function<EnhancedWindwardContext, ?> function) {
+    registerRouter(relativePath, httpMethod.name(), function, EnhancedWindwardContext.class);
     return this;
   }
 

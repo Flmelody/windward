@@ -28,9 +28,40 @@ import org.flmelody.core.ws.WebSocketWindwardContext;
  */
 public interface Router {
   /**
+   * register function with specific method
+   *
+   * @param httpMethod http method
+   * @param relativePath relative path
+   * @param supplier supplier
+   * @return this
+   * @param <R> response data
+   */
+  <R> Router method(HttpMethod httpMethod, String relativePath, Supplier<R> supplier);
+
+  /**
+   * register function with specific method
+   *
+   * @param relativePath relative path
+   * @param consumer function to consume
+   * @return this
+   */
+  Router method(
+      HttpMethod httpMethod, String relativePath, Consumer<SimpleWindwardContext> consumer);
+
+  /**
+   * register function with specific method
+   *
+   * @param relativePath relative path
+   * @param function function to consume
+   * @return this
+   */
+  Router method(
+      HttpMethod httpMethod, String relativePath, Function<EnhancedWindwardContext, ?> function);
+
+  /**
    * register function with get method
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param supplier supplier
    * @return this
    * @param <R> response data
@@ -49,7 +80,7 @@ public interface Router {
   /**
    * register function with get method
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param function function to consume
    * @return this
    */
@@ -58,7 +89,7 @@ public interface Router {
   /**
    * register function with put method
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param supplier supplier
    * @return this
    * @param <R> response data
@@ -68,7 +99,7 @@ public interface Router {
   /**
    * register function with put method
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param consumer function to consume
    * @return this
    */
@@ -77,7 +108,7 @@ public interface Router {
   /**
    * register function with put method
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param function function to consume
    * @return this
    */
@@ -86,7 +117,7 @@ public interface Router {
   /**
    * register function with post method
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param supplier supplier
    * @return this
    * @param <R> response data
@@ -96,7 +127,7 @@ public interface Router {
   /**
    * register function with post method
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param consumer function to consume
    * @return this
    */
@@ -105,7 +136,7 @@ public interface Router {
   /**
    * register function with post method
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param function function to consume
    * @return this
    */
@@ -114,7 +145,7 @@ public interface Router {
   /**
    * register function with delete method
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param supplier supplier
    * @return this
    * @param <R> response data
@@ -124,7 +155,7 @@ public interface Router {
   /**
    * register function with delete method
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param consumer function to consume
    * @return this
    */
@@ -133,7 +164,7 @@ public interface Router {
   /**
    * register function with delete method
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param function function to consume
    * @return this
    */
@@ -142,7 +173,7 @@ public interface Router {
   /**
    * register websocket function
    *
-   * @param relativePath relativePath
+   * @param relativePath relative path
    * @param consumer function to consume
    * @return this
    */
