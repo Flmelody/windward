@@ -36,7 +36,7 @@ public interface Router {
    * @return this
    * @param <R> response data
    */
-  <R> Router method(HttpMethod httpMethod, String relativePath, Supplier<R> supplier);
+  <R> Router http(HttpMethod httpMethod, String relativePath, Supplier<R> supplier);
 
   /**
    * register function with specific method
@@ -45,7 +45,7 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router method(
+  Router http(
       HttpMethod httpMethod, String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
@@ -55,7 +55,7 @@ public interface Router {
    * @param function function to consume
    * @return this
    */
-  Router method(
+  Router http(
       HttpMethod httpMethod, String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
