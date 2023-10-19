@@ -132,7 +132,7 @@ public abstract class AbstractWindwardContext implements WindwardContext {
    */
   @Override
   public <T> void writeJson(int code, T data) {
-    windwardResponse.write(code, MediaType.APPLICATION_JSON_VALUE, data);
+    write(code, MediaType.APPLICATION_JSON_VALUE, data);
   }
 
   /**
@@ -153,6 +153,31 @@ public abstract class AbstractWindwardContext implements WindwardContext {
    */
   @Override
   public void writeString(int code, String data) {
-    windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE, data);
+    write(code, MediaType.TEXT_PLAIN_VALUE, data);
+  }
+
+  /**
+   * response with specific contentType
+   *
+   * @param contentType contentType
+   * @param data data
+   * @param <T> data
+   */
+  @Override
+  public <T> void write(String contentType, T data) {
+    write(HttpStatus.OK.value(), contentType, data);
+  }
+
+  /**
+   * response with specific contentType
+   *
+   * @param code code
+   * @param contentType contentType
+   * @param data data
+   * @param <T> data
+   */
+  @Override
+  public <T> void write(int code, String contentType, T data) {
+    windwardResponse.write(code, contentType, data);
   }
 }

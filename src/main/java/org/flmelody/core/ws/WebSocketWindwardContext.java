@@ -72,30 +72,9 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
   }
 
   @Override
-  public <T> void writeJson(T data) {
+  public <T> void write(int code, String contentType, T data) {
     if (processCheck()) {
-      super.writeJson(data);
-    }
-  }
-
-  @Override
-  public <T> void writeJson(int code, T data) {
-    if (processCheck()) {
-      super.writeJson(code, data);
-    }
-  }
-
-  @Override
-  public void writeString(String data) {
-    if (processCheck()) {
-      super.writeString(data);
-    }
-  }
-
-  @Override
-  public void writeString(int code, String data) {
-    if (processCheck()) {
-      super.writeString(code, data);
+      super.write(code, contentType, data);
     }
   }
 

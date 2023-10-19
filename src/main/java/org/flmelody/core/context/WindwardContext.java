@@ -84,6 +84,27 @@ public interface WindwardContext {
   }
 
   /**
+   * response data
+   *
+   * @param contentType contentType
+   * @param data data
+   * @param <T> type
+   */
+  default <T> void write(String contentType, T data) {
+    write(HttpStatus.OK.value(), contentType, data);
+  }
+
+  /**
+   * response data
+   *
+   * @param code response code
+   * @param contentType contentType
+   * @param data data
+   * @param <T> type
+   */
+  <T> void write(int code, String contentType, T data);
+
+  /**
    * response json
    *
    * @param data data

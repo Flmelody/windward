@@ -60,6 +60,11 @@ public class EmptyWindwardContext implements WindwardContext {
   }
 
   @Override
+  public <T> void write(int code, String contentType, T data) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public <T> void writeJson(int code, T data) {
     throw new UnsupportedOperationException();
   }
