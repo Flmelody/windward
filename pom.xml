@@ -47,7 +47,7 @@
         <gson.version>2.10.1</gson.version>
         <junit.version>RELEASE</junit.version>
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
-        <hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
+        <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
         <jakarta.el.version>4.0.2</jakarta.el.version>
         <lombok.version>1.18.28</lombok.version>
         <mockito.version>4.11.0</mockito.version>
