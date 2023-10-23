@@ -115,7 +115,7 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
     if (upgradedContext || httpResponse) {
       return true;
     }
-    logger.warn("Context not upgraded!");
+    logger.atWarn().log("Context not upgraded!");
     return false;
   }
 

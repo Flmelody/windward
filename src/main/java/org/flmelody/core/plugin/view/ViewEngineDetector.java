@@ -34,14 +34,14 @@ public class ViewEngineDetector {
       AVAILABLE_GROOVY_ENGINE = true;
     } catch (ClassNotFoundException e) {
       AVAILABLE_GROOVY_ENGINE = false;
-      logger.info("Unavailable groovy template due to missed groovy engine");
+      logger.atInfo().log("Unavailable groovy template due to missed groovy engine");
     }
     try {
       Class.forName("org.thymeleaf.TemplateEngine");
       AVAILABLE_THYMELEAF_ENGINE = true;
     } catch (ClassNotFoundException e) {
       AVAILABLE_THYMELEAF_ENGINE = false;
-      logger.info("Unavailable thymeleaf template due to missed thymeleaf engine");
+      logger.atInfo().log("Unavailable thymeleaf template due to missed thymeleaf engine");
     }
   }
 }
