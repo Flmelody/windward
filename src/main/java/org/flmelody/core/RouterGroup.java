@@ -19,7 +19,7 @@ package org.flmelody.core;
 /**
  * @author esotericman
  */
-public interface RouterGroup extends Router {
+public interface RouterGroup<M> extends Router {
   /**
    * find out matched router function
    *
@@ -29,4 +29,11 @@ public interface RouterGroup extends Router {
    * @param <R> router type
    */
   <R> R matchRouter(String relativePath, String method);
+
+  /**
+   * return this groups manager, so that we can bind more routers of root
+   *
+   * @return groups manager
+   */
+  M end();
 }

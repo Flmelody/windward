@@ -38,16 +38,18 @@ import org.flmelody.util.UrlUtil;
 /**
  * @author esotericman
  */
-public abstract class AbstractRouterGroup implements RouterGroup {
+public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
+  private final M manager;
   private String groupPath;
   private final Map<String, Map<String, ? super Object>> routers =
       Collections.synchronizedMap(new LinkedHashMap<>(2 << 3));
 
-  protected AbstractRouterGroup() {
-    this("/");
+  protected AbstractRouterGroup(M manager) {
+    this(manager, "/");
   }
 
-  protected AbstractRouterGroup(String groupPath) {
+  protected AbstractRouterGroup(M manager, String groupPath) {
+    this.manager = manager;
     setGroupPath(groupPath);
   }
 
@@ -59,86 +61,91 @@ public abstract class AbstractRouterGroup implements RouterGroup {
   }
 
   @Override
-  public <R> RouterGroup get(String relativePath, Supplier<R> supplier) {
+  public M end() {
+    return manager;
+  }
+
+  @Override
+  public <R> RouterGroup<M> get(String relativePath, Supplier<R> supplier) {
     return http(HttpMethod.GET, relativePath, supplier);
   }
 
   @Override
-  public RouterGroup get(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+  public RouterGroup<M> get(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     return http(HttpMethod.GET, relativePath, consumer);
   }
 
   @Override
-  public RouterGroup get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public RouterGroup<M> get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     return http(HttpMethod.GET, relativePath, function);
   }
 
   @Override
-  public <R> RouterGroup put(String relativePath, Supplier<R> supplier) {
+  public <R> RouterGroup<M> put(String relativePath, Supplier<R> supplier) {
     return http(HttpMethod.PUT, relativePath, supplier);
   }
 
   @Override
-  public RouterGroup put(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+  public RouterGroup<M> put(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     return http(HttpMethod.PUT, relativePath, consumer);
   }
 
   @Override
-  public RouterGroup put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public RouterGroup<M> put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     return http(HttpMethod.PUT, relativePath, function);
   }
 
   @Override
-  public <R> RouterGroup post(String relativePath, Supplier<R> supplier) {
+  public <R> RouterGroup<M> post(String relativePath, Supplier<R> supplier) {
     return http(HttpMethod.POST, relativePath, supplier);
   }
 
   @Override
-  public RouterGroup post(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+  public RouterGroup<M> post(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     return http(HttpMethod.POST, relativePath, consumer);
   }
 
   @Override
-  public RouterGroup post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public RouterGroup<M> post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     return http(HttpMethod.POST, relativePath, function);
   }
 
   @Override
-  public <R> RouterGroup delete(String relativePath, Supplier<R> supplier) {
+  public <R> RouterGroup<M> delete(String relativePath, Supplier<R> supplier) {
     return http(HttpMethod.DELETE, relativePath, supplier);
   }
 
   @Override
-  public RouterGroup delete(String relativePath, Consumer<SimpleWindwardContext> consumer) {
+  public RouterGroup<M> delete(String relativePath, Consumer<SimpleWindwardContext> consumer) {
     return http(HttpMethod.DELETE, relativePath, consumer);
   }
 
   @Override
-  public RouterGroup delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public RouterGroup<M> delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
     return http(HttpMethod.DELETE, relativePath, function);
   }
 
   @Override
-  public RouterGroup ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
+  public RouterGroup<M> ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
     registerRouter(relativePath, HttpMethod.GET.name(), consumer, WebSocketWindwardContext.class);
     return this;
   }
 
   @Override
-  public <R> RouterGroup http(HttpMethod httpMethod, String relativePath, Supplier<R> supplier) {
+  public <R> RouterGroup<M> http(HttpMethod httpMethod, String relativePath, Supplier<R> supplier) {
     registerRouter(relativePath, httpMethod.name(), supplier, SimpleWindwardContext.class);
     return this;
   }
 
   @Override
-  public RouterGroup http(
+  public RouterGroup<M> http(
       HttpMethod httpMethod, String relativePath, Consumer<SimpleWindwardContext> consumer) {
     registerRouter(relativePath, httpMethod.name(), consumer, SimpleWindwardContext.class);
     return this;
   }
 
   @Override
-  public RouterGroup http(
+  public RouterGroup<M> http(
       HttpMethod httpMethod, String relativePath, Function<EnhancedWindwardContext, ?> function) {
     registerRouter(relativePath, httpMethod.name(), function, EnhancedWindwardContext.class);
     return this;

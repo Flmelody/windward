@@ -11,7 +11,7 @@ public class DefaultRouterGroupTest {
 
   @Test
   public void getTest() {
-    DefaultRouterGroup defaultRouterGroup = new DefaultRouterGroup("/");
+    DefaultRouterGroup defaultRouterGroup = new DefaultRouterGroup(null, "/");
     FunctionMetaInfo<?> functionMetaInfo =
         defaultRouterGroup
             .get("/dev/v1/{name}", () -> "hello world")
@@ -21,7 +21,7 @@ public class DefaultRouterGroupTest {
 
   @Test
   public void postTest() {
-    DefaultRouterGroup defaultRouterGroup = new DefaultRouterGroup("/");
+    DefaultRouterGroup defaultRouterGroup = new DefaultRouterGroup(null, "/");
     FunctionMetaInfo<?> functionMetaInfo =
         defaultRouterGroup
             .post("/dev/{version}/{name}/post", () -> "hello world")

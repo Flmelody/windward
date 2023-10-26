@@ -46,7 +46,7 @@ import org.flmelody.util.UrlUtil;
  */
 public class Windward implements Router {
   // registered function
-  private static final List<AbstractRouterGroup> routerGroups = new ArrayList<>();
+  private static final List<AbstractRouterGroup<Windward>> routerGroups = new ArrayList<>();
   // filters
   private static final List<Filter> globalFilters = new ArrayList<>();
   // handlers for exception
@@ -133,9 +133,9 @@ public class Windward implements Router {
    * @param relativePath relativePath
    * @return routerGroup
    */
-  public RouterGroup group(String relativePath) {
+  public RouterGroup<Windward> group(String relativePath) {
     DefaultRouterGroup defaultRouterGroup =
-        new DefaultRouterGroup(UrlUtil.buildUrl(contextPath, relativePath));
+        new DefaultRouterGroup(this, UrlUtil.buildUrl(contextPath, relativePath));
     routerGroups.add(defaultRouterGroup);
     return defaultRouterGroup;
   }
@@ -190,7 +190,7 @@ public class Windward implements Router {
    * @return registered function
    */
   public static <I> FunctionMetaInfo<I> findRouter(String relativePath, String method) {
-    for (AbstractRouterGroup routerGroup : routerGroups) {
+    for (AbstractRouterGroup<Windward> routerGroup : routerGroups) {
       FunctionMetaInfo<I> functionMetaInfo = routerGroup.matchRouter(relativePath, method);
       if (functionMetaInfo != null) {
         return functionMetaInfo;

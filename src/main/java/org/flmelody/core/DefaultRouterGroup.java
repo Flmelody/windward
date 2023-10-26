@@ -21,12 +21,12 @@ package org.flmelody.core;
  *
  * @author esotericman
  */
-public class DefaultRouterGroup extends AbstractRouterGroup {
-  public DefaultRouterGroup() {
-    super();
+public class DefaultRouterGroup extends AbstractRouterGroup<Windward> {
+  public DefaultRouterGroup(Windward windward) {
+    super(windward);
   }
 
-  public DefaultRouterGroup(String relativePath) {
-    super(relativePath);
+  public DefaultRouterGroup(Windward windward, String relativePath) {
+    super(windward, relativePath);
   }
 }
