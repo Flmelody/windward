@@ -28,8 +28,6 @@ public class LoggingFilter implements Filter {
 
   @Override
   public void filter(WindwardContext windwardContext) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Accepted request {}", windwardContext.windwardRequest().getUri());
-    }
+    logger.atDebug().log("Accepted request {}", windwardContext.windwardRequest().getUri());
   }
 }

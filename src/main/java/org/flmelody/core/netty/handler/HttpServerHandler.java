@@ -107,7 +107,6 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
             (WebSocketWindwardContext) cachedWindwardContext;
         websocketWindwardContext.setHttpResponse(true);
       }
-
       handle(functionMetaInfo, windwardContext);
     }
   }
@@ -255,7 +254,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
             HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.reasonPhrase());
       }
     } catch (Exception e) {
-      logger.error("Error occurred", e);
+      logger.atError().log("Error occurred", e);
       if (!handleException(windwardContext, e)) {
         windwardContext.writeString(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -275,7 +274,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         }
       } catch (Exception exception) {
         alreadyDone = false;
-        logger.error("Handle exception error", e);
+        logger.atError().log("Handle exception error", e);
       }
     }
     return alreadyDone;
