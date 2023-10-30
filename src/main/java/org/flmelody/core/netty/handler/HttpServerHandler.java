@@ -204,7 +204,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
               windwardResponseBuild.build());
         }
       } catch (Exception e) {
-        logger.error("Failed to construct context");
+        logger.atError().log("Failed to construct context");
       }
     }
     return new EmptyWindwardContext();
@@ -218,7 +218,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
       try {
         filter.filter(windwardContext);
       } catch (Exception e) {
-        logger.error("Handler error", e);
+        logger.atError().log("Handler error", e);
         windwardContext.writeString(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
