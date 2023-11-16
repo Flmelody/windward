@@ -30,17 +30,16 @@ public final class UrlUtil {
     }
     StringBuilder stringBuilder = new StringBuilder();
     for (int i = 0; i < path.length; i++) {
-      if (i == 0) {
-        if (!path[i].startsWith(SLASH)) {
-          path[i] = SLASH + path[i];
-        }
-        if (!path[i].endsWith(SLASH)) {
-          path[i] += SLASH;
-        }
-      } else if (path[i].startsWith(SLASH)) {
-        path[i] = path[i].replaceFirst("/", "");
+      if (!path[i].startsWith(SLASH)) {
+        path[i] = SLASH + path[i];
+      }
+      if (path[i].endsWith(SLASH)) {
+        path[i] = path[i].substring(0, path[i].length() - 1);
       }
       stringBuilder.append(path[i]);
+    }
+    if (stringBuilder.length() == 0) {
+      return SLASH;
     }
     return stringBuilder.toString();
   }
