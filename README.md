@@ -3,7 +3,7 @@
 ![GitHub](https://img.shields.io/github/license/Flmelody/windward)
 ![Maven Central](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Frepo1.maven.org%2Fmaven2%2Forg%2Fflmelody%2Fwindward%2Fmaven-metadata.xml&query=%2F%2Fmetadata%2Fversioning%2Flatest&label=maven-central)
 
-Light web function framework for Java
+Light web framework for Java
 <div>
     <img src="https://github.com/Flmelody/windward-guide/blob/main/docs/.vuepress/public/windward.png" alt="windward" width="360" height="240">
 </div>
