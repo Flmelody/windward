@@ -36,6 +36,7 @@ import org.flmelody.core.plugin.json.JsonPlugin;
 import org.flmelody.core.plugin.resolver.CompositePluginResolver;
 import org.flmelody.core.plugin.resolver.PluginResolver;
 import org.flmelody.core.plugin.view.ViewEngineDetector;
+import org.flmelody.core.plugin.view.freemarker.FreemarkerView;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
 import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
 import org.flmelody.core.ws.WebSocketWindwardContext;
@@ -114,6 +115,9 @@ public class Windward implements Router {
     }
     if (ViewEngineDetector.AVAILABLE_THYMELEAF_ENGINE) {
       windward.registerPlugin(ThymeleafView.class, new ThymeleafView());
+    }
+    if (ViewEngineDetector.AVAILABLE_FREEMARKER_ENGINE) {
+      windward.registerPlugin(FreemarkerView.class, new FreemarkerView());
     }
     return windward;
   }

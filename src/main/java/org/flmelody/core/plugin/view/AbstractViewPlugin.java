@@ -25,11 +25,14 @@ import org.flmelody.util.UrlUtil;
 public abstract class AbstractViewPlugin implements ViewPlugin {
   protected String templateLocationPrefix;
 
+  protected String defaultExtension;
+
   // for custom plugin
   public AbstractViewPlugin() {}
 
-  public AbstractViewPlugin(String templateLocationPrefix) {
+  public AbstractViewPlugin(String templateLocationPrefix, String defaultExtension) {
     this.templateLocationPrefix = templateLocationPrefix;
+    this.defaultExtension = defaultExtension;
   }
 
   public void setTemplateLocationPrefix(String templateLocationPrefix) {
@@ -39,6 +42,11 @@ public abstract class AbstractViewPlugin implements ViewPlugin {
       return;
     }
     this.templateLocationPrefix = templateLocationPrefix;
+  }
+
+  @Override
+  public boolean supportedExtension(String extension) {
+    return defaultExtension.equalsIgnoreCase(extension);
   }
 
   public final String resolveView(String viewUrl, Map<String, Object> model) throws Exception {

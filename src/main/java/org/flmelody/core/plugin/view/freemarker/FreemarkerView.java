@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.flmelody.core.plugin.view.groovy;
+package org.flmelody.core.plugin.view.freemarker;
 
-import groovy.text.Template;
-import groovy.text.markup.MarkupTemplateEngine;
+import freemarker.template.Configuration;
 import java.io.StringWriter;
 import java.util.Map;
 import org.flmelody.core.plugin.view.AbstractViewPlugin;
@@ -25,24 +24,27 @@ import org.flmelody.core.plugin.view.AbstractViewPlugin;
 /**
  * @author esotericman
  */
-public class GroovyView extends AbstractViewPlugin {
-  protected final MarkupTemplateEngine templateEngine;
-  private static final String viewExtension = "tpl";
+public class FreemarkerView extends AbstractViewPlugin {
+  private final Configuration configuration = new Configuration(Configuration.VERSION_2_3_32);
 
-  public GroovyView() {
+  {
+    configuration.setClassForTemplateLoading(FreemarkerView.class, "/");
+  }
+
+  private static final String viewExtension = "ftl";
+
+  public FreemarkerView() {
     this(null, viewExtension);
   }
 
-  public GroovyView(String templateLocation, String defaultExtension) {
-    super(templateLocation, defaultExtension);
-    this.templateEngine = new MarkupTemplateEngine();
+  public FreemarkerView(String templateLocationPrefix, String defaultExtension) {
+    super(templateLocationPrefix, defaultExtension);
   }
 
   @Override
   public String render(String viewUrl, Map<String, Object> model) throws Exception {
-    Template template = this.templateEngine.createTemplate(this.getClass().getResource(viewUrl));
     StringWriter stringWriter = new StringWriter();
-    template.make(model).writeTo(stringWriter);
+    configuration.getTemplate(viewUrl).process(model, stringWriter);
     return stringWriter.toString();
   }
 }

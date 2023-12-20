@@ -28,7 +28,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
  */
 public class ThymeleafView extends AbstractViewPlugin {
   protected final TemplateEngine templateEngine;
-  protected final String defaultExtension = "html";
+  private static final String viewExtension = "html";
   private final boolean useDialect;
 
   {
@@ -43,22 +43,17 @@ public class ThymeleafView extends AbstractViewPlugin {
   }
 
   public ThymeleafView() {
-    this(null);
+    this(null, viewExtension);
   }
 
-  public ThymeleafView(String templateLocation) {
-    super(templateLocation);
+  public ThymeleafView(String templateLocation, String defaultExtension) {
+    super(templateLocation, defaultExtension);
     this.templateEngine = new TemplateEngine();
     this.templateEngine.setTemplateResolver(new ClassLoaderTemplateResolver());
     // use LayoutDialect
     if (useDialect) {
       this.templateEngine.setDialect(new LayoutDialect());
     }
-  }
-
-  @Override
-  public boolean supportedExtension(String extension) {
-    return defaultExtension.equalsIgnoreCase(extension);
   }
 
   @Override

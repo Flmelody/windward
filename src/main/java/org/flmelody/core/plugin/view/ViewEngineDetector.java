@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 public class ViewEngineDetector {
   public static boolean AVAILABLE_GROOVY_ENGINE;
   public static boolean AVAILABLE_THYMELEAF_ENGINE;
+  public static boolean AVAILABLE_FREEMARKER_ENGINE;
 
   private static final Logger logger = LoggerFactory.getLogger(ViewEngineDetector.class);
 
@@ -42,6 +43,13 @@ public class ViewEngineDetector {
     } catch (ClassNotFoundException e) {
       AVAILABLE_THYMELEAF_ENGINE = false;
       logger.atInfo().log("Unavailable thymeleaf template due to missed thymeleaf engine");
+    }
+    try {
+      Class.forName("freemarker.template.Configuration");
+      AVAILABLE_FREEMARKER_ENGINE = true;
+    } catch (ClassNotFoundException e) {
+      AVAILABLE_FREEMARKER_ENGINE = false;
+      logger.atInfo().log("Unavailable freemarker template due to missed groovy engine");
     }
   }
 }
