@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package org.flmelody.core;
-
-import org.flmelody.core.context.WindwardContext;
+package org.flmelody.core.exception;
 
 /**
  * @author esotericman
  */
-public interface ExceptionHandler extends Handler {
-  void handle(WindwardContext windwardContext);
+public class HandlerNotFoundException extends RuntimeException {
 
-  boolean supported(Exception e);
+  public HandlerNotFoundException(String reason) {
+    super(reason);
+  }
 }

@@ -18,6 +18,7 @@ package org.flmelody.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +111,7 @@ public class Windward implements Router {
 
   // prepare template engine
   private static Windward prepareDefault(Windward windward) {
+    windward.registerExceptionHandler(new DefaultNotFoundHandler());
     if (ViewEngineDetector.AVAILABLE_GROOVY_ENGINE) {
       windward.registerPlugin(GroovyView.class, new GroovyView());
     }
@@ -169,6 +171,7 @@ public class Windward implements Router {
       return this;
     }
     globalExceptionHandlers.addAll(Arrays.asList(exceptionHandlers));
+    globalExceptionHandlers.sort(Comparator.comparingInt(Order::getOrder));
     return this;
   }
 

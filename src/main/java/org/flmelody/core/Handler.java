@@ -16,13 +16,7 @@
 
 package org.flmelody.core;
 
-import org.flmelody.core.context.WindwardContext;
-
 /**
  * @author esotericman
  */
-public interface ExceptionHandler extends Handler {
-  void handle(WindwardContext windwardContext);
-
-  boolean supported(Exception e);
-}
+public interface Handler extends Order {}

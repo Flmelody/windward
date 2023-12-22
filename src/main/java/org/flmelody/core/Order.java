@@ -16,13 +16,20 @@
 
 package org.flmelody.core;
 
-import org.flmelody.core.context.WindwardContext;
-
 /**
  * @author esotericman
  */
-public interface ExceptionHandler extends Handler {
-  void handle(WindwardContext windwardContext);
+public interface Order {
+  int LOWEST_ORDER = Integer.MAX_VALUE;
+  int DEFAULT_ORDER = 0;
+  int HIGHEST_ORDER = Integer.MIN_VALUE;
 
-  boolean supported(Exception e);
+  /**
+   * Priority of component, the lower the value, the higher the priority
+   *
+   * @return priority
+   */
+  default int getOrder() {
+    return DEFAULT_ORDER;
+  }
 }

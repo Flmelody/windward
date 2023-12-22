@@ -49,6 +49,7 @@ import org.flmelody.core.context.EmptyWindwardContext;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
+import org.flmelody.core.exception.HandlerNotFoundException;
 import org.flmelody.core.netty.NettyResponseWriter;
 import org.flmelody.core.ws.WebSocketEvent;
 import org.flmelody.core.ws.WebSocketFireEvent;
@@ -184,9 +185,8 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
     WindwardResponse.WindwardResponseBuild windwardResponseBuild =
         WindwardResponse.newBuilder().responseWriter(new NettyResponseWriter(ctx, keepAlive));
     if (functionMetaInfo == null) {
-      windwardResponseBuild
-          .build()
-          .write(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.reasonPhrase());
+      return new SimpleWindwardContext(
+          windwardRequestBuilder.build(), windwardResponseBuild.build());
     } else {
       try {
         Class<? extends WindwardContext> clazz = functionMetaInfo.getClazz();
@@ -231,6 +231,9 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
 
   private void execute(FunctionMetaInfo<?> functionMetaInfo, WindwardContext windwardContext) {
     try {
+      if (functionMetaInfo == null) {
+        throw new HandlerNotFoundException("No handler found!");
+      }
       Object function = functionMetaInfo.getFunction();
       if (function instanceof Consumer) {
         @SuppressWarnings("unchecked")
@@ -250,12 +253,11 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
           windwardContext.writeString(object.toString());
         }
       } else {
-        windwardContext.writeString(
-            HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.reasonPhrase());
+        throw new HandlerNotFoundException("No handler found!");
       }
     } catch (Exception e) {
-      logger.atError().log("Error occurred", e);
       if (!handleException(windwardContext, e)) {
+        logger.atError().log("Error occurred", e);
         windwardContext.writeString(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             HttpStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
@@ -271,9 +273,9 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         if (exceptionHandler.supported(e)) {
           exceptionHandler.handle(windwardContext);
           alreadyDone = true;
+          break;
         }
       } catch (Exception exception) {
-        alreadyDone = false;
         logger.atError().log("Handle exception error", e);
       }
     }

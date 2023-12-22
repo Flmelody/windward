@@ -17,12 +17,25 @@
 package org.flmelody.core;
 
 import org.flmelody.core.context.WindwardContext;
+import org.flmelody.core.exception.HandlerNotFoundException;
 
 /**
  * @author esotericman
  */
-public interface ExceptionHandler extends Handler {
-  void handle(WindwardContext windwardContext);
+public class DefaultNotFoundHandler implements ExceptionHandler {
 
-  boolean supported(Exception e);
+  @Override
+  public void handle(WindwardContext windwardContext) {
+    windwardContext.writeString(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.reasonPhrase());
+  }
+
+  @Override
+  public boolean supported(Exception e) {
+    return HandlerNotFoundException.class.isAssignableFrom(e.getClass());
+  }
+
+  @Override
+  public int getOrder() {
+    return LOWEST_ORDER;
+  }
 }
