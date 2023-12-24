@@ -41,6 +41,7 @@ public interface Router {
   /**
    * register function with specific method
    *
+   * @param httpMethod http method
    * @param relativePath relative path
    * @param consumer function to consume
    * @return this

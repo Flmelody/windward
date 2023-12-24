@@ -39,6 +39,7 @@ public final class ValidationUtil {
   /**
    * try to convert json content to target object
    *
+   * @param jsonPlugin jsonPlugin
    * @param content json
    * @param targetClass target class that convert to
    * @param groups validator group
@@ -54,6 +55,7 @@ public final class ValidationUtil {
   /**
    * try to convert json content to target object
    *
+   * @param jsonPlugin jsonPlugin
    * @param content json
    * @param type type of target class
    * @param groups validator group
