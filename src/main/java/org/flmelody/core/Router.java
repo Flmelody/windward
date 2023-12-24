@@ -45,12 +45,12 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router http(
-      HttpMethod httpMethod, String relativePath, Consumer<SimpleWindwardContext> consumer);
+  Router http(HttpMethod httpMethod, String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
    * register function with specific method
    *
+   * @param httpMethod method of http
    * @param relativePath relative path
    * @param function function to consume
    * @return this
@@ -63,8 +63,8 @@ public interface Router {
    *
    * @param relativePath relative path
    * @param supplier supplier
-   * @return this
    * @param <R> response data
+   * @return this
    */
   <R> Router get(String relativePath, Supplier<R> supplier);
 
@@ -91,8 +91,8 @@ public interface Router {
    *
    * @param relativePath relative path
    * @param supplier supplier
-   * @return this
    * @param <R> response data
+   * @return this
    */
   <R> Router put(String relativePath, Supplier<R> supplier);
 
@@ -119,8 +119,8 @@ public interface Router {
    *
    * @param relativePath relative path
    * @param supplier supplier
-   * @return this
    * @param <R> response data
+   * @return this
    */
   <R> Router post(String relativePath, Supplier<R> supplier);
 
@@ -147,8 +147,8 @@ public interface Router {
    *
    * @param relativePath relative path
    * @param supplier supplier
-   * @return this
    * @param <R> response data
+   * @return this
    */
   <R> Router delete(String relativePath, Supplier<R> supplier);
 

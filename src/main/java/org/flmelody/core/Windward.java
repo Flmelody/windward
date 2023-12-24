@@ -194,6 +194,8 @@ public class Windward implements Router {
    * find out registered function by specific path
    *
    * @param relativePath relativePath
+   * @param method http methods name
+   * @param <I> routers metadata
    * @return registered function
    */
   public static <I> FunctionMetaInfo<I> findRouter(String relativePath, String method) {

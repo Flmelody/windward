@@ -71,6 +71,7 @@ public interface ResponseWriter {
    * @param headers responses header
    * @param data data
    * @param <T> data type
+   * @param close close connection or not
    */
   <T> void write(int code, String contentType, Map<String, Object> headers, T data, boolean close);
 

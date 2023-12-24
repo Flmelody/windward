@@ -49,6 +49,7 @@ public interface JsonPlugin extends Plugin {
    * convert json string into specific type
    *
    * @param data data
+   * @param <I> data type
    * @param type type
    * @param <O> type
    * @return converted object

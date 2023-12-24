@@ -80,6 +80,7 @@ public interface HttpBasicWindwardContext extends WindwardContext {
    *
    * @param viewUrl templates location
    * @param model templates data
+   * @param <M> views model
    */
   <M> void html(String viewUrl, M model);
 }
