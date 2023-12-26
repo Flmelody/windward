@@ -43,7 +43,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netty-all.version>4.1.104.Final</netty-all.version>
-        <jackson-databind.version>2.16.0</jackson-databind.version>
+        <jackson-databind.version>2.16.1</jackson-databind.version>
         <gson.version>2.10.1</gson.version>
         <junit.version>4.13.2</junit.version>
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
