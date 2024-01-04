@@ -19,9 +19,9 @@ package org.flmelody.core.netty;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -61,7 +61,7 @@ public class NettyResponseWriter implements ResponseWriter {
 
   @Override
   public <T> void write(int code, String contentType, Map<String, Object> headers, T data) {
-    write(code, contentType, Collections.emptyMap(), data, !keepConnection);
+    write(code, contentType, headers, data, !keepConnection);
   }
 
   @Override
@@ -76,19 +76,19 @@ public class NettyResponseWriter implements ResponseWriter {
     if (!channel.isActive()) {
       return;
     }
-    String response;
-    if (MediaType.APPLICATION_JSON_VALUE.equals(contentType)) {
-      response = Windward.plugin(JsonPlugin.class).toJson(data);
+    ByteBuf response;
+    if (data == null) {
+      response = Unpooled.EMPTY_BUFFER;
     } else {
-      response = String.valueOf(data);
+      if (MediaType.APPLICATION_JSON_VALUE.equals(contentType)) {
+        response =
+            Unpooled.copiedBuffer(
+                Windward.plugin(JsonPlugin.class).toJson(data), CharsetUtil.UTF_8);
+      } else {
+        response = Unpooled.copiedBuffer(String.valueOf(data), CharsetUtil.UTF_8);
+      }
     }
-    if (response == null) {
-      ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
-      return;
-    }
-    FullHttpResponse httpResponse =
-        new DefaultFullHttpResponse(
-            HTTP_1_1, OK, Unpooled.copiedBuffer(response, CharsetUtil.UTF_8));
+    FullHttpResponse httpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK, response);
     httpResponse.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
     httpResponse.setStatus(HttpResponseStatus.valueOf(code));
     if (headers != null && !headers.isEmpty()) {
