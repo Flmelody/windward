@@ -37,7 +37,7 @@ public final class ValidationUtil {
   private ValidationUtil() {}
 
   /**
-   * try to convert json content to target object
+   * Try to convert json content to target object
    *
    * @param jsonPlugin jsonPlugin
    * @param content json
@@ -53,7 +53,7 @@ public final class ValidationUtil {
   }
 
   /**
-   * try to convert json content to target object
+   * Try to convert json content to target object
    *
    * @param jsonPlugin jsonPlugin
    * @param content json

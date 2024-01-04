@@ -21,7 +21,7 @@ package org.flmelody.core;
  */
 public interface RouterGroup<M> extends Router {
   /**
-   * find out matched router function
+   * Find out matched router function
    *
    * @param relativePath relativePath
    * @param method method
@@ -31,7 +31,7 @@ public interface RouterGroup<M> extends Router {
   <R> R matchRouter(String relativePath, String method);
 
   /**
-   * return this groups manager, so that we can bind more routers of root
+   * Return this groups manager, so that we can bind more routers of root
    *
    * @return groups manager
    */

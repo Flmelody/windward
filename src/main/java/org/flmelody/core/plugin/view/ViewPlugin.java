@@ -25,7 +25,7 @@ import org.flmelody.core.plugin.Plugin;
 interface ViewPlugin extends Plugin {
 
   /**
-   * if extension is supported
+   * Whether the extension is supported
    *
    * @param extension resources extension
    * @return whether extension is supported
@@ -33,7 +33,7 @@ interface ViewPlugin extends Plugin {
   boolean supportedExtension(String extension);
 
   /**
-   * try to render template
+   * Render this template
    *
    * @param viewUrl templates url
    * @param model templates data

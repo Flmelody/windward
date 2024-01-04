@@ -34,7 +34,7 @@ public class GsonUtil {
   private GsonUtil() {}
 
   /**
-   * convert data into json string
+   * Convert data into json string
    *
    * @param data data
    * @param <I> type of data
@@ -49,7 +49,7 @@ public class GsonUtil {
   }
 
   /**
-   * convert json string into specific class
+   * Convert json string into specific class
    *
    * @param json json string
    * @param clazz class

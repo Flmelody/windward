@@ -25,7 +25,7 @@ public class WindwardResponse {
   private ResponseWriter responseWriter;
 
   /**
-   * write data into response
+   * Write data into response
    *
    * @param code http code
    * @param data data
@@ -36,7 +36,7 @@ public class WindwardResponse {
   }
 
   /**
-   * write data into response
+   * Write data into response
    *
    * @param code http code
    * @param contentType response contentType
@@ -48,7 +48,7 @@ public class WindwardResponse {
   }
 
   /**
-   * write data into response
+   * Write data into response
    *
    * @param code http code
    * @param contentType response contentType
@@ -60,7 +60,7 @@ public class WindwardResponse {
     responseWriter.write(code, contentType, headers, data);
   }
 
-  /** close connection */
+  /** Close connection */
   public void close() {
     responseWriter.close();
   }
@@ -71,7 +71,7 @@ public class WindwardResponse {
 
   private WindwardResponse() {}
 
-  /** builder for WindwardResponse */
+  /** Builder for WindwardResponse */
   public static class WindwardResponseBuild {
     private final WindwardResponse windwardResponse;
 

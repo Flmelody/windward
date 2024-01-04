@@ -20,14 +20,14 @@ import org.flmelody.core.HttpStatus;
 import org.flmelody.core.WindwardRequest;
 
 /**
- * http context
+ * Http context
  *
  * @author esotericman
  */
 public interface WindwardContext {
 
   /**
-   * get parameter by name and type
+   * Get parameter by name and type
    *
    * @param parameterName parameterName
    * @param <P> class type
@@ -36,7 +36,7 @@ public interface WindwardContext {
   <P> P getRequestParameter(String parameterName);
 
   /**
-   * get parameter as list
+   * Get parameter as list
    *
    * @param parameterName parameterName
    * @return parameters list
@@ -44,38 +44,38 @@ public interface WindwardContext {
   List<String> getRequestParameters(String parameterName);
 
   /**
-   * get path variables
+   * Get path variables
    *
    * @return path variables
    */
   Map<String, Object> getPathVariables();
 
   /**
-   * get request body
+   * Get request body
    *
    * @return request body
    */
   String getRequestBody();
 
   /**
-   * get windwardRequest
+   * Get windwardRequest
    *
    * @return windwardRequest
    */
   WindwardRequest windwardRequest();
 
-  /** close context */
+  /** Close context */
   void close();
 
   /**
-   * check if current context is already closed
+   * Check if current context is already closed
    *
    * @return is closed
    */
   Boolean isClosed();
 
   /**
-   * whether context can be cached
+   * Whether context can be cached
    *
    * @return cacheable flag
    */
@@ -84,7 +84,7 @@ public interface WindwardContext {
   }
 
   /**
-   * response data
+   * Response data
    *
    * @param contentType contentType
    * @param data data
@@ -95,7 +95,7 @@ public interface WindwardContext {
   }
 
   /**
-   * response data
+   * Response data
    *
    * @param code response code
    * @param contentType contentType
@@ -105,7 +105,7 @@ public interface WindwardContext {
   <T> void write(int code, String contentType, T data);
 
   /**
-   * response json
+   * Response json
    *
    * @param data data
    * @param <T> type
@@ -115,7 +115,7 @@ public interface WindwardContext {
   }
 
   /**
-   * response json
+   * Response json
    *
    * @param code response code
    * @param data data
@@ -124,7 +124,7 @@ public interface WindwardContext {
   <T> void writeJson(int code, T data);
 
   /**
-   * response plain string
+   * Response plain string
    *
    * @param data strings
    */
@@ -133,7 +133,7 @@ public interface WindwardContext {
   }
 
   /**
-   * response plain string
+   * Response plain string
    *
    * @param code response code
    * @param data strings

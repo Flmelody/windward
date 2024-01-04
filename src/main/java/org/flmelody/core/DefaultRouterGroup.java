@@ -17,7 +17,7 @@
 package org.flmelody.core;
 
 /**
- * default router group
+ * Default router group
  *
  * @author esotericman
  */

@@ -70,7 +70,7 @@ public class Windward implements Router {
   }
 
   /**
-   * prepare core engine of Windward
+   * Prepare core engine of Windward
    *
    * @param port server port
    * @param filters request filters
@@ -81,7 +81,7 @@ public class Windward implements Router {
   }
 
   /**
-   * prepare core engine of Windward
+   * Prepare core engine of Windward
    *
    * @param port server port
    * @param contextPath path of root
@@ -93,7 +93,7 @@ public class Windward implements Router {
   }
 
   /**
-   * prepare core engine of Windward
+   * Prepare core engine of Windward
    *
    * @param port server port
    * @param contextPath path of root
@@ -125,7 +125,7 @@ public class Windward implements Router {
   }
 
   /**
-   * run server
+   * Run server
    *
    * @throws ServerException exception
    */
@@ -134,7 +134,7 @@ public class Windward implements Router {
   }
 
   /**
-   * define new router with specific relativePath
+   * Define new router with specific relativePath
    *
    * @param relativePath relativePath
    * @return routerGroup
@@ -147,7 +147,7 @@ public class Windward implements Router {
   }
 
   /**
-   * register filter
+   * Register filter
    *
    * @param filters filter
    * @return current windward
@@ -161,7 +161,7 @@ public class Windward implements Router {
   }
 
   /**
-   * register exception handler
+   * Register exception handler
    *
    * @param exceptionHandlers exception handler
    * @return current windward
@@ -176,7 +176,7 @@ public class Windward implements Router {
   }
 
   /**
-   * register plugin or overwrite existed
+   * Register plugin or overwrite existed
    *
    * @param clazz plugin class
    * @param plugin plugin
@@ -191,7 +191,7 @@ public class Windward implements Router {
   }
 
   /**
-   * find out registered function by specific path
+   * Find out registered function by specific path
    *
    * @param relativePath relativePath
    * @param method http methods name
@@ -209,7 +209,7 @@ public class Windward implements Router {
   }
 
   /**
-   * get filters
+   * Get filters
    *
    * @return filters
    */
@@ -218,7 +218,7 @@ public class Windward implements Router {
   }
 
   /**
-   * get exception handlers
+   * Get exception handlers
    *
    * @return exception handlers
    */
@@ -227,7 +227,7 @@ public class Windward implements Router {
   }
 
   /**
-   * get plugin
+   * Get plugin
    *
    * @param clazz class of plugin
    * @param <T> plugin type
@@ -242,7 +242,7 @@ public class Windward implements Router {
   }
 
   /**
-   * get plugins by super or self
+   * Get plugins by super or self
    *
    * @param clazz super or self class
    * @param <T> class type

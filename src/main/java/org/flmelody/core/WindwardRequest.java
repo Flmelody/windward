@@ -42,7 +42,7 @@ public class WindwardRequest implements RequestReader {
   private WindwardRequest() {}
 
   /**
-   * get request methods name
+   * Get request methods name
    *
    * @return methods name
    */
@@ -51,7 +51,7 @@ public class WindwardRequest implements RequestReader {
   }
 
   /**
-   * return request header
+   * Return request header
    *
    * @param name headers name
    * @return headers values
@@ -64,7 +64,7 @@ public class WindwardRequest implements RequestReader {
   }
 
   /**
-   * request uri
+   * Request uri
    *
    * @return request uri
    */
@@ -73,7 +73,7 @@ public class WindwardRequest implements RequestReader {
   }
 
   /**
-   * get request querystring
+   * Get request querystring
    *
    * @return querystring or empty
    */
@@ -82,7 +82,7 @@ public class WindwardRequest implements RequestReader {
   }
 
   /**
-   * get path variables
+   * Get path variables
    *
    * @return path variables
    */
@@ -91,7 +91,7 @@ public class WindwardRequest implements RequestReader {
   }
 
   /**
-   * get request body
+   * Get request body
    *
    * @return request body or null
    */
@@ -123,7 +123,7 @@ public class WindwardRequest implements RequestReader {
     return requestReader.bindJson(body, type, groups);
   }
 
-  /** builder for WindwardRequest */
+  /** Builder for WindwardRequest */
   public static class WindwardRequestBuilder {
     private final WindwardRequest windwardRequest;
 

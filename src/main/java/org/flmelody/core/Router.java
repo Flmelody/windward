@@ -28,7 +28,7 @@ import org.flmelody.core.ws.WebSocketWindwardContext;
  */
 public interface Router {
   /**
-   * register function with specific method
+   * Register function with specific method
    *
    * @param httpMethod http method
    * @param relativePath relative path
@@ -39,7 +39,7 @@ public interface Router {
   <R> Router http(HttpMethod httpMethod, String relativePath, Supplier<R> supplier);
 
   /**
-   * register function with specific method
+   * Register function with specific method
    *
    * @param httpMethod http method
    * @param relativePath relative path
@@ -49,7 +49,7 @@ public interface Router {
   Router http(HttpMethod httpMethod, String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
-   * register function with specific method
+   * Register function with specific method
    *
    * @param httpMethod method of http
    * @param relativePath relative path
@@ -60,7 +60,7 @@ public interface Router {
       HttpMethod httpMethod, String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
-   * register function with get method
+   * Register function with get method
    *
    * @param relativePath relative path
    * @param supplier supplier
@@ -70,7 +70,7 @@ public interface Router {
   <R> Router get(String relativePath, Supplier<R> supplier);
 
   /**
-   * register function with get method
+   * Register function with get method
    *
    * @param relativePath relativePath
    * @param consumer function to consume
@@ -79,7 +79,7 @@ public interface Router {
   Router get(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
-   * register function with get method
+   * Register function with get method
    *
    * @param relativePath relative path
    * @param function function to consume
@@ -88,7 +88,7 @@ public interface Router {
   Router get(String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
-   * register function with put method
+   * Register function with put method
    *
    * @param relativePath relative path
    * @param supplier supplier
@@ -98,7 +98,7 @@ public interface Router {
   <R> Router put(String relativePath, Supplier<R> supplier);
 
   /**
-   * register function with put method
+   * Register function with put method
    *
    * @param relativePath relative path
    * @param consumer function to consume
@@ -107,7 +107,7 @@ public interface Router {
   Router put(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
-   * register function with put method
+   * Register function with put method
    *
    * @param relativePath relative path
    * @param function function to consume
@@ -116,7 +116,7 @@ public interface Router {
   Router put(String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
-   * register function with post method
+   * Register function with post method
    *
    * @param relativePath relative path
    * @param supplier supplier
@@ -126,7 +126,7 @@ public interface Router {
   <R> Router post(String relativePath, Supplier<R> supplier);
 
   /**
-   * register function with post method
+   * Register function with post method
    *
    * @param relativePath relative path
    * @param consumer function to consume
@@ -135,7 +135,7 @@ public interface Router {
   Router post(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
-   * register function with post method
+   * Register function with post method
    *
    * @param relativePath relative path
    * @param function function to consume
@@ -144,7 +144,7 @@ public interface Router {
   Router post(String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
-   * register function with delete method
+   * Register function with delete method
    *
    * @param relativePath relative path
    * @param supplier supplier
@@ -154,7 +154,7 @@ public interface Router {
   <R> Router delete(String relativePath, Supplier<R> supplier);
 
   /**
-   * register function with delete method
+   * Register function with delete method
    *
    * @param relativePath relative path
    * @param consumer function to consume
@@ -163,7 +163,7 @@ public interface Router {
   Router delete(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
-   * register function with delete method
+   * Register function with delete method
    *
    * @param relativePath relative path
    * @param function function to consume
@@ -172,7 +172,7 @@ public interface Router {
   Router delete(String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
-   * register websocket function
+   * Register websocket function
    *
    * @param relativePath relative path
    * @param consumer function to consume

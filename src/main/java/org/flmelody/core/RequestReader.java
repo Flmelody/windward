@@ -23,7 +23,7 @@ import java.lang.reflect.Type;
  */
 public interface RequestReader {
   /**
-   * read request body into new object possibly
+   * Read request body into new object possibly
    *
    * @param body json string
    * @param clazz objects class
@@ -33,7 +33,7 @@ public interface RequestReader {
   <I> I readJson(String body, Class<I> clazz);
 
   /**
-   * read request body into new object possibly
+   * Read request body into new object possibly
    *
    * @param body json string
    * @param type objects type
@@ -43,7 +43,7 @@ public interface RequestReader {
   <I> I readJson(String body, Type type);
 
   /**
-   * bind request body to specific class. and return instance of the class
+   * Bind request body to specific class. and return instance of the class
    *
    * @param body json string
    * @param clazz objects class
@@ -54,7 +54,7 @@ public interface RequestReader {
   <I> I bindJson(String body, Class<I> clazz, Class<?>... groups);
 
   /**
-   * bind request body to specific type. and return instance of the type
+   * Bind request body to specific type. and return instance of the type
    *
    * @param body json string
    * @param type objects type

@@ -79,7 +79,7 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
   }
 
   /**
-   * send any data
+   * Send any data
    *
    * @param data any data or raw data
    * @param <T> data type
@@ -92,7 +92,7 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
 
   /**
    * Make sure context upgraded already which means {@link WebSocketEvent#ON_CONNECT} already done.
-   * In general,we only need to access context like below:
+   * In general, we only need to access context like below:
    *
    * <pre>{@code
    *  switch (webSocketWindwardContext.getWebSocketEvent()) {

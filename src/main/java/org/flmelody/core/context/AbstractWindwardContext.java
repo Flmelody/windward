@@ -37,13 +37,7 @@ public abstract class AbstractWindwardContext implements WindwardContext {
     this.windwardResponse = windwardResponse;
   }
 
-  /**
-   * get parameter by name and type
-   *
-   * @param parameterName parameterName
-   * @param <P> class type
-   * @return parameter
-   */
+  /** {@inheritDoc} */
   @Override
   public <P> P getRequestParameter(String parameterName) {
     List<String> parameters = this.windwardRequest.getQuerystring().get(parameterName);
@@ -54,128 +48,74 @@ public abstract class AbstractWindwardContext implements WindwardContext {
     return (P) parameters.get(0);
   }
 
-  /**
-   * get parameter as list
-   *
-   * @param parameterName parameterName
-   * @return parameters list
-   */
+  /** {@inheritDoc} */
   @Override
   public List<String> getRequestParameters(String parameterName) {
     return this.windwardRequest.getQuerystring().get(parameterName);
   }
 
-  /**
-   * get path variables
-   *
-   * @return path variables
-   */
+  /** {@inheritDoc} */
   @Override
   public Map<String, Object> getPathVariables() {
     return this.windwardRequest.getPathVariables();
   }
 
-  /**
-   * get request body
-   *
-   * @return request body
-   */
+  /** {@inheritDoc} */
   @Override
   public String getRequestBody() {
     return this.windwardRequest.getRequestBody();
   }
 
-  /**
-   * get windwardRequest
-   *
-   * @return windwardRequest
-   */
+  /** {@inheritDoc} */
   @Override
   public WindwardRequest windwardRequest() {
     return this.windwardRequest;
   }
 
-  /** close context */
+  /** {@inheritDoc} */
   @Override
   public void close() {
     this.closed = Boolean.TRUE;
     windwardResponse.close();
   }
 
-  /**
-   * check if current context is already closed
-   *
-   * @return is closed
-   */
+  /** {@inheritDoc} */
   @Override
   public Boolean isClosed() {
     return this.closed;
   }
 
-  /**
-   * response json
-   *
-   * @param data data
-   * @param <T> type
-   */
+  /** {@inheritDoc} */
   @Override
   public <T> void writeJson(T data) {
     writeJson(HttpStatus.OK.value(), data);
   }
 
-  /**
-   * response json
-   *
-   * @param code response code
-   * @param data data
-   * @param <T> type
-   */
+  /** {@inheritDoc} */
   @Override
   public <T> void writeJson(int code, T data) {
     write(code, MediaType.APPLICATION_JSON_VALUE, data);
   }
 
-  /**
-   * response plain string
-   *
-   * @param data strings
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeString(String data) {
     writeString(HttpStatus.OK.value(), data);
   }
 
-  /**
-   * response plain string
-   *
-   * @param code response code
-   * @param data strings
-   */
+  /** {@inheritDoc} */
   @Override
   public void writeString(int code, String data) {
     write(code, MediaType.TEXT_PLAIN_VALUE, data);
   }
 
-  /**
-   * response with specific contentType
-   *
-   * @param contentType contentType
-   * @param data data
-   * @param <T> data
-   */
+  /** {@inheritDoc} */
   @Override
   public <T> void write(String contentType, T data) {
     write(HttpStatus.OK.value(), contentType, data);
   }
 
-  /**
-   * response with specific contentType
-   *
-   * @param code code
-   * @param contentType contentType
-   * @param data data
-   * @param <T> data
-   */
+  /** {@inheritDoc} */
   @Override
   public <T> void write(int code, String contentType, T data) {
     windwardResponse.write(code, contentType, data);

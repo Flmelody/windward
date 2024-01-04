@@ -23,7 +23,7 @@ import java.lang.reflect.Type;
  */
 public interface HttpBasicWindwardContext extends WindwardContext {
   /**
-   * read request body into new object possibly
+   * Read request body into new object possibly
    *
    * @param clazz objects class
    * @param <I> objects type
@@ -32,7 +32,7 @@ public interface HttpBasicWindwardContext extends WindwardContext {
   <I> I readJson(Class<I> clazz);
 
   /**
-   * read request body into new object possibly
+   * Read request body into new object possibly
    *
    * @param type objects type
    * @param <I> objects type
@@ -41,7 +41,7 @@ public interface HttpBasicWindwardContext extends WindwardContext {
   <I> I readJson(Type type);
 
   /**
-   * bind request body to specific class. and return instance of the class
+   * Bind request body to specific class. and return instance of the class
    *
    * @param clazz objects class
    * @param groups validate group
@@ -51,7 +51,7 @@ public interface HttpBasicWindwardContext extends WindwardContext {
   <I> I bindJson(Class<I> clazz, Class<?>... groups);
 
   /**
-   * bind request body to specific class. and return instance of the class
+   * Bind request body to specific class. and return instance of the class
    *
    * @param type objects type
    * @param groups validate group
@@ -61,14 +61,14 @@ public interface HttpBasicWindwardContext extends WindwardContext {
   <I> I bindJson(Type type, Class<?>... groups);
 
   /**
-   * redirect
+   * Redirect the client to a new address
    *
    * @param redirectUrl location for redirecting
    */
   void redirect(String redirectUrl);
 
   /**
-   * redirect
+   * Redirect the client to a new address
    *
    * @param code http code of redirecting
    * @param redirectUrl location for redirecting
@@ -76,7 +76,7 @@ public interface HttpBasicWindwardContext extends WindwardContext {
   void redirect(int code, String redirectUrl);
 
   /**
-   * response html directly
+   * Response html directly
    *
    * @param viewUrl templates location
    * @param model templates data

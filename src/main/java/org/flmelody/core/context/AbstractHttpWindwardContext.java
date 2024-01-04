@@ -63,22 +63,13 @@ public abstract class AbstractHttpWindwardContext extends AbstractWindwardContex
     return windwardRequest.bindJson(windwardRequest.getRequestBody(), type, groups);
   }
 
-  /**
-   * redirect
-   *
-   * @param redirectUrl location for redirecting
-   */
+  /** {@inheritDoc} */
   @Override
   public void redirect(String redirectUrl) {
     redirect(HttpStatus.FOUND.value(), redirectUrl);
   }
 
-  /**
-   * redirect
-   *
-   * @param code http code of redirecting
-   * @param redirectUrl location for redirecting
-   */
+  /** {@inheritDoc} */
   @Override
   public void redirect(int code, String redirectUrl) {
     if (HttpStatus.MOVED_PERMANENTLY.value() == code || HttpStatus.FOUND.value() == code) {

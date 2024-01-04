@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public interface ResponseWriter {
   /**
-   * write response data
+   * Write response data
    *
    * @param code http code
    * @param data data
@@ -32,7 +32,7 @@ public interface ResponseWriter {
   <T> void write(int code, T data);
 
   /**
-   * write response data
+   * Write response data
    *
    * @param code http code
    * @param contentType contentType
@@ -42,7 +42,7 @@ public interface ResponseWriter {
   <T> void write(int code, String contentType, T data);
 
   /**
-   * write response data
+   * Write response data
    *
    * @param code http code
    * @param contentType contentType
@@ -53,7 +53,7 @@ public interface ResponseWriter {
   <T> void write(int code, String contentType, Map<String, Object> headers, T data);
 
   /**
-   * write response data
+   * Write response data
    *
    * @param code http code
    * @param contentType contentType
@@ -64,7 +64,7 @@ public interface ResponseWriter {
   <T> void write(int code, String contentType, T data, boolean close);
 
   /**
-   * write response data
+   * Write response data
    *
    * @param code http code
    * @param contentType contentType
@@ -76,7 +76,7 @@ public interface ResponseWriter {
   <T> void write(int code, String contentType, Map<String, Object> headers, T data, boolean close);
 
   /**
-   * write response data
+   * Write response data
    *
    * @param code http code
    * @param contentType contentType
@@ -85,6 +85,6 @@ public interface ResponseWriter {
    */
   <T> void writeAndClose(int code, String contentType, T data);
 
-  /** close connection */
+  /** Close connection */
   void close();
 }

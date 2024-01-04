@@ -20,14 +20,14 @@ import java.lang.reflect.Type;
 import org.flmelody.core.plugin.Plugin;
 
 /**
- * base interface for serializing or deserializing json
+ * Base interface for serializing or deserializing json
  *
  * @author esotericman
  */
 public interface JsonPlugin extends Plugin {
 
   /**
-   * convert data into json string
+   * Convert data into json string
    *
    * @param data data
    * @param <I> type of data
@@ -36,7 +36,7 @@ public interface JsonPlugin extends Plugin {
   <I> String toJson(I data);
 
   /**
-   * convert json string into specific class
+   * Convert json string into specific class
    *
    * @param json json string
    * @param clazz class
@@ -46,7 +46,7 @@ public interface JsonPlugin extends Plugin {
   <O> O toObject(String json, Class<O> clazz);
 
   /**
-   * convert json string into specific type
+   * Convert json string into specific type
    *
    * @param data data
    * @param <I> data type
