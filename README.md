@@ -17,7 +17,7 @@ Light web framework for Java
 <dependency>
     <groupId>org.flmelody</groupId>
     <artifactId>windward</artifactId>
-    <version>1.4.4-RELEASE</version>
+    <version>1.4.5-RELEASE</version>
 </dependency>
 ```
 
@@ -28,7 +28,7 @@ use jackson
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-databind</artifactId>
-    <version>${jackson-databind.version}</version>
+    <version>2.16.0</version>
 </dependency>
 ```
 
@@ -39,7 +39,7 @@ or gson
 <dependency>
     <groupId>com.google.code.gson</groupId>
     <artifactId>gson</artifactId>
-    <version>${gson.version}</version>
+    <version>2.10.1</version>
 </dependency>
 ```
 
