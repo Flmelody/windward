@@ -31,7 +31,6 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter {
 
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) {
-
     if (msg instanceof WebSocketFrame) {
       if (msg instanceof CloseWebSocketFrame) {
         ctx.fireUserEventTriggered(
