@@ -21,4 +21,5 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 /**
  * @author esotericman
  */
-public abstract class AbstractWebSocketDecoder<I> extends MessageToMessageDecoder<I> {}
+public abstract class AbstractWebSocketDecoder<I> extends MessageToMessageDecoder<I>
+    implements WebSocketCodec {}

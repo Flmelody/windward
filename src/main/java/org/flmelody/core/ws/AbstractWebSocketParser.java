@@ -21,4 +21,5 @@ import io.netty.channel.SimpleChannelInboundHandler;
 /**
  * @author esotericman
  */
-public abstract class AbstractWebSocketParser<I> extends SimpleChannelInboundHandler<I> {}
+public abstract class AbstractWebSocketParser<I> extends SimpleChannelInboundHandler<I>
+    implements WebSocketParser {}
