@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.flmelody.core.ws.codec;
+package org.flmelody.core.plugin.ws;
 
-import org.flmelody.core.Order;
+import org.flmelody.core.plugin.Plugin;
 
 /**
  * @author esotericman
  */
-public interface WebSocketCodec extends Order {}
+interface WebSocketPlugin extends Plugin {}

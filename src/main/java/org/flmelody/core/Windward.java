@@ -389,7 +389,7 @@ public class Windward implements Router {
       List<WebSocketCodec> codecs,
       List<WebSocketParser> parsers,
       Consumer<WebSocketWindwardContext> consumer) {
-    group(UrlUtil.SLASH).ws(relativePath, consumer);
+    group(UrlUtil.SLASH).ws(relativePath, codecs, parsers, consumer);
     return this;
   }
 }
