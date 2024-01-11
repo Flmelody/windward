@@ -16,10 +16,12 @@
 
 package org.flmelody.core.ws.codec;
 
-import io.netty.handler.codec.MessageToMessageEncoder;
+import io.netty.handler.codec.MessageToMessageDecoder;
 
 /**
+ * Inherit this class to implement custom decoding.
+ *
  * @author esotericman
  */
-public abstract class AbstractWebSocketEncoder<I> extends MessageToMessageEncoder<I>
+public abstract class WebSocketDecoder<I> extends MessageToMessageDecoder<I>
     implements WebSocketCodec {}

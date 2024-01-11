@@ -18,7 +18,6 @@ package org.flmelody.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -41,9 +40,7 @@ import org.flmelody.core.plugin.view.ViewEngineDetector;
 import org.flmelody.core.plugin.view.freemarker.FreemarkerView;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
 import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
-import org.flmelody.core.ws.WebSocketParser;
 import org.flmelody.core.ws.WebSocketWindwardContext;
-import org.flmelody.core.ws.codec.WebSocketCodec;
 import org.flmelody.util.UrlUtil;
 
 /**
@@ -379,17 +376,7 @@ public class Windward implements Router {
   /** {@inheritDoc} */
   @Override
   public Windward ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
-    return ws(relativePath, Collections.emptyList(), Collections.emptyList(), consumer);
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public Windward ws(
-      String relativePath,
-      List<WebSocketCodec> codecs,
-      List<WebSocketParser> parsers,
-      Consumer<WebSocketWindwardContext> consumer) {
-    group(UrlUtil.SLASH).ws(relativePath, codecs, parsers, consumer);
+    group(UrlUtil.SLASH).ws(relativePath, consumer);
     return this;
   }
 }

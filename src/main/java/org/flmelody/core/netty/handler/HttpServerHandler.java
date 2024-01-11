@@ -16,6 +16,8 @@
 
 package org.flmelody.core.netty.handler;
 
+import static org.flmelody.core.netty.handler.WebSocketHandler.MULTIPLE_SUBSCRIBER;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -51,9 +53,12 @@ import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.exception.HandlerNotFoundException;
 import org.flmelody.core.netty.NettyResponseWriter;
+import org.flmelody.core.plugin.ws.ExtensionalWebSocketPlugin;
 import org.flmelody.core.ws.WebSocketEvent;
 import org.flmelody.core.ws.WebSocketFireEvent;
+import org.flmelody.core.ws.WebSocketParser;
 import org.flmelody.core.ws.WebSocketWindwardContext;
+import org.flmelody.core.ws.codec.WebSocketCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +104,8 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
                 WebSocketServerProtocolHandler.class.getSimpleName(),
                 new WebSocketServerProtocolHandler(fullHttpRequest.uri(), null, true));
         ctx.pipeline().addLast(new SocketTailHandler());
+        // Adaptation of appropriate codecs and message parsers
+        extractHandlers(ctx, uri);
         ctx.fireChannelRead(fullHttpRequest.retain());
         return;
       }
@@ -109,6 +116,8 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         websocketWindwardContext.setHttpResponse(true);
       }
       handle(functionMetaInfo, windwardContext);
+    } else {
+      ctx.fireChannelRead(msg);
     }
   }
 
@@ -142,6 +151,27 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
                     handle(cachedFunctionMetaInfo, webSocketWindwardContext);
                   }
                 });
+  }
+
+  private void extractHandlers(ChannelHandlerContext ctx, String uri) {
+    List<ExtensionalWebSocketPlugin> plugins = Windward.plugins(ExtensionalWebSocketPlugin.class);
+    for (ExtensionalWebSocketPlugin plugin : plugins) {
+      if (plugin.isMatch(uri)) {
+        List<WebSocketCodec> webSocketCodecs = plugin.getWebSocketCodecs();
+        List<WebSocketParser<?>> webSocketParsers = plugin.getWebSocketParsers();
+        boolean emptyCodecs = webSocketCodecs == null || webSocketCodecs.isEmpty();
+        boolean emptyParsers = webSocketParsers == null || webSocketParsers.isEmpty();
+        // Custom parsing generally requires both a codec and a message parser to be configured.
+        if (emptyCodecs || emptyParsers) {
+          continue;
+        }
+        ctx.pipeline().addLast(webSocketCodecs.toArray(new WebSocketCodec[0]));
+        ctx.pipeline().addLast(webSocketParsers.toArray(new WebSocketParser[0]));
+        ctx.channel().attr(MULTIPLE_SUBSCRIBER).set(true);
+        // Direct return without multiple merges to avoid unnecessary problems
+        break;
+      }
+    }
   }
 
   private Map<String, List<String>> prepareHeaders(HttpHeaders httpHeaders) {

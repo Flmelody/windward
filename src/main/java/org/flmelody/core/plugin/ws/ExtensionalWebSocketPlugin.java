@@ -16,30 +16,66 @@
 
 package org.flmelody.core.plugin.ws;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.flmelody.core.Order;
 import org.flmelody.core.ws.WebSocketParser;
 import org.flmelody.core.ws.codec.WebSocketCodec;
+import org.flmelody.util.AntPathMatcher;
 
 /**
  * Holder of websockets codecs or parsers. This plugin is globally scoped.
  *
  * @author esotericman
  */
-public abstract class ExtensionalWebSocketPlugin implements WebSocketPlugin {
+public class ExtensionalWebSocketPlugin implements WebSocketPlugin {
+  private final AntPathMatcher pathMatcher = AntPathMatcher.newBuild().withIgnoreCase().build();
+  protected final String pattern;
   private final List<WebSocketCodec> webSocketCodecs;
-  private final List<WebSocketParser> webSocketParsers;
+  private final List<WebSocketParser<?>> webSocketParsers;
+
+  public ExtensionalWebSocketPlugin(
+      List<WebSocketCodec> webSocketCodecs, List<WebSocketParser<?>> webSocketParsers) {
+    this("/**", webSocketCodecs, webSocketParsers);
+  }
 
   protected ExtensionalWebSocketPlugin(
-      List<WebSocketCodec> webSocketCodecs, List<WebSocketParser> webSocketParsers) {
-    this.webSocketCodecs = webSocketCodecs;
-    this.webSocketParsers = webSocketParsers;
+      String pattern,
+      List<WebSocketCodec> webSocketCodecs,
+      List<WebSocketParser<?>> webSocketParsers) {
+    if (pattern == null) {
+      throw new IllegalArgumentException("");
+    }
+    this.pattern = pattern;
+    if (webSocketCodecs == null) {
+      this.webSocketCodecs = Collections.emptyList();
+    } else {
+      this.webSocketCodecs =
+          webSocketCodecs.stream()
+              .sorted(Comparator.comparingInt(Order::getOrder))
+              .collect(Collectors.toList());
+    }
+    if (webSocketParsers == null) {
+      this.webSocketParsers = Collections.emptyList();
+    } else {
+      this.webSocketParsers =
+          webSocketParsers.stream()
+              .sorted(Comparator.comparingInt(Order::getOrder))
+              .collect(Collectors.toList());
+    }
+  }
+
+  public boolean isMatch(String path) {
+    return this.pathMatcher.isMatch(pattern, path);
   }
 
   public List<WebSocketCodec> getWebSocketCodecs() {
     return webSocketCodecs;
   }
 
-  public List<WebSocketParser> getWebSocketParsers() {
+  public List<WebSocketParser<?>> getWebSocketParsers() {
     return webSocketParsers;
   }
 }

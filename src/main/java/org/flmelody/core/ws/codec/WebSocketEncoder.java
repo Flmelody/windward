@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.flmelody.core.ws;
+package org.flmelody.core.ws.codec;
 
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.MessageToMessageEncoder;
 
 /**
+ * Inherit this class to implement custom coding.
+ *
  * @author esotericman
  */
-public abstract class AbstractWebSocketParser<I> extends SimpleChannelInboundHandler<I>
-    implements WebSocketParser {}
+public abstract class WebSocketEncoder<I> extends MessageToMessageEncoder<I>
+    implements WebSocketCodec {}

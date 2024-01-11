@@ -182,19 +182,4 @@ public interface Router {
    * @return this
    */
   Router ws(String relativePath, Consumer<WebSocketWindwardContext> consumer);
-
-  /**
-   * Register websocket function
-   *
-   * @param relativePath relative path
-   * @param codecs codecs
-   * @param parsers parsers
-   * @param consumer function to consume
-   * @return this
-   */
-  Router ws(
-      String relativePath,
-      List<WebSocketCodec> codecs,
-      List<WebSocketParser> parsers,
-      Consumer<WebSocketWindwardContext> consumer);
 }

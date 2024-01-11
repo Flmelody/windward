@@ -21,6 +21,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.util.AttributeKey;
 import org.flmelody.core.ws.WebSocketEvent;
 import org.flmelody.core.ws.WebSocketFireEvent;
 
@@ -28,6 +29,8 @@ import org.flmelody.core.ws.WebSocketFireEvent;
  * @author esotericman
  */
 public class WebSocketHandler extends ChannelInboundHandlerAdapter {
+  static final AttributeKey<Boolean> MULTIPLE_SUBSCRIBER =
+      AttributeKey.newInstance("windward_multiple_subscriber");
 
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -56,6 +59,11 @@ public class WebSocketHandler extends ChannelInboundHandlerAdapter {
                 .event(WebSocketEvent.ON_MESSAGE)
                 .data(msg)
                 .build());
+      }
+      boolean b = ctx.channel().hasAttr(MULTIPLE_SUBSCRIBER);
+      if (b) {
+        ((WebSocketFrame) msg).retain();
+        ctx.fireChannelRead(msg);
       }
     }
   }

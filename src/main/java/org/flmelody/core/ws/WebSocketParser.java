@@ -16,7 +16,12 @@
 
 package org.flmelody.core.ws;
 
+import io.netty.channel.SimpleChannelInboundHandler;
+import org.flmelody.core.Order;
+
 /**
+ * Inherit this class to implement custom format message parsing.
+ *
  * @author esotericman
  */
-public interface WebSocketParser {}
+public abstract class WebSocketParser<I> extends SimpleChannelInboundHandler<I> implements Order {}
