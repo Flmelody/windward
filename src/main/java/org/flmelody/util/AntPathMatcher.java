@@ -74,7 +74,7 @@ public class AntPathMatcher {
     int pointer = skipBlanks(path);
 
     return !path.isEmpty()
-        && (equal(path.charAt(pointer), patternStart) || patternStart == QUESTION)
+        && (compareChar(path.charAt(pointer), patternStart) || patternStart == QUESTION)
         && isMatch(pattern.substring(1), path.substring(pointer + 1));
   }
 
@@ -121,7 +121,7 @@ public class AntPathMatcher {
     return pointer;
   }
 
-  private boolean equal(final char pathChar, final char patternChar) {
+  private boolean compareChar(final char pathChar, final char patternChar) {
     if (ignoreCase) {
       return pathChar == patternChar
           || ((pathChar > patternChar)
