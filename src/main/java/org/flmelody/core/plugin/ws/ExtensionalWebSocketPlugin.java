@@ -48,8 +48,8 @@ public class ExtensionalWebSocketPlugin implements WebSocketPlugin {
       String pattern,
       List<WebSocketCodec> webSocketCodecs,
       List<WebSocketParser<?>> webSocketParsers) {
-    if (pattern == null) {
-      throw new IllegalArgumentException("");
+    if (pattern == null || pattern.isEmpty()) {
+      throw new IllegalArgumentException("Pattern can't be empty");
     }
     this.pattern = pattern;
     if (webSocketCodecs == null) {
