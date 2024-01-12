@@ -103,9 +103,9 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
                 ctx.name(),
                 WebSocketServerProtocolHandler.class.getSimpleName(),
                 new WebSocketServerProtocolHandler(fullHttpRequest.uri(), null, true));
-        ctx.pipeline().addLast(new SocketTailHandler());
         // Adaptation of appropriate codecs and message parsers
         extractHandlers(ctx, uri);
+        ctx.pipeline().addLast(new SocketTailHandler());
         ctx.fireChannelRead(fullHttpRequest.retain());
         return;
       }

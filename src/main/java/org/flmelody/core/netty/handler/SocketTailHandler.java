@@ -44,8 +44,7 @@ public class SocketTailHandler extends ChannelInboundHandlerAdapter {
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-    ctx.fireUserEventTriggered(
+    ctx.pipeline().fireUserEventTriggered(
         WebSocketFireEvent.builder().reset().event(WebSocketEvent.ON_ERROR).build());
-    super.exceptionCaught(ctx, cause);
   }
 }

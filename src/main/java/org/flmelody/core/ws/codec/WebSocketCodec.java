@@ -16,8 +16,7 @@
 
 package org.flmelody.core.ws.codec;
 
-import io.netty.channel.ChannelInboundHandler;
-import io.netty.channel.ChannelOutboundHandler;
+import io.netty.channel.ChannelHandler;
 import org.flmelody.core.Order;
 
 /**
@@ -28,4 +27,4 @@ import org.flmelody.core.Order;
  * @see WebSocketEncoder
  * @author esotericman
  */
-public interface WebSocketCodec extends Order, ChannelInboundHandler, ChannelOutboundHandler {}
+public interface WebSocketCodec extends Order, ChannelHandler {}
