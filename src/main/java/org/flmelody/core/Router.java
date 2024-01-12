@@ -16,15 +16,12 @@
 
 package org.flmelody.core;
 
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
-import org.flmelody.core.ws.WebSocketParser;
 import org.flmelody.core.ws.WebSocketWindwardContext;
-import org.flmelody.core.ws.codec.WebSocketCodec;
 
 /**
  * @author flmelody
@@ -180,6 +177,7 @@ public interface Router {
    * @param relativePath relative path
    * @param consumer function to consume
    * @return this
+   * @see org.flmelody.core.plugin.ws.ExtensionalWebSocketPlugin
    */
   Router ws(String relativePath, Consumer<WebSocketWindwardContext> consumer);
 }

@@ -26,8 +26,11 @@ import org.flmelody.core.ws.codec.WebSocketCodec;
 import org.flmelody.util.AntPathMatcher;
 
 /**
- * Holder of websockets codecs or parsers. This plugin is globally scoped.
+ * Holder of websockets codecs or parsers. This plugin is globally scoped. Note that currently at
+ * least one codec and one message parser are included for this plugin to work.
  *
+ * @see WebSocketCodec
+ * @see WebSocketParser
  * @author esotericman
  */
 public class ExtensionalWebSocketPlugin implements WebSocketPlugin {
