@@ -5,16 +5,16 @@ package org.flmelody.util;
  * the following rules:
  *
  * <p>'?' - matches one character '*' - matches zero or more characters '**' - matches zero or more
- * directories in a path
+ * directories in a path.
  *
  * <p>The instances of this class can be configured via its {@link Builder} to: (1) Use a custom
  * path separator. The default is '/' character (2) Ignore character case during comparison. The
  * default is {@code false} (3) Match start. Determines whether the pattern at least matches as far
  * as the given base path goes, assuming that a full path may then match as well. The default is
- * {@code false}
+ * {@code false}.
  *
- * <p>(4) Specify whether to trim tokenized paths. The default is {@code false} The custom path
- * separator & ignoring character case options were inspired by Spring's AntPathMatcher
+ * <p>Specify whether to trim tokenized paths. The default is {@code false} The custom path
+ * separator &amp; ignoring character case options were inspired by Spring's AntPathMatcher.
  *
  * @author original author
  * @see <a href="https://github.com/azagniotov/ant-style-path-matcher">azagniotov</a>
@@ -87,25 +87,6 @@ public class AntPathMatcher {
 
     return false;
   }
-
-  /*
-   private boolean doubleAsteriskMatch(final String pattern, final String path) {
-      if (pattern.charAt(1) != ASTERISK) {
-          return false;
-      } else if (pattern.length() > 2 && isMatch(pattern.substring(3), path)) {
-          return true;
-      }
-
-      int pointer = 0;
-      for (int idx = 0; idx < path.length(); idx++) {
-          if (path.charAt(idx) == pathSeparator) {
-              pointer = idx;
-              break;
-          }
-      }
-      return isMatch(pattern.substring(2), path.substring(pointer));
-  }
-   */
 
   public static AntPathMatcher.Builder newBuild() {
     return new AntPathMatcher.Builder();
