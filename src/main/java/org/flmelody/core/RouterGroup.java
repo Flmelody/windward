@@ -19,7 +19,7 @@ package org.flmelody.core;
 /**
  * @author esotericman
  */
-public interface RouterGroup<M> extends Router {
+public interface RouterGroup<M> extends Router<RouterGroup<M>> {
   /**
    * Find out matched router function
    *

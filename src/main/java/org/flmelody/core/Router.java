@@ -26,7 +26,7 @@ import org.flmelody.core.ws.WebSocketWindwardContext;
 /**
  * @author flmelody
  */
-public interface Router {
+public interface Router<T> {
   /**
    * Register function with specific method
    *
@@ -36,7 +36,7 @@ public interface Router {
    * @return this
    * @param <R> response data
    */
-  <R> Router http(HttpMethod httpMethod, String relativePath, Supplier<R> supplier);
+  <R> T http(HttpMethod httpMethod, String relativePath, Supplier<R> supplier);
 
   /**
    * Register function with specific method
@@ -46,7 +46,7 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router http(HttpMethod httpMethod, String relativePath, Consumer<SimpleWindwardContext> consumer);
+  T http(HttpMethod httpMethod, String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
    * Register function with specific method
@@ -56,8 +56,7 @@ public interface Router {
    * @param function function to consume
    * @return this
    */
-  Router http(
-      HttpMethod httpMethod, String relativePath, Function<EnhancedWindwardContext, ?> function);
+  T http(HttpMethod httpMethod, String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
    * Register function with get method
@@ -67,7 +66,7 @@ public interface Router {
    * @param <R> response data
    * @return this
    */
-  <R> Router get(String relativePath, Supplier<R> supplier);
+  <R> T get(String relativePath, Supplier<R> supplier);
 
   /**
    * Register function with get method
@@ -76,7 +75,7 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router get(String relativePath, Consumer<SimpleWindwardContext> consumer);
+  T get(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
    * Register function with get method
@@ -85,7 +84,7 @@ public interface Router {
    * @param function function to consume
    * @return this
    */
-  Router get(String relativePath, Function<EnhancedWindwardContext, ?> function);
+  T get(String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
    * Register function with put method
@@ -95,7 +94,7 @@ public interface Router {
    * @param <R> response data
    * @return this
    */
-  <R> Router put(String relativePath, Supplier<R> supplier);
+  <R> T put(String relativePath, Supplier<R> supplier);
 
   /**
    * Register function with put method
@@ -104,7 +103,7 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router put(String relativePath, Consumer<SimpleWindwardContext> consumer);
+  T put(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
    * Register function with put method
@@ -113,7 +112,7 @@ public interface Router {
    * @param function function to consume
    * @return this
    */
-  Router put(String relativePath, Function<EnhancedWindwardContext, ?> function);
+  T put(String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
    * Register function with post method
@@ -123,7 +122,7 @@ public interface Router {
    * @param <R> response data
    * @return this
    */
-  <R> Router post(String relativePath, Supplier<R> supplier);
+  <R> T post(String relativePath, Supplier<R> supplier);
 
   /**
    * Register function with post method
@@ -132,7 +131,7 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router post(String relativePath, Consumer<SimpleWindwardContext> consumer);
+  T post(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
    * Register function with post method
@@ -141,7 +140,7 @@ public interface Router {
    * @param function function to consume
    * @return this
    */
-  Router post(String relativePath, Function<EnhancedWindwardContext, ?> function);
+  T post(String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
    * Register function with delete method
@@ -151,7 +150,7 @@ public interface Router {
    * @param <R> response data
    * @return this
    */
-  <R> Router delete(String relativePath, Supplier<R> supplier);
+  <R> T delete(String relativePath, Supplier<R> supplier);
 
   /**
    * Register function with delete method
@@ -160,7 +159,7 @@ public interface Router {
    * @param consumer function to consume
    * @return this
    */
-  Router delete(String relativePath, Consumer<SimpleWindwardContext> consumer);
+  T delete(String relativePath, Consumer<SimpleWindwardContext> consumer);
 
   /**
    * Register function with delete method
@@ -169,7 +168,7 @@ public interface Router {
    * @param function function to consume
    * @return this
    */
-  Router delete(String relativePath, Function<EnhancedWindwardContext, ?> function);
+  T delete(String relativePath, Function<EnhancedWindwardContext, ?> function);
 
   /**
    * Register websocket function
@@ -179,5 +178,5 @@ public interface Router {
    * @return this
    * @see org.flmelody.core.plugin.ws.ExtensionalWebSocketPlugin
    */
-  Router ws(String relativePath, Consumer<WebSocketWindwardContext> consumer);
+  T ws(String relativePath, Consumer<WebSocketWindwardContext> consumer);
 }

@@ -46,7 +46,7 @@ import org.flmelody.util.UrlUtil;
 /**
  * @author esotericman
  */
-public class Windward implements Router {
+public class Windward implements Router<Windward> {
   // registered function
   private static final List<AbstractRouterGroup<Windward>> routerGroups = new ArrayList<>();
   // filters
