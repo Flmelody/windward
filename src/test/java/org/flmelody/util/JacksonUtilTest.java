@@ -1,10 +1,9 @@
-package org.flmelody;
+package org.flmelody.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.flmelody.core.exception.JsonDeserializeException;
 import org.flmelody.core.exception.JsonSerializeException;
-import org.flmelody.util.JacksonUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
