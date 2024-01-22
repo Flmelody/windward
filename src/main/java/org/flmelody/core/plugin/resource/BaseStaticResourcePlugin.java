@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package org.flmelody.core.plugin.resolver;
+package org.flmelody.core.plugin.resource;
 
-import org.flmelody.core.Windward;
-import org.flmelody.core.plugin.Plugin;
-import org.flmelody.core.plugin.view.AbstractViewPlugin;
+import java.util.function.Consumer;
+import org.flmelody.core.context.WindwardContext;
 
 /**
  * @author esotericman
  */
-public class ViewPluginResolver implements PluginResolver {
+public class BaseStaticResourcePlugin implements ResourcePlugin, Consumer<WindwardContext> {
+  protected final String[] staticResourceLocations;
+
+  public BaseStaticResourcePlugin(String[] staticResourceLocations) {
+    this.staticResourceLocations = staticResourceLocations;
+  }
+
   @Override
-  public void resolve(Windward windward, Plugin plugin) {
-    if (plugin instanceof AbstractViewPlugin) {
-      ((AbstractViewPlugin) plugin).setTemplateLocationPrefix(windward.getTemplateRoot());
-    }
+  public void accept(WindwardContext windwardContext) {
+    // todo
   }
 }

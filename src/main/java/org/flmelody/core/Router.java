@@ -179,4 +179,12 @@ public interface Router<T> {
    * @see org.flmelody.core.plugin.ws.ExtensionalWebSocketPlugin
    */
   T ws(String relativePath, Consumer<WebSocketWindwardContext> consumer);
+
+  /**
+   * Register resources path pattern
+   *
+   * @param pathPatterns resources path pattern
+   * @return this
+   */
+  T resource(String... pathPatterns);
 }

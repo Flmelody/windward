@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -32,7 +33,9 @@ import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.exception.RouterMappingException;
+import org.flmelody.core.plugin.resource.ResourcePlugin;
 import org.flmelody.core.ws.WebSocketWindwardContext;
+import org.flmelody.util.AntPathMatcher;
 import org.flmelody.util.UrlUtil;
 
 /**
@@ -43,6 +46,9 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
   private String groupPath;
   private final Map<String, Map<String, ? super Object>> routers =
       Collections.synchronizedMap(new LinkedHashMap<>(2 << 3));
+  private final AntPathMatcher antPathMatcher = AntPathMatcher.newBuild().build();
+  private final Map<String, Boolean> matchedRouter = new ConcurrentHashMap<>();
+  private boolean resourceRouter;
 
   protected AbstractRouterGroup(M manager) {
     this(manager, "/");
@@ -132,6 +138,19 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
   }
 
   @Override
+  public RouterGroup<M> resource(String... pathPatterns) {
+    if (pathPatterns != null) {
+      ResourcePlugin resourcePlugin = Windward.plugin(ResourcePlugin.class);
+      for (String pathPattern : pathPatterns) {
+        registerRouter(
+            pathPattern, HttpMethod.GET.name(), resourcePlugin, SimpleWindwardContext.class);
+      }
+      this.resourceRouter = true;
+    }
+    return this;
+  }
+
+  @Override
   public <R> RouterGroup<M> http(HttpMethod httpMethod, String relativePath, Supplier<R> supplier) {
     registerRouter(relativePath, httpMethod.name(), supplier, SimpleWindwardContext.class);
     return this;
@@ -166,7 +185,23 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
         Pattern compiledPattern = Pattern.compile("\\{(.*?)}");
         Matcher compiledMatcher = compiledPattern.matcher(routerKey);
         if (!compiledMatcher.find()) {
-          continue;
+          // If it's a GET request, try to match it again using Ant-style path patterns
+          if (HttpMethod.GET.name().equalsIgnoreCase(method) && resourceRouter) {
+            Boolean result = matchedRouter.get(relativePath);
+            if (Boolean.TRUE.equals(result)) {
+              //noinspection unchecked
+              return (R) routers.get(routerKey).get(method);
+            } else {
+              boolean matched = antPathMatcher.isMatch(routerKey, relativePath);
+              matchedRouter.put(relativePath, matched);
+              if (matched) {
+                //noinspection unchecked
+                return (R) routers.get(routerKey).get(method);
+              }
+            }
+          } else {
+            continue;
+          }
         }
         String routerRegex = routerKey.replaceAll("\\{(.*?)}", "(.+)");
         if (relativePath.matches(routerRegex)) {

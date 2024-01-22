@@ -36,6 +36,8 @@ import org.flmelody.core.plugin.json.AutoJsonBinder;
 import org.flmelody.core.plugin.json.JsonPlugin;
 import org.flmelody.core.plugin.resolver.CompositePluginResolver;
 import org.flmelody.core.plugin.resolver.PluginResolver;
+import org.flmelody.core.plugin.resource.BaseStaticResourcePlugin;
+import org.flmelody.core.plugin.resource.ResourcePlugin;
 import org.flmelody.core.plugin.view.ViewEngineDetector;
 import org.flmelody.core.plugin.view.freemarker.FreemarkerView;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
@@ -55,14 +57,19 @@ public class Windward implements Router<Windward> {
   private static final List<ExceptionHandler> globalExceptionHandlers = new ArrayList<>();
   // plugins
   private static final Map<Class<?>, Plugin> globalPlugins = new HashMap<>();
+  // root context of application
   private final String contextPath;
-  private final String resourceRoot;
+  // template files location
+  private final String templateRoot;
+  // static files locations
+  private final String[] staticResourceLocations;
   private final PluginResolver pluginResolver = new CompositePluginResolver();
   private HttpServer httpServer;
 
-  private Windward(String contextPath, String resourceRoot) {
+  private Windward(String contextPath, String templateRoot, String[] staticResourceLocations) {
     this.contextPath = contextPath;
-    this.resourceRoot = resourceRoot;
+    this.templateRoot = templateRoot;
+    this.staticResourceLocations = staticResourceLocations;
   }
 
   public static Windward setup() {
@@ -89,7 +96,7 @@ public class Windward implements Router<Windward> {
    * @return core engine of Windward
    */
   public static Windward setup(int port, String contextPath, Filter... filters) {
-    return setup(port, contextPath, "/templates", filters);
+    return setup(port, contextPath, "/templates", new String[] {"/static"}, filters);
   }
 
   /**
@@ -97,21 +104,30 @@ public class Windward implements Router<Windward> {
    *
    * @param port server port
    * @param contextPath path of root
-   * @param resourceRoot root for resource
+   * @param templateRoot root for template files
+   * @param staticResourceLocations locations of static resource
    * @param filters request filters
    * @return core engine of Windward
    */
   public static Windward setup(
-      int port, String contextPath, String resourceRoot, Filter... filters) {
-    Windward windward = new Windward(contextPath, resourceRoot);
+      int port,
+      String contextPath,
+      String templateRoot,
+      String[] staticResourceLocations,
+      Filter... filters) {
+    Windward windward = new Windward(contextPath, templateRoot, staticResourceLocations);
     windward.httpServer = new NettyHttpServer(port);
-    windward.registerFilter(filters).registerPlugin(JsonPlugin.class, AutoJsonBinder.jsonPlugin);
+    windward
+        .registerExceptionHandler(new DefaultNotFoundHandler())
+        .registerFilter(filters)
+        .registerPlugin(JsonPlugin.class, AutoJsonBinder.jsonPlugin)
+        .registerPlugin(
+            ResourcePlugin.class, new BaseStaticResourcePlugin(staticResourceLocations));
     return prepareDefault(windward);
   }
 
   // prepare template engine
   private static Windward prepareDefault(Windward windward) {
-    windward.registerExceptionHandler(new DefaultNotFoundHandler());
     if (ViewEngineDetector.AVAILABLE_GROOVY_ENGINE) {
       windward.registerPlugin(GroovyView.class, new GroovyView());
     }
@@ -263,8 +279,12 @@ public class Windward implements Router<Windward> {
     return contextPath;
   }
 
-  public String getResourceRoot() {
-    return resourceRoot;
+  public String getTemplateRoot() {
+    return templateRoot;
+  }
+
+  public String[] getStaticResourceLocations() {
+    return staticResourceLocations;
   }
 
   public Windward then() {
@@ -377,6 +397,13 @@ public class Windward implements Router<Windward> {
   @Override
   public Windward ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
     group(UrlUtil.SLASH).ws(relativePath, consumer);
+    return this;
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public Windward resource(String... pattern) {
+    group(UrlUtil.SLASH).resource(pattern);
     return this;
   }
 }

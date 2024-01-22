@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package org.flmelody.core.plugin.resolver;
+package org.flmelody.core.plugin.resource;
 
-import org.flmelody.core.Windward;
 import org.flmelody.core.plugin.Plugin;
-import org.flmelody.core.plugin.view.AbstractViewPlugin;
 
 /**
  * @author esotericman
  */
-public class ViewPluginResolver implements PluginResolver {
-  @Override
-  public void resolve(Windward windward, Plugin plugin) {
-    if (plugin instanceof AbstractViewPlugin) {
-      ((AbstractViewPlugin) plugin).setTemplateLocationPrefix(windward.getTemplateRoot());
-    }
-  }
-}
+public interface ResourcePlugin extends Plugin {}
