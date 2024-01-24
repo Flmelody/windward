@@ -33,6 +33,11 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
     super(staticResourceLocations);
   }
 
+  // Add custom page yourself
+  public void appendPage(String pageName) {
+    this.fixedPages.add(pageName);
+  }
+
   @Override
   public void accept(WindwardContext windwardContext) {
     super.accept(windwardContext);
