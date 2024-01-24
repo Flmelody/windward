@@ -54,6 +54,9 @@ public enum MediaType {
   }
 
   public static MediaType detectMediaType(String type) {
+    if (type == null) {
+      return APPLICATION_STREAM_VALUE;
+    }
     String baseType = null;
     for (MediaType mediaType : MediaType.values()) {
       if (mediaType.value.contains(type)) {
