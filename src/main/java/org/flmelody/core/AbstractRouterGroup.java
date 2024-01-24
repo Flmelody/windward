@@ -145,6 +145,9 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
         registerRouter(
             pathPattern, HttpMethod.GET.name(), resourcePlugin, SimpleWindwardContext.class);
       }
+      if (!resourceRouter) {
+        this.resourceRouter = true;
+      }
     }
     return this;
   }

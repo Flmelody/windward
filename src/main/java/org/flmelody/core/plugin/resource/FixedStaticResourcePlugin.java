@@ -16,6 +16,7 @@
 
 package org.flmelody.core.plugin.resource;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,8 +35,10 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
   }
 
   // Add custom page yourself
-  public void appendPage(String pageName) {
-    this.fixedPages.add(pageName);
+  public void appendPages(String... pageNames) {
+    if (pageNames != null) {
+      this.fixedPages.addAll(Arrays.asList(pageNames));
+    }
   }
 
   @Override
