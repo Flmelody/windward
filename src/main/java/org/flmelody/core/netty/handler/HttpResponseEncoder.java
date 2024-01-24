@@ -33,7 +33,7 @@ public class HttpResponseEncoder extends MessageToMessageEncoder<FullHttpRespons
   @Override
   protected void encode(ChannelHandlerContext ctx, FullHttpResponse msg, List<Object> out) {
     WebSocketFrame webSocketFrame;
-    if (msg.headers().contains(MediaType.WEB_SOCKET_BINARY)) {
+    if (msg.headers().contains(MediaType.WEB_SOCKET_BINARY.value)) {
       webSocketFrame = new BinaryWebSocketFrame(msg.content());
     } else {
       webSocketFrame = new TextWebSocketFrame(msg.content());

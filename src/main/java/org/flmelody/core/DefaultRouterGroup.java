@@ -29,4 +29,13 @@ public class DefaultRouterGroup extends AbstractRouterGroup<Windward> {
   public DefaultRouterGroup(Windward windward, String relativePath) {
     super(windward, relativePath);
   }
+
+  public DefaultRouterGroup(Windward windward, String relativePath, boolean resourceRouter) {
+    super(windward, relativePath);
+    this.resourceRouter = true;
+  }
+
+  public boolean isResourceGroup() {
+    return resourceRouter;
+  }
 }

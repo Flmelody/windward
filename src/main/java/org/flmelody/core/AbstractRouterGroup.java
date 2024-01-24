@@ -48,7 +48,7 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
       Collections.synchronizedMap(new LinkedHashMap<>(2 << 3));
   private final AntPathMatcher antPathMatcher = AntPathMatcher.newBuild().build();
   private final Map<String, Boolean> matchedRouter = new ConcurrentHashMap<>();
-  private boolean resourceRouter;
+  protected boolean resourceRouter;
 
   protected AbstractRouterGroup(M manager) {
     this(manager, "/");
@@ -145,7 +145,6 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
         registerRouter(
             pathPattern, HttpMethod.GET.name(), resourcePlugin, SimpleWindwardContext.class);
       }
-      this.resourceRouter = true;
     }
     return this;
   }
@@ -198,6 +197,7 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
                 //noinspection unchecked
                 return (R) routers.get(routerKey).get(method);
               }
+              continue;
             }
           } else {
             continue;

@@ -51,7 +51,7 @@ public class NettyResponseWriter implements ResponseWriter {
 
   @Override
   public <T> void write(int code, T data) {
-    write(code, MediaType.APPLICATION_JSON_VALUE, data);
+    write(code, MediaType.APPLICATION_JSON_VALUE.value, data);
   }
 
   @Override
@@ -80,7 +80,7 @@ public class NettyResponseWriter implements ResponseWriter {
     if (data == null) {
       response = Unpooled.EMPTY_BUFFER;
     } else {
-      if (MediaType.APPLICATION_JSON_VALUE.equals(contentType)) {
+      if (MediaType.APPLICATION_JSON_VALUE.value.equals(contentType)) {
         response =
             Unpooled.copiedBuffer(
                 Windward.plugin(JsonPlugin.class).toJson(data), CharsetUtil.UTF_8);

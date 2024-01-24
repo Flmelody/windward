@@ -86,7 +86,7 @@ public class WebSocketWindwardContext extends AbstractWindwardContext {
    */
   public <T> void writeBinaryData(T data) {
     if (processCheck()) {
-      windwardResponse.write(HttpStatus.OK.value(), MediaType.WEB_SOCKET_BINARY, data);
+      windwardResponse.write(HttpStatus.OK.value(), MediaType.WEB_SOCKET_BINARY.value, data);
     }
   }
 

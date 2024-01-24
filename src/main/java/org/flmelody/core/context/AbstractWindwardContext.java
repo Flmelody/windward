@@ -94,7 +94,7 @@ public abstract class AbstractWindwardContext implements WindwardContext {
   /** {@inheritDoc} */
   @Override
   public <T> void writeJson(int code, T data) {
-    write(code, MediaType.APPLICATION_JSON_VALUE, data);
+    write(code, MediaType.APPLICATION_JSON_VALUE.value, data);
   }
 
   /** {@inheritDoc} */
@@ -106,7 +106,7 @@ public abstract class AbstractWindwardContext implements WindwardContext {
   /** {@inheritDoc} */
   @Override
   public void writeString(int code, String data) {
-    write(code, MediaType.TEXT_PLAIN_VALUE, data);
+    write(code, MediaType.TEXT_PLAIN_VALUE.value, data);
   }
 
   /** {@inheritDoc} */

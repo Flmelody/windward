@@ -75,7 +75,7 @@ public abstract class AbstractHttpWindwardContext extends AbstractWindwardContex
     if (HttpStatus.MOVED_PERMANENTLY.value() == code || HttpStatus.FOUND.value() == code) {
       HashMap<String, Object> headerMap = new HashMap<>();
       headerMap.put("location", redirectUrl);
-      windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE, headerMap, null);
+      windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE.value, headerMap, null);
       return;
     }
     throw new WindwardException("Illegal redirecting code" + code);
@@ -104,7 +104,10 @@ public abstract class AbstractHttpWindwardContext extends AbstractWindwardContex
             viewPlugin.resolveView(
                 viewUrl, Windward.plugin(JsonPlugin.class).toObject(model, HashMap.class));
         windwardResponse.write(
-            HttpStatus.OK.value(), MediaType.TEXT_HTML_VALUE, Collections.emptyMap(), renderedView);
+            HttpStatus.OK.value(),
+            MediaType.TEXT_HTML_VALUE.value,
+            Collections.emptyMap(),
+            renderedView);
       } catch (Exception e) {
         throw new RuntimeException(e);
       }

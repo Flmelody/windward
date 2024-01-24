@@ -49,19 +49,21 @@ import org.flmelody.util.UrlUtil;
  * @author esotericman
  */
 public class Windward implements Router<Windward> {
-  // registered function
+  // Registered function
   private static final List<AbstractRouterGroup<Windward>> routerGroups = new ArrayList<>();
-  // filters
+  // Registered resource router
+  private static final List<AbstractRouterGroup<Windward>> resourceRouterGroups = new ArrayList<>();
+  // Filters
   private static final List<Filter> globalFilters = new ArrayList<>();
-  // handlers for exception
+  // Handlers for exception
   private static final List<ExceptionHandler> globalExceptionHandlers = new ArrayList<>();
-  // plugins
+  // Plugins
   private static final Map<Class<?>, Plugin> globalPlugins = new HashMap<>();
-  // root context of application
+  // Root context of application
   private final String contextPath;
-  // template files location
+  // Template files location
   private final String templateRoot;
-  // static files locations
+  // Static files locations
   private final String[] staticResourceLocations;
   private final PluginResolver pluginResolver = new CompositePluginResolver();
   private HttpServer httpServer;
@@ -126,7 +128,7 @@ public class Windward implements Router<Windward> {
     return prepareDefault(windward);
   }
 
-  // prepare template engine
+  // Prepare template engine
   private static Windward prepareDefault(Windward windward) {
     if (ViewEngineDetector.AVAILABLE_GROOVY_ENGINE) {
       windward.registerPlugin(GroovyView.class, new GroovyView());
@@ -159,6 +161,20 @@ public class Windward implements Router<Windward> {
     DefaultRouterGroup defaultRouterGroup =
         new DefaultRouterGroup(this, UrlUtil.buildUrl(contextPath, relativePath));
     routerGroups.add(defaultRouterGroup);
+    return defaultRouterGroup;
+  }
+
+  /**
+   * New resource group
+   *
+   * @param relativePath root path
+   * @return routerGroup
+   */
+  @SuppressWarnings("SameParameterValue")
+  private RouterGroup<Windward> resourceGroup(String relativePath) {
+    DefaultRouterGroup defaultRouterGroup =
+        new DefaultRouterGroup(this, UrlUtil.buildUrl(contextPath, relativePath), true);
+    resourceRouterGroups.add(defaultRouterGroup);
     return defaultRouterGroup;
   }
 
@@ -207,7 +223,7 @@ public class Windward implements Router<Windward> {
   }
 
   /**
-   * Find out registered function by specific path
+   * Find out registered function or resource by specific path
    *
    * @param relativePath relativePath
    * @param method http methods name
@@ -216,6 +232,12 @@ public class Windward implements Router<Windward> {
    */
   public static <I> FunctionMetaInfo<I> findRouter(String relativePath, String method) {
     for (AbstractRouterGroup<Windward> routerGroup : routerGroups) {
+      FunctionMetaInfo<I> functionMetaInfo = routerGroup.matchRouter(relativePath, method);
+      if (functionMetaInfo != null) {
+        return functionMetaInfo;
+      }
+    }
+    for (AbstractRouterGroup<Windward> routerGroup : resourceRouterGroups) {
       FunctionMetaInfo<I> functionMetaInfo = routerGroup.matchRouter(relativePath, method);
       if (functionMetaInfo != null) {
         return functionMetaInfo;
@@ -403,7 +425,7 @@ public class Windward implements Router<Windward> {
   /** {@inheritDoc} */
   @Override
   public Windward resource(String... pattern) {
-    group(UrlUtil.SLASH).resource(pattern);
+    resourceGroup(UrlUtil.SLASH).resource(pattern);
     return this;
   }
 }
