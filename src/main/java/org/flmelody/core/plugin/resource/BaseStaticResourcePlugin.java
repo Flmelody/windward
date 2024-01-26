@@ -17,6 +17,7 @@
 package org.flmelody.core.plugin.resource;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,7 +67,8 @@ public class BaseStaticResourcePlugin implements ResourcePlugin, Consumer<Windwa
         fileUri = UrlUtil.buildUrl(staticResourceLocation, fileUri);
       }
       try (InputStream in = this.getClass().getResourceAsStream(fileUri)) {
-        if (in == null) {
+        // NULL or directory, we don't return it.
+        if (in == null || in instanceof ByteArrayInputStream) {
           continue;
         }
         return new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))

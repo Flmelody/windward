@@ -64,7 +64,7 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
           }
         }
         try {
-          String spa = fileUri.substring(0, fileUri.lastIndexOf(UrlUtil.SLASH) + 1) + fixedPage;
+          String spa = UrlUtil.buildUrl(fileUri, fixedPage);
           return super.findResource(spa);
         } catch (Exception ignored) {
           // Nothing here
