@@ -71,11 +71,6 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
   private FunctionMetaInfo<?> cachedFunctionMetaInfo;
 
   @Override
-  public void channelReadComplete(ChannelHandlerContext ctx) {
-    ctx.flush();
-  }
-
-  @Override
   protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
     if (msg instanceof FullHttpRequest) {
       FullHttpRequest fullHttpRequest = (FullHttpRequest) msg;
