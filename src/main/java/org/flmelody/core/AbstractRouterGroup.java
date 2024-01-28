@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -208,6 +209,12 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
         }
         String routerRegex = routerKey.replaceAll("\\{(.*?)}", "(.+)");
         if (relativePath.matches(routerRegex)) {
+          // Expected router
+          int pathCount = new StringTokenizer(relativePath, UrlUtil.SLASH).countTokens();
+          int routerCount = new StringTokenizer(routerRegex, UrlUtil.SLASH).countTokens();
+          if (pathCount != routerCount) {
+            return null;
+          }
           FunctionMetaInfo<?> functionMetaInfo =
               (FunctionMetaInfo<?>) routers.get(routerKey).get(method);
           if (functionMetaInfo == null) {
