@@ -46,11 +46,12 @@ public class BaseStaticResourcePlugin implements ResourcePlugin, Consumer<Windwa
   }
 
   @Override
-  public void accept(WindwardContext windwardContext) {
+  public final void accept(WindwardContext windwardContext) {
     WindwardRequest windwardRequest = windwardContext.windwardRequest();
     String fileUri = windwardRequest.getUri();
-    String resource = findResource(fileUri);
-    Path path = new File(fileUri).toPath();
+    StaticResource staticResource = StaticResource.newBuilder().fileUri(fileUri).build();
+    String resource = findResource(staticResource);
+    Path path = new File(staticResource.getFileUri()).toPath();
     String mimeType;
     try {
       mimeType = Files.probeContentType(path);
@@ -61,12 +62,14 @@ public class BaseStaticResourcePlugin implements ResourcePlugin, Consumer<Windwa
         HttpStatus.OK.value(), MediaType.detectMediaType(mimeType).value, resource);
   }
 
-  protected String findResource(String fileUri) {
+  protected String findResource(StaticResource staticResource) {
     for (String staticResourceLocation : staticResourceLocations) {
+      String fileUri = staticResource.getFileUri();
       if (!fileUri.startsWith(staticResourceLocation)) {
-        fileUri = UrlUtil.buildUrl(staticResourceLocation, fileUri);
+        StaticResource.newBuilder(staticResource)
+            .fileUri(UrlUtil.buildUrl(staticResourceLocation, fileUri));
       }
-      try (InputStream in = this.getClass().getResourceAsStream(fileUri)) {
+      try (InputStream in = this.getClass().getResourceAsStream(staticResource.getFileUri())) {
         // NULL or directory, we don't return it.
         if (in == null || in instanceof ByteArrayInputStream) {
           continue;

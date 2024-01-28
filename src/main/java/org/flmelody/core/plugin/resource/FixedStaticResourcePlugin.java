@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.exception.HandlerNotFoundException;
 import org.flmelody.util.UrlUtil;
 
@@ -42,30 +41,28 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
   }
 
   @Override
-  public void accept(WindwardContext windwardContext) {
-    super.accept(windwardContext);
-  }
-
-  @Override
-  protected String findResource(String fileUri) {
+  protected String findResource(StaticResource staticResource) {
     try {
-      return super.findResource(fileUri);
+      return super.findResource(staticResource);
     } catch (HandlerNotFoundException e) {
       for (String fixedPage : fixedPages) {
+        String fileUri = staticResource.getFileUri();
         if (fileUri.endsWith(fixedPage)) {
           throw e;
         }
         int index = fileUri.lastIndexOf(UrlUtil.SLASH);
         if (index < 0) {
           try {
-            return super.findResource(fixedPage);
+            return super.findResource(
+                StaticResource.newBuilder(staticResource).fileUri(fixedPage).build());
           } catch (Exception ignored) {
             // Nothing here
           }
         }
         try {
           fileUri = UrlUtil.buildUrl(fileUri, fixedPage);
-          return super.findResource(fileUri);
+          return super.findResource(
+              StaticResource.newBuilder(staticResource).fileUri(fileUri).build());
         } catch (Exception ignored) {
           // Nothing here
         }
