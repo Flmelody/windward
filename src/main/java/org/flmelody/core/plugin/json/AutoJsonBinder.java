@@ -39,7 +39,7 @@ public class AutoJsonBinder {
         Class.forName("com.google.gson.Gson");
         jsonPlugin = new GsonPlugin();
       } catch (ClassNotFoundException e) {
-        logger.atInfo().log("Gson lib not find, error throw");
+        logger.atInfo().log("Gson lib not found");
       }
     }
     if (jsonPlugin == null) {
