@@ -49,7 +49,7 @@ public final class ValidationUtil {
   public static <T> T validate(
       JsonPlugin jsonPlugin, String content, Class<T> targetClass, Class<?>... groups)
       throws ValidationException {
-    return validate(jsonPlugin, jsonPlugin.toObject(content, targetClass), groups);
+    return validate(jsonPlugin.toObject(content, targetClass), groups);
   }
 
   /**
@@ -64,10 +64,10 @@ public final class ValidationUtil {
    */
   public static <T> T validate(JsonPlugin jsonPlugin, String content, Type type, Class<?>... groups)
       throws ValidationException {
-    return validate(jsonPlugin, jsonPlugin.toObject(content, type), groups);
+    return validate(jsonPlugin.toObject(content, type), groups);
   }
 
-  private static <T> T validate(JsonPlugin jsonPlugin, T target, Class<?>... groups) {
+  private static <T> T validate(T target, Class<?>... groups) {
     Validator validator = validatorFactory.getValidator();
     Set<ConstraintViolation<T>> validate;
     if (Objects.isNull(groups)) {
