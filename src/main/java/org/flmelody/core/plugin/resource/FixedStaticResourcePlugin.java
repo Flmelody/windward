@@ -73,7 +73,9 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
           String possibleUri = UrlUtil.SLASH;
           while (stringTokenizer.hasMoreTokens()) {
             possibleUri = UrlUtil.buildUrl(possibleUri, stringTokenizer.nextToken());
-            if (possibleUri.matches("^/.+/.+$") && !possibleUri.equals(originalUri)) {
+            // Like /static/endpoint is okay
+            if (possibleUri.chars().filter(i -> i == '/').count() > 1
+                && !possibleUri.equals(originalUri)) {
               try {
                 return super.findResource(
                     StaticResource.newBuilder(staticResource)
