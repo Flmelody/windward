@@ -47,9 +47,9 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
     try {
       return super.findResource(staticResource);
     } catch (HandlerNotFoundException e) {
+      String originalUri = staticResource.getFileUri();
       for (String fixedPage : fixedPages) {
-        String fileUri = staticResource.getFileUri();
-        String originalUri = fileUri;
+        String fileUri = originalUri;
         // Wrong or lost resource
         boolean ignoredResource = fileUri.matches("\\.[a-z|A-Z]+$");
         if (ignoredResource) {
