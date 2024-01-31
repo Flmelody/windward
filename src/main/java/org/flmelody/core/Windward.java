@@ -224,6 +224,7 @@ public class Windward implements Router<Windward> {
    * @return current windward
    * @deprecated use {@link #registerPlugin(PluginSlot, Plugin)} instead
    */
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public Windward registerPlugin(Class<? extends Plugin> clazz, Plugin plugin) {
     // resolve plugin
     pluginResolver.resolve(this, plugin);
