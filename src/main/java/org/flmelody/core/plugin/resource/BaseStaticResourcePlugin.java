@@ -31,7 +31,7 @@ import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.context.WindwardContext;
-import org.flmelody.core.exception.HandlerNotFoundException;
+import org.flmelody.core.exception.ResourceNotFoundException;
 import org.flmelody.core.exception.WindwardException;
 import org.flmelody.util.UrlUtil;
 
@@ -81,6 +81,6 @@ public class BaseStaticResourcePlugin implements ResourcePlugin, Consumer<Windwa
         throw new WindwardException(e);
       }
     }
-    throw new HandlerNotFoundException("No matched resource!");
+    throw new ResourceNotFoundException("No matched resource!");
   }
 }

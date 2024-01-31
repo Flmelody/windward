@@ -32,12 +32,11 @@ import org.flmelody.core.exception.PluginMissException;
 import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.NettyHttpServer;
 import org.flmelody.core.plugin.Plugin;
+import org.flmelody.core.plugin.PluginSlot;
 import org.flmelody.core.plugin.json.AutoJsonBinder;
-import org.flmelody.core.plugin.json.JsonPlugin;
 import org.flmelody.core.plugin.resolver.CompositePluginResolver;
 import org.flmelody.core.plugin.resolver.PluginResolver;
 import org.flmelody.core.plugin.resource.BaseStaticResourcePlugin;
-import org.flmelody.core.plugin.resource.ResourcePlugin;
 import org.flmelody.core.plugin.view.ViewEngineDetector;
 import org.flmelody.core.plugin.view.freemarker.FreemarkerView;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
@@ -122,22 +121,21 @@ public class Windward implements Router<Windward> {
     windward
         .registerExceptionHandler(new DefaultNotFoundHandler())
         .registerFilter(filters)
-        .registerPlugin(JsonPlugin.class, AutoJsonBinder.jsonPlugin)
-        .registerPlugin(
-            ResourcePlugin.class, new BaseStaticResourcePlugin(staticResourceLocations));
+        .registerPlugin(PluginSlot.JSON, AutoJsonBinder.jsonPlugin)
+        .registerPlugin(PluginSlot.RESOURCE, new BaseStaticResourcePlugin(staticResourceLocations));
     return prepareDefault(windward);
   }
 
   // Prepare template engine
   private static Windward prepareDefault(Windward windward) {
     if (ViewEngineDetector.AVAILABLE_GROOVY_ENGINE) {
-      windward.registerPlugin(GroovyView.class, new GroovyView());
+      windward.registerPlugin(PluginSlot.GROOVY_VIEW, new GroovyView());
     }
     if (ViewEngineDetector.AVAILABLE_THYMELEAF_ENGINE) {
-      windward.registerPlugin(ThymeleafView.class, new ThymeleafView());
+      windward.registerPlugin(PluginSlot.THYMELEAF_VIEW, new ThymeleafView());
     }
     if (ViewEngineDetector.AVAILABLE_FREEMARKER_ENGINE) {
-      windward.registerPlugin(FreemarkerView.class, new FreemarkerView());
+      windward.registerPlugin(PluginSlot.FREEMARKER_VIEW, new FreemarkerView());
     }
     return windward;
   }
@@ -210,15 +208,32 @@ public class Windward implements Router<Windward> {
   /**
    * Register plugin or overwrite existed
    *
+   * @param pluginSlot slot
+   * @param plugin plugin
+   * @return current windward
+   */
+  public Windward registerPlugin(PluginSlot pluginSlot, Plugin plugin) {
+    return registerPlugin(pluginSlot.clazz, plugin);
+  }
+
+  /**
+   * Register plugin or overwrite existed
+   *
    * @param clazz plugin class
    * @param plugin plugin
    * @return current windward
+   * @deprecated use {@link #registerPlugin(PluginSlot, Plugin)} instead
    */
   public Windward registerPlugin(Class<? extends Plugin> clazz, Plugin plugin) {
     // resolve plugin
     pluginResolver.resolve(this, plugin);
     // bind plugin
-    globalPlugins.put(clazz, plugin);
+    PluginSlot slot = PluginSlot.slot(clazz);
+    if (PluginSlot.ANY.equals(slot)) {
+      globalPlugins.put(clazz, plugin);
+    } else {
+      globalPlugins.put(slot.clazz, plugin);
+    }
     return this;
   }
 
