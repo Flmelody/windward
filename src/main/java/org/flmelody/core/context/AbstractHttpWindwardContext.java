@@ -81,6 +81,7 @@ public abstract class AbstractHttpWindwardContext extends AbstractWindwardContex
     throw new WindwardException("Illegal redirecting code" + code);
   }
 
+  /** {@inheritDoc} */
   @Override
   public <M> void html(String viewUrl, M model) {
     if (viewUrl == null || viewUrl.isEmpty()) {

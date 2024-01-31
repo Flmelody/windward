@@ -20,7 +20,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringTokenizer;
 import org.flmelody.core.exception.HandlerNotFoundException;
+import org.flmelody.core.exception.ResourceNotFoundException;
 import org.flmelody.util.UrlUtil;
 
 /**
@@ -47,6 +49,7 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
     } catch (HandlerNotFoundException e) {
       for (String fixedPage : fixedPages) {
         String fileUri = staticResource.getFileUri();
+        String originalUri = fileUri;
         // Wrong or lost resource
         boolean ignoredResource = fileUri.matches("\\.[a-z|A-Z]+$");
         if (ignoredResource) {
@@ -66,10 +69,24 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
           return super.findResource(
               StaticResource.newBuilder(staticResource).fileUri(fileUri).build());
         } catch (Exception ignored) {
-          // Nothing here
+          StringTokenizer stringTokenizer = new StringTokenizer(originalUri, UrlUtil.SLASH);
+          String possibleUri = UrlUtil.SLASH;
+          while (stringTokenizer.hasMoreTokens()) {
+            possibleUri = UrlUtil.buildUrl(possibleUri, stringTokenizer.nextToken());
+            if (possibleUri.matches("^/.+/.+$") && !possibleUri.equals(originalUri)) {
+              try {
+                return super.findResource(
+                    StaticResource.newBuilder(staticResource)
+                        .fileUri(UrlUtil.buildUrl(possibleUri, fixedPage))
+                        .build());
+              } catch (Exception ignoredException) {
+                // Do nothing
+              }
+            }
+          }
         }
       }
     }
-    throw new HandlerNotFoundException("No matched resource!");
+    throw new ResourceNotFoundException("No matched resource!");
   }
 }
