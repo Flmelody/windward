@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package org.flmelody.core.context;
+package org.flmelody.support;
 
-import org.flmelody.core.WindwardRequest;
-import org.flmelody.core.WindwardResponse;
+import java.io.Serializable;
+import java.util.function.Function;
 
 /**
+ * Represents a function that accepts one argument and produces a result.
+ *
+ * <p>This is a <a href="package-summary.html">functional interface</a> whose functional method is
+ * {@link #apply(Object)}.
+ *
+ * @param <T> the type of the input to the function
+ * @param <R> the type of the result of the function
  * @author esotericman
  */
-public class EnhancedWindwardContext extends AbstractHttpWindwardContext {
-
-  public EnhancedWindwardContext(
-      WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
-    super(windwardRequest, windwardResponse);
-  }
-}
+@FunctionalInterface
+public interface EnhancedFunction<T, R> extends Function<T, R>, Serializable {}

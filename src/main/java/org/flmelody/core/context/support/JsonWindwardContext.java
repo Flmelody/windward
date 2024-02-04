@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.flmelody.core.context;
+package org.flmelody.core.context.support;
 
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
+import org.flmelody.core.context.EnhancedWindwardContext;
 
 /**
  * @author esotericman
  */
-public class EnhancedWindwardContext extends AbstractHttpWindwardContext {
-
-  public EnhancedWindwardContext(
-      WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
+public class JsonWindwardContext extends EnhancedWindwardContext {
+  public JsonWindwardContext(WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
     super(windwardRequest, windwardResponse);
   }
 }

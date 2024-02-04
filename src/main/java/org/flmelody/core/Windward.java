@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.flmelody.core.context.EnhancedWindwardContext;
@@ -42,6 +41,7 @@ import org.flmelody.core.plugin.view.freemarker.FreemarkerView;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
 import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
 import org.flmelody.core.ws.WebSocketWindwardContext;
+import org.flmelody.support.EnhancedFunction;
 import org.flmelody.util.UrlUtil;
 
 /**
@@ -346,8 +346,8 @@ public class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public Windward http(
-      HttpMethod httpMethod, String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public <C extends EnhancedWindwardContext> Windward http(
+      HttpMethod httpMethod, String relativePath, EnhancedFunction<C, ?> function) {
     group(UrlUtil.SLASH).http(httpMethod, relativePath, function);
     return this;
   }
@@ -366,7 +366,8 @@ public class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public Windward get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public <C extends EnhancedWindwardContext> Windward get(
+      String relativePath, EnhancedFunction<C, ?> function) {
     group(UrlUtil.SLASH).get(relativePath, function);
     return this;
   }
@@ -386,7 +387,8 @@ public class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public Windward put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public <C extends EnhancedWindwardContext> Windward put(
+      String relativePath, EnhancedFunction<C, ?> function) {
     group(UrlUtil.SLASH).put(relativePath, function);
     return this;
   }
@@ -406,7 +408,8 @@ public class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public Windward post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public <C extends EnhancedWindwardContext> Windward post(
+      String relativePath, EnhancedFunction<C, ?> function) {
     group(UrlUtil.SLASH).post(relativePath, function);
     return this;
   }
@@ -426,7 +429,8 @@ public class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public Windward delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public <C extends EnhancedWindwardContext> Windward delete(
+      String relativePath, EnhancedFunction<C, ?> function) {
     group(UrlUtil.SLASH).delete(relativePath, function);
     return this;
   }

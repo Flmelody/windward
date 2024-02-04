@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,6 +35,7 @@ import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.exception.RouterMappingException;
 import org.flmelody.core.plugin.resource.ResourcePlugin;
 import org.flmelody.core.ws.WebSocketWindwardContext;
+import org.flmelody.support.EnhancedFunction;
 import org.flmelody.util.AntPathMatcher;
 import org.flmelody.util.UrlUtil;
 
@@ -83,7 +83,8 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
   }
 
   @Override
-  public RouterGroup<M> get(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public <C extends EnhancedWindwardContext> RouterGroup<M> get(
+      String relativePath, EnhancedFunction<C, ?> function) {
     return http(HttpMethod.GET, relativePath, function);
   }
 
@@ -98,7 +99,8 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
   }
 
   @Override
-  public RouterGroup<M> put(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public <C extends EnhancedWindwardContext> RouterGroup<M> put(
+      String relativePath, EnhancedFunction<C, ?> function) {
     return http(HttpMethod.PUT, relativePath, function);
   }
 
@@ -113,7 +115,8 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
   }
 
   @Override
-  public RouterGroup<M> post(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public <C extends EnhancedWindwardContext> RouterGroup<M> post(
+      String relativePath, EnhancedFunction<C, ?> function) {
     return http(HttpMethod.POST, relativePath, function);
   }
 
@@ -128,7 +131,8 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
   }
 
   @Override
-  public RouterGroup<M> delete(String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public <C extends EnhancedWindwardContext> RouterGroup<M> delete(
+      String relativePath, EnhancedFunction<C, ?> function) {
     return http(HttpMethod.DELETE, relativePath, function);
   }
 
@@ -167,8 +171,8 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
   }
 
   @Override
-  public RouterGroup<M> http(
-      HttpMethod httpMethod, String relativePath, Function<EnhancedWindwardContext, ?> function) {
+  public <C extends EnhancedWindwardContext> RouterGroup<M> http(
+      HttpMethod httpMethod, String relativePath, EnhancedFunction<C, ?> function) {
     registerRouter(relativePath, httpMethod.name(), function, EnhancedWindwardContext.class);
     return this;
   }

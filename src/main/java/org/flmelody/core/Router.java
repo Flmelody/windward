@@ -17,11 +17,11 @@
 package org.flmelody.core;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.ws.WebSocketWindwardContext;
+import org.flmelody.support.EnhancedFunction;
 
 /**
  * @author flmelody
@@ -56,7 +56,8 @@ public interface Router<T> {
    * @param function function to consume
    * @return this
    */
-  T http(HttpMethod httpMethod, String relativePath, Function<EnhancedWindwardContext, ?> function);
+  <C extends EnhancedWindwardContext> T http(
+      HttpMethod httpMethod, String relativePath, EnhancedFunction<C, ?> function);
 
   /**
    * Register function with get method
@@ -84,7 +85,7 @@ public interface Router<T> {
    * @param function function to consume
    * @return this
    */
-  T get(String relativePath, Function<EnhancedWindwardContext, ?> function);
+  <C extends EnhancedWindwardContext> T get(String relativePath, EnhancedFunction<C, ?> function);
 
   /**
    * Register function with put method
@@ -112,7 +113,7 @@ public interface Router<T> {
    * @param function function to consume
    * @return this
    */
-  T put(String relativePath, Function<EnhancedWindwardContext, ?> function);
+  <C extends EnhancedWindwardContext> T put(String relativePath, EnhancedFunction<C, ?> function);
 
   /**
    * Register function with post method
@@ -140,7 +141,7 @@ public interface Router<T> {
    * @param function function to consume
    * @return this
    */
-  T post(String relativePath, Function<EnhancedWindwardContext, ?> function);
+  <C extends EnhancedWindwardContext> T post(String relativePath, EnhancedFunction<C, ?> function);
 
   /**
    * Register function with delete method
@@ -168,7 +169,8 @@ public interface Router<T> {
    * @param function function to consume
    * @return this
    */
-  T delete(String relativePath, Function<EnhancedWindwardContext, ?> function);
+  <C extends EnhancedWindwardContext> T delete(
+      String relativePath, EnhancedFunction<C, ?> function);
 
   /**
    * Register websocket function
