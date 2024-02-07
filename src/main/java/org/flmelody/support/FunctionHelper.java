@@ -16,8 +16,10 @@
 
 package org.flmelody.support;
 
+import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.flmelody.core.exception.WindwardException;
@@ -38,30 +40,34 @@ public final class FunctionHelper {
    * @param function a function
    * @return generic type map
    */
-  public static Map<Class<?>, Class<?>> resolveFunction(EnhancedFunction<?, ?> function) {
+  public static <F> Map<Class<?>, Class<?>> resolveFunction(F function) {
     return findFunctionSmartly(function);
   }
 
-  private static Map<Class<?>, Class<?>> findFunctionSmartly(EnhancedFunction<?, ?> function) {
+  private static <F> Map<Class<?>, Class<?>> findFunctionSmartly(F function) {
     String functionClassName = function.getClass().getName();
     int lambdaMarkerIndex = functionClassName.indexOf("$$Lambda$");
     // Not lambda function
     if (lambdaMarkerIndex == -1) {
       return findRegularFunction(function);
     }
-    return findLambdaFunction(function);
+    if (function instanceof Serializable) {
+      return findLambdaFunction(function);
+    }
+    return Collections.emptyMap();
   }
 
   // Use to non lambda function
-  private static Map<Class<?>, Class<?>> findRegularFunction(EnhancedFunction<?, ?> function) {
+  private static <F> Map<Class<?>, Class<?>> findRegularFunction(F function) {
     Map<Class<?>, Class<?>> functionMap = new HashMap<>();
     Method method = function.getClass().getMethods()[0];
-    functionMap.put(method.getParameterTypes()[0], method.getReturnType());
+    Class<?>[] parameterTypes = method.getParameterTypes();
+    functionMap.put(parameterTypes.length == 0 ? null : parameterTypes[0], method.getReturnType());
     return functionMap;
   }
 
   // Lambda function
-  private static Map<Class<?>, Class<?>> findLambdaFunction(EnhancedFunction<?, ?> function) {
+  private static <F> Map<Class<?>, Class<?>> findLambdaFunction(F function) {
     Map<Class<?>, Class<?>> functionMap = new HashMap<>();
     try {
       SerializedLambda serializedLambda = getSerializedLambda(function);
@@ -86,11 +92,11 @@ public final class FunctionHelper {
     return functionMap;
   }
 
-  private static SerializedLambda getSerializedLambda(EnhancedFunction<?, ?> lambda) {
+  private static <F> SerializedLambda getSerializedLambda(F lambda) {
     return writeReplace(lambda);
   }
 
-  private static SerializedLambda writeReplace(Object lambda) {
+  private static <F> SerializedLambda writeReplace(F lambda) {
     try {
       Method method = lambda.getClass().getDeclaredMethod("writeReplace");
       method.setAccessible(true);
