@@ -47,9 +47,15 @@ public class FunctionMetaInfo<I> {
       // windward context
       //noinspection unchecked
       this.parameterType =
-          (Class<? extends WindwardContext>) resolvedFunction.keySet().stream().findFirst().get();
+          (Class<? extends WindwardContext>)
+              resolvedFunction.keySet().stream()
+                  .findFirst()
+                  .orElseThrow(() -> new WindwardException("Missed parameter type!"));
       // all java type
-      this.resultType = resolvedFunction.values().stream().findFirst().get();
+      this.resultType =
+          resolvedFunction.values().stream()
+              .findFirst()
+              .orElseThrow(() -> new WindwardException("Missed result type!"));
     } else {
       this.parameterType = null;
       this.resultType = null;
