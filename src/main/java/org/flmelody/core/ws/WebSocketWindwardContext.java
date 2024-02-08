@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author esotericman
  */
-public class WebSocketWindwardContext extends AbstractWindwardContext {
+public final class WebSocketWindwardContext extends AbstractWindwardContext {
   private static final Logger logger = LoggerFactory.getLogger(WebSocketWindwardContext.class);
   private WebSocketEvent webSocketEvent;
   private Object webSocketData;

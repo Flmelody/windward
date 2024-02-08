@@ -214,16 +214,16 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
           windwardRequestBuilder.build(), windwardResponseBuild.build());
     } else {
       try {
-        Class<? extends WindwardContext> clazz = functionMetaInfo.getClazz();
-        if (clazz.isAssignableFrom(SimpleWindwardContext.class)) {
+        Class<? extends WindwardContext> context = functionMetaInfo.getContext();
+        if (context.isAssignableFrom(SimpleWindwardContext.class)) {
           return new SimpleWindwardContext(
               windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
               windwardResponseBuild.build());
-        } else if (clazz.isAssignableFrom(EnhancedWindwardContext.class)) {
+        } else if (context.isAssignableFrom(EnhancedWindwardContext.class)) {
           return new EnhancedWindwardContext(
               windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
               windwardResponseBuild.build());
-        } else if (clazz.isAssignableFrom(WebSocketWindwardContext.class)) {
+        } else if (context.isAssignableFrom(WebSocketWindwardContext.class)) {
           return new WebSocketWindwardContext(
               windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
               windwardResponseBuild.build());

@@ -22,7 +22,7 @@ import org.flmelody.core.WindwardResponse;
 /**
  * @author esotericman
  */
-public class SimpleWindwardContext extends AbstractHttpWindwardContext {
+public final class SimpleWindwardContext extends AbstractHttpWindwardContext {
   public SimpleWindwardContext(WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
     super(windwardRequest, windwardResponse);
   }
