@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
+import org.flmelody.core.context.support.HttpKind;
 import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.support.EnhancedFunction;
 
@@ -56,7 +57,7 @@ public interface Router<T> {
    * @param function function to consume
    * @return this
    */
-  <C extends EnhancedWindwardContext> T http(
+  <C extends EnhancedWindwardContext & HttpKind> T http(
       HttpMethod httpMethod, String relativePath, EnhancedFunction<C, ?> function);
 
   /**
@@ -85,7 +86,8 @@ public interface Router<T> {
    * @param function function to consume
    * @return this
    */
-  <C extends EnhancedWindwardContext> T get(String relativePath, EnhancedFunction<C, ?> function);
+  <C extends EnhancedWindwardContext & HttpKind> T get(
+      String relativePath, EnhancedFunction<C, ?> function);
 
   /**
    * Register function with put method
@@ -113,7 +115,8 @@ public interface Router<T> {
    * @param function function to consume
    * @return this
    */
-  <C extends EnhancedWindwardContext> T put(String relativePath, EnhancedFunction<C, ?> function);
+  <C extends EnhancedWindwardContext & HttpKind> T put(
+      String relativePath, EnhancedFunction<C, ?> function);
 
   /**
    * Register function with post method
@@ -141,7 +144,8 @@ public interface Router<T> {
    * @param function function to consume
    * @return this
    */
-  <C extends EnhancedWindwardContext> T post(String relativePath, EnhancedFunction<C, ?> function);
+  <C extends EnhancedWindwardContext & HttpKind> T post(
+      String relativePath, EnhancedFunction<C, ?> function);
 
   /**
    * Register function with delete method
@@ -169,7 +173,7 @@ public interface Router<T> {
    * @param function function to consume
    * @return this
    */
-  <C extends EnhancedWindwardContext> T delete(
+  <C extends EnhancedWindwardContext & HttpKind> T delete(
       String relativePath, EnhancedFunction<C, ?> function);
 
   /**

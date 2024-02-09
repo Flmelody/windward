@@ -16,25 +16,7 @@
 
 package org.flmelody.core.context.support;
 
-import org.flmelody.core.WindwardRequest;
-import org.flmelody.core.WindwardResponse;
-import org.flmelody.core.context.EnhancedWindwardContext;
-
 /**
  * @author esotericman
  */
-public class JsonWindwardContext extends EnhancedWindwardContext implements HttpKind {
-  public JsonWindwardContext(WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
-    super(windwardRequest, windwardResponse);
-  }
-
-  @Override
-  public void doOnRequest() {
-    // Check the request header
-  }
-
-  @Override
-  public <R> void doOnResponse(R r) {
-    this.writeJson(r);
-  }
-}
+public interface HttpKind {}

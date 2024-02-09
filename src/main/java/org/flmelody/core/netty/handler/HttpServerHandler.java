@@ -38,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import org.flmelody.core.ExceptionHandler;
 import org.flmelody.core.Filter;
@@ -59,6 +58,7 @@ import org.flmelody.core.ws.WebSocketFireEvent;
 import org.flmelody.core.ws.WebSocketParser;
 import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.core.ws.codec.WebSocketCodec;
+import org.flmelody.support.EnhancedFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -219,10 +219,13 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
           return new SimpleWindwardContext(
               windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
               windwardResponseBuild.build());
-        } else if (context.isAssignableFrom(EnhancedWindwardContext.class)) {
-          return new EnhancedWindwardContext(
-              windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
-              windwardResponseBuild.build());
+        } else if (EnhancedWindwardContext.class.isAssignableFrom(context)) {
+          Class<? extends WindwardContext> parameterType = functionMetaInfo.getParameterType();
+          return parameterType
+              .getConstructor(WindwardRequest.class, WindwardResponse.class)
+              .newInstance(
+                  windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
+                  windwardResponseBuild.build());
         } else if (context.isAssignableFrom(WebSocketWindwardContext.class)) {
           return new WebSocketWindwardContext(
               windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
@@ -264,11 +267,11 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         @SuppressWarnings("unchecked")
         final Consumer<WindwardContext> contextConsumer = (Consumer<WindwardContext>) function;
         contextConsumer.accept(windwardContext);
-      } else if (function instanceof Function) {
-        @SuppressWarnings("unchecked")
-        final Function<WindwardContext, ?> contextConsumer =
-            (Function<WindwardContext, ?>) function;
-        contextConsumer.apply(windwardContext);
+      } else if (function instanceof EnhancedFunction) {
+        EnhancedWindwardContext enhancedWindwardContext = (EnhancedWindwardContext) windwardContext;
+        //noinspection unchecked
+        enhancedWindwardContext.execute(
+            (EnhancedFunction<? extends EnhancedWindwardContext, ?>) function);
       } else if (function instanceof Supplier) {
         Supplier<?> supplier = (Supplier<?>) function;
         Object object = supplier.get();

@@ -19,12 +19,24 @@ package org.flmelody.core.context.support;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.EnhancedWindwardContext;
+import org.flmelody.core.exception.ResourceNotFoundException;
 
 /**
  * @author esotericman
  */
-public class ViewWindwardContext extends EnhancedWindwardContext {
+public class ViewWindwardContext extends EnhancedWindwardContext implements HttpKind {
   public ViewWindwardContext(WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
     super(windwardRequest, windwardResponse);
+  }
+
+  @Override
+  public void doOnRequest() {}
+
+  @Override
+  public <R> void doOnResponse(R r) {
+    if (!(r instanceof String)) {
+      throw new ResourceNotFoundException("No suitable resource!");
+    }
+    html(String.valueOf(r), null);
   }
 }

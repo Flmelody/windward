@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
+import org.flmelody.core.context.support.HttpKind;
 import org.flmelody.core.exception.PluginMissException;
 import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.NettyHttpServer;
@@ -346,7 +347,7 @@ public class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public <C extends EnhancedWindwardContext> Windward http(
+  public <C extends EnhancedWindwardContext & HttpKind> Windward http(
       HttpMethod httpMethod, String relativePath, EnhancedFunction<C, ?> function) {
     group(UrlUtil.SLASH).http(httpMethod, relativePath, function);
     return this;
@@ -366,7 +367,7 @@ public class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public <C extends EnhancedWindwardContext> Windward get(
+  public <C extends EnhancedWindwardContext & HttpKind> Windward get(
       String relativePath, EnhancedFunction<C, ?> function) {
     group(UrlUtil.SLASH).get(relativePath, function);
     return this;
@@ -387,7 +388,7 @@ public class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public <C extends EnhancedWindwardContext> Windward put(
+  public <C extends EnhancedWindwardContext & HttpKind> Windward put(
       String relativePath, EnhancedFunction<C, ?> function) {
     group(UrlUtil.SLASH).put(relativePath, function);
     return this;
@@ -408,7 +409,7 @@ public class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public <C extends EnhancedWindwardContext> Windward post(
+  public <C extends EnhancedWindwardContext & HttpKind> Windward post(
       String relativePath, EnhancedFunction<C, ?> function) {
     group(UrlUtil.SLASH).post(relativePath, function);
     return this;
@@ -429,7 +430,7 @@ public class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public <C extends EnhancedWindwardContext> Windward delete(
+  public <C extends EnhancedWindwardContext & HttpKind> Windward delete(
       String relativePath, EnhancedFunction<C, ?> function) {
     group(UrlUtil.SLASH).delete(relativePath, function);
     return this;
