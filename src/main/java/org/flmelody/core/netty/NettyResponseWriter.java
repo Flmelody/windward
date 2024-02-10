@@ -94,10 +94,10 @@ public class NettyResponseWriter implements ResponseWriter {
     if (headers != null && !headers.isEmpty()) {
       headers.keySet().forEach(key -> httpResponse.headers().set(key, headers.get(key)));
     }
+    httpResponse
+        .headers()
+        .setInt(HttpHeaderNames.CONTENT_LENGTH, httpResponse.content().readableBytes());
     if (!close) {
-      httpResponse
-          .headers()
-          .setInt(HttpHeaderNames.CONTENT_LENGTH, httpResponse.content().readableBytes());
       httpResponse.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
     }
     ctx.writeAndFlush(httpResponse);
