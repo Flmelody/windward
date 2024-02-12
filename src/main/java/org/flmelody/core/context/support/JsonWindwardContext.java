@@ -16,9 +16,12 @@
 
 package org.flmelody.core.context.support;
 
+import org.flmelody.core.HttpHeader;
+import org.flmelody.core.MediaType;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.EnhancedWindwardContext;
+import org.flmelody.core.exception.ValidationException;
 
 /**
  * @author esotericman
@@ -31,6 +34,13 @@ public class JsonWindwardContext extends EnhancedWindwardContext implements Http
   @Override
   public void doOnRequest() {
     // Check the request header
+    for (String header : this.windwardRequest.getHeader(HttpHeader.CONTENT_TYPE)) {
+      MediaType mediaType = MediaType.detectMediaType(header);
+      if (MediaType.APPLICATION_JSON_VALUE.equals(mediaType)) {
+        return;
+      }
+    }
+    throw new ValidationException("Content type must be JSON!");
   }
 
   @Override

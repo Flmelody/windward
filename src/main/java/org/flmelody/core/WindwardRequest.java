@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author esotericman
@@ -29,7 +30,7 @@ public class WindwardRequest implements RequestReader {
   private String method;
   private String uri;
   private Boolean keepAlive;
-  private final Map<String, List<String>> headers = new HashMap<>(2 << 3);
+  private final Map<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
   private final Map<String, List<String>> querystring = new HashMap<>(2 << 3);
   private final Map<String, Object> pathVariables = new HashMap<>(2 << 3);
   private String requestBody;
@@ -61,6 +62,15 @@ public class WindwardRequest implements RequestReader {
       return Collections.emptyList();
     }
     return headers.get(name);
+  }
+
+  /**
+   * Return all request headers
+   *
+   * @return headers values
+   */
+  public Map<String, List<String>> getHeaders() {
+    return headers;
   }
 
   /**

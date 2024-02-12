@@ -33,10 +33,10 @@ import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketSe
 import io.netty.util.CharsetUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.flmelody.core.ExceptionHandler;
@@ -171,7 +171,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
 
   private Map<String, List<String>> prepareHeaders(HttpHeaders httpHeaders) {
     Iterator<Map.Entry<String, String>> entryIterator = httpHeaders.iteratorAsString();
-    Map<String, List<String>> headers = new HashMap<>();
+    Map<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     while (entryIterator.hasNext()) {
       Map.Entry<String, String> next = entryIterator.next();
       if (headers.containsKey(next.getKey())) {

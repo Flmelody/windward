@@ -21,6 +21,8 @@ import org.flmelody.core.WindwardResponse;
 import org.flmelody.support.EnhancedFunction;
 
 /**
+ * @see org.flmelody.core.context.support.JsonWindwardContext
+ * @see org.flmelody.core.context.support.ViewWindwardContext
  * @author esotericman
  */
 public abstract class EnhancedWindwardContext extends AbstractHttpWindwardContext {
@@ -36,7 +38,14 @@ public abstract class EnhancedWindwardContext extends AbstractHttpWindwardContex
     doOnResponse(function.apply((C) this));
   }
 
+  /** Check request before executing function. */
   protected abstract void doOnRequest();
 
+  /**
+   * Cope with result of function.
+   *
+   * @param r Result of function
+   * @param <R> Result type
+   */
   protected abstract <R> void doOnResponse(R r);
 }
