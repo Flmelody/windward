@@ -18,6 +18,7 @@ package org.flmelody.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,7 @@ import org.flmelody.util.UrlUtil;
 /**
  * @author esotericman
  */
-public class Windward implements Router<Windward> {
+public final class Windward implements Router<Windward> {
   // Registered function
   private static final List<AbstractRouterGroup<Windward>> routerGroups = new ArrayList<>();
   // Registered resource router
@@ -59,6 +60,8 @@ public class Windward implements Router<Windward> {
   private static final List<ExceptionHandler> globalExceptionHandlers = new ArrayList<>();
   // Plugins
   private static final Map<Class<?>, Plugin> globalPlugins = new HashMap<>();
+  // Listeners
+  private static final List<Filter> globalListeners = new ArrayList<>();
   // Root context of application
   private final String contextPath;
   // Template files location
@@ -269,7 +272,7 @@ public class Windward implements Router<Windward> {
    * @return filters
    */
   public static List<Filter> filters() {
-    return globalFilters;
+    return Collections.unmodifiableList(globalFilters);
   }
 
   /**
@@ -278,7 +281,7 @@ public class Windward implements Router<Windward> {
    * @return exception handlers
    */
   public static List<ExceptionHandler> exceptionHandlers() {
-    return globalExceptionHandlers;
+    return Collections.unmodifiableList(globalExceptionHandlers);
   }
 
   /**
