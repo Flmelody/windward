@@ -42,6 +42,7 @@ import org.flmelody.core.plugin.view.ViewEngineDetector;
 import org.flmelody.core.plugin.view.freemarker.FreemarkerView;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
 import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
+import org.flmelody.core.wind.listener.Listener;
 import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.support.EnhancedFunction;
 import org.flmelody.util.UrlUtil;
@@ -61,7 +62,7 @@ public final class Windward implements Router<Windward> {
   // Plugins
   private static final Map<Class<?>, Plugin> globalPlugins = new HashMap<>();
   // Listeners
-  private static final List<Filter> globalListeners = new ArrayList<>();
+  private static final List<Listener> globalListeners = new ArrayList<>();
   // Root context of application
   private final String contextPath;
   // Template files location
@@ -210,6 +211,20 @@ public final class Windward implements Router<Windward> {
   }
 
   /**
+   * Register listener
+   *
+   * @param listeners event listeners
+   * @return current windward
+   */
+  public Windward registerListener(Listener... listeners) {
+    if (listeners == null || listeners.length == 0) {
+      return this;
+    }
+    globalListeners.addAll(Arrays.asList(listeners));
+    return this;
+  }
+
+  /**
    * Register plugin or overwrite existed
    *
    * @param pluginSlot slot
@@ -282,6 +297,15 @@ public final class Windward implements Router<Windward> {
    */
   public static List<ExceptionHandler> exceptionHandlers() {
     return Collections.unmodifiableList(globalExceptionHandlers);
+  }
+
+  /**
+   * Get event listeners
+   *
+   * @return event listeners
+   */
+  public static List<Listener> listeners() {
+    return Collections.unmodifiableList(globalListeners);
   }
 
   /**
