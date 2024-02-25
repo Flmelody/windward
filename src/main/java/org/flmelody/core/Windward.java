@@ -42,6 +42,9 @@ import org.flmelody.core.plugin.view.ViewEngineDetector;
 import org.flmelody.core.plugin.view.freemarker.FreemarkerView;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
 import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
+import org.flmelody.core.wind.DefaultWindManager;
+import org.flmelody.core.wind.WindManager;
+import org.flmelody.core.wind.event.Event;
 import org.flmelody.core.wind.listener.Listener;
 import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.support.EnhancedFunction;
@@ -61,8 +64,6 @@ public final class Windward implements Router<Windward> {
   private static final List<ExceptionHandler> globalExceptionHandlers = new ArrayList<>();
   // Plugins
   private static final Map<Class<?>, Plugin> globalPlugins = new HashMap<>();
-  // Listeners
-  private static final List<Listener> globalListeners = new ArrayList<>();
   // Root context of application
   private final String contextPath;
   // Template files location
@@ -70,6 +71,7 @@ public final class Windward implements Router<Windward> {
   // Static files locations
   private final String[] staticResourceLocations;
   private final PluginResolver pluginResolver = new CompositePluginResolver();
+  private final WindManager windManager = new DefaultWindManager();
   private HttpServer httpServer;
 
   private Windward(String contextPath, String templateRoot, String[] staticResourceLocations) {
@@ -151,6 +153,9 @@ public final class Windward implements Router<Windward> {
    * @throws ServerException exception
    */
   public void run() throws ServerException {
+    // trigger events
+    windManager.sway();
+    // start server
     httpServer.run();
   }
 
@@ -217,10 +222,12 @@ public final class Windward implements Router<Windward> {
    * @return current windward
    */
   public Windward registerListener(Listener... listeners) {
-    if (listeners == null || listeners.length == 0) {
+    if (listeners == null) {
       return this;
     }
-    globalListeners.addAll(Arrays.asList(listeners));
+    for (Listener listener : listeners) {
+      windManager.join(listener);
+    }
     return this;
   }
 
@@ -253,6 +260,22 @@ public final class Windward implements Router<Windward> {
       globalPlugins.put(clazz, plugin);
     } else {
       globalPlugins.put(slot.clazz, plugin);
+    }
+    return this;
+  }
+
+  /**
+   * Publish event
+   *
+   * @param events events
+   * @return current windward
+   */
+  public Windward publishEvent(Event... events) {
+    if (events == null) {
+      return this;
+    }
+    for (Event event : events) {
+      windManager.blow(event);
     }
     return this;
   }
@@ -297,15 +320,6 @@ public final class Windward implements Router<Windward> {
    */
   public static List<ExceptionHandler> exceptionHandlers() {
     return Collections.unmodifiableList(globalExceptionHandlers);
-  }
-
-  /**
-   * Get event listeners
-   *
-   * @return event listeners
-   */
-  public static List<Listener> listeners() {
-    return Collections.unmodifiableList(globalListeners);
   }
 
   /**
