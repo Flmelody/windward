@@ -18,6 +18,7 @@ package org.flmelody.core.wind;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.flmelody.core.Windward;
 import org.flmelody.core.wind.event.Event;
 import org.flmelody.core.wind.listener.Listener;
 
@@ -25,8 +26,13 @@ import org.flmelody.core.wind.listener.Listener;
  * @author esotericman
  */
 public abstract class AbstractWindManager implements WindManager {
+  private final Windward windward;
   protected final List<Listener> listeners = new ArrayList<>();
   protected final List<Event> events = new ArrayList<>();
+
+  protected AbstractWindManager(Windward windward) {
+    this.windward = windward;
+  }
 
   @Override
   public void join(Listener listener) {
@@ -36,16 +42,10 @@ public abstract class AbstractWindManager implements WindManager {
   }
 
   @Override
-  public void blow(Event event) {
+  public void trigger(Event event) {
     events.add(event);
-  }
-
-  @Override
-  public void sway() {
     for (Listener listener : listeners) {
-      for (Event event : events) {
-        listener.cope(event);
-      }
+      listener.cope(windward, event);
     }
   }
 }

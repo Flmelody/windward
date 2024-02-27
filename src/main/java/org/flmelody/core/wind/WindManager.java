@@ -36,8 +36,5 @@ public interface WindManager {
    *
    * @param event event
    */
-  void blow(Event event);
-
-  /** Notify subscribers to cope with events. */
-  void sway();
+  void trigger(Event event);
 }

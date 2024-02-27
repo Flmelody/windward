@@ -16,7 +16,13 @@
 
 package org.flmelody.core.wind;
 
+import org.flmelody.core.Windward;
+
 /**
  * @author esotericman
  */
-public class DefaultWindManager extends AbstractWindManager {}
+public class DefaultWindManager extends AbstractWindManager {
+  public DefaultWindManager(Windward windward) {
+    super(windward);
+  }
+}

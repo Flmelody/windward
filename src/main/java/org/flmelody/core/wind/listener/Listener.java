@@ -16,6 +16,7 @@
 
 package org.flmelody.core.wind.listener;
 
+import org.flmelody.core.Windward;
 import org.flmelody.core.wind.event.Event;
 
 /**
@@ -23,5 +24,12 @@ import org.flmelody.core.wind.event.Event;
  */
 public interface Listener {
 
-  boolean cope(Event event);
+  /**
+   * Cope event with windward.
+   *
+   * @param windward windward
+   * @param event event
+   * @return result
+   */
+  boolean cope(Windward windward, Event event);
 }

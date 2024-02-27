@@ -71,7 +71,7 @@ public final class Windward implements Router<Windward> {
   // Static files locations
   private final String[] staticResourceLocations;
   private final PluginResolver pluginResolver = new CompositePluginResolver();
-  private final WindManager windManager = new DefaultWindManager();
+  private final WindManager windManager = new DefaultWindManager(this);
   private HttpServer httpServer;
 
   private Windward(String contextPath, String templateRoot, String[] staticResourceLocations) {
@@ -153,8 +153,6 @@ public final class Windward implements Router<Windward> {
    * @throws ServerException exception
    */
   public void run() throws ServerException {
-    // trigger events
-    windManager.sway();
     // start server
     httpServer.run();
   }
@@ -275,7 +273,7 @@ public final class Windward implements Router<Windward> {
       return this;
     }
     for (Event event : events) {
-      windManager.blow(event);
+      windManager.trigger(event);
     }
     return this;
   }
