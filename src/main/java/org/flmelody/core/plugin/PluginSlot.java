@@ -1,7 +1,7 @@
 package org.flmelody.core.plugin;
 
 import org.flmelody.core.plugin.json.JsonPlugin;
-import org.flmelody.core.plugin.resource.ResourcePlugin;
+import org.flmelody.core.plugin.resource.BaseStaticResourcePlugin;
 import org.flmelody.core.plugin.view.freemarker.FreemarkerView;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
 import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
@@ -25,7 +25,7 @@ public enum PluginSlot {
   /** Slot for websocket. */
   WEBSOCKET(ExtensionalWebSocketPlugin.class),
   /** Slot for static resource. */
-  RESOURCE(ResourcePlugin.class);
+  RESOURCE(BaseStaticResourcePlugin.class);
 
   public final Class<? extends Plugin> clazz;
 

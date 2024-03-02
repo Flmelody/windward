@@ -26,6 +26,7 @@ import org.flmelody.support.FunctionHelper;
  * @author esotericman
  */
 public class FunctionMetaInfo<I> {
+  private final String path;
   private final I function;
   private final Class<? extends WindwardContext> context;
   private final Class<? extends WindwardContext> parameterType;
@@ -33,7 +34,11 @@ public class FunctionMetaInfo<I> {
   private final Map<String, Object> pathVariables;
 
   public FunctionMetaInfo(
-      I function, Class<? extends WindwardContext> context, Map<String, Object> pathVariables) {
+      String path,
+      I function,
+      Class<? extends WindwardContext> context,
+      Map<String, Object> pathVariables) {
+    this.path = path;
     this.function = function;
     this.context = context;
     this.pathVariables = pathVariables;
@@ -60,6 +65,10 @@ public class FunctionMetaInfo<I> {
       this.parameterType = null;
       this.resultType = null;
     }
+  }
+
+  public String getPath() {
+    return path;
   }
 
   public I getFunction() {

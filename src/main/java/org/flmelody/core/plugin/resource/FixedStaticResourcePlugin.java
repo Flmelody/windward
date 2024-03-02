@@ -31,10 +31,6 @@ import org.flmelody.util.UrlUtil;
 public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
   private final Set<String> fixedPages = new HashSet<>(Collections.singletonList("index.html"));
 
-  public FixedStaticResourcePlugin(String[] staticResourceLocations) {
-    super(staticResourceLocations);
-  }
-
   // Add custom page yourself
   public void appendPages(String... pageNames) {
     if (pageNames != null) {
@@ -43,9 +39,9 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
   }
 
   @Override
-  protected String findResource(StaticResource staticResource) {
+  protected String findResource(String staticResourceLocation, StaticResource staticResource) {
     try {
-      return super.findResource(staticResource);
+      return super.findResource(staticResourceLocation, staticResource);
     } catch (HandlerNotFoundException e) {
       String originalUri = staticResource.getFileUri();
       for (String fixedPage : fixedPages) {
@@ -59,6 +55,7 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
         if (index < 0) {
           try {
             return super.findResource(
+                staticResourceLocation,
                 StaticResource.newBuilder(staticResource).fileUri(fixedPage).build());
           } catch (Exception ignored) {
             // Nothing here
@@ -67,6 +64,7 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
         try {
           fileUri = UrlUtil.buildUrl(fileUri, fixedPage);
           return super.findResource(
+              staticResourceLocation,
               StaticResource.newBuilder(staticResource).fileUri(fileUri).build());
         } catch (Exception ignored) {
           StringTokenizer stringTokenizer = new StringTokenizer(originalUri, UrlUtil.SLASH);
@@ -78,6 +76,7 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
                 && !possibleUri.equals(originalUri)) {
               try {
                 return super.findResource(
+                    staticResourceLocation,
                     StaticResource.newBuilder(staticResource)
                         .fileUri(UrlUtil.buildUrl(possibleUri, fixedPage))
                         .build());

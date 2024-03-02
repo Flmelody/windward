@@ -69,15 +69,15 @@ public final class Windward implements Router<Windward> {
   // Template files location
   private final String templateRoot;
   // Static files locations
-  private final String[] staticResourceLocations;
+  private final String staticResourceLocation;
   private final PluginResolver pluginResolver = new CompositePluginResolver();
   private final WindManager windManager = new DefaultWindManager(this);
   private HttpServer httpServer;
 
-  private Windward(String contextPath, String templateRoot, String[] staticResourceLocations) {
+  private Windward(String contextPath, String templateRoot, String staticResourceLocation) {
     this.contextPath = contextPath;
     this.templateRoot = templateRoot;
-    this.staticResourceLocations = staticResourceLocations;
+    this.staticResourceLocation = staticResourceLocation;
   }
 
   public static Windward setup() {
@@ -104,7 +104,7 @@ public final class Windward implements Router<Windward> {
    * @return core engine of Windward
    */
   public static Windward setup(int port, String contextPath, Filter... filters) {
-    return setup(port, contextPath, "/templates", new String[] {"/static"}, filters);
+    return setup(port, contextPath, "/templates", "/static", filters);
   }
 
   /**
@@ -113,7 +113,7 @@ public final class Windward implements Router<Windward> {
    * @param port server port
    * @param contextPath path of root
    * @param templateRoot root for template files
-   * @param staticResourceLocations locations of static resource
+   * @param staticResourceLocation location of static resource
    * @param filters request filters
    * @return core engine of Windward
    */
@@ -121,15 +121,15 @@ public final class Windward implements Router<Windward> {
       int port,
       String contextPath,
       String templateRoot,
-      String[] staticResourceLocations,
+      String staticResourceLocation,
       Filter... filters) {
-    Windward windward = new Windward(contextPath, templateRoot, staticResourceLocations);
+    Windward windward = new Windward(contextPath, templateRoot, staticResourceLocation);
     windward.httpServer = new NettyHttpServer(port);
     windward
         .registerExceptionHandler(new DefaultNotFoundHandler())
         .registerFilter(filters)
         .registerPlugin(PluginSlot.JSON, AutoJsonBinder.jsonPlugin)
-        .registerPlugin(PluginSlot.RESOURCE, new BaseStaticResourcePlugin(staticResourceLocations));
+        .registerPlugin(PluginSlot.RESOURCE, new BaseStaticResourcePlugin());
     return prepareDefault(windward);
   }
 
@@ -361,8 +361,8 @@ public final class Windward implements Router<Windward> {
     return templateRoot;
   }
 
-  public String[] getStaticResourceLocations() {
-    return staticResourceLocations;
+  public String getStaticResourceLocation() {
+    return staticResourceLocation;
   }
 
   public Windward then() {
@@ -484,8 +484,14 @@ public final class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public Windward resource(String... pattern) {
-    resourceGroup(UrlUtil.SLASH).resource(pattern);
+  public Windward resource(String... pathPatterns) {
+    return resources(staticResourceLocation, pathPatterns);
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public Windward resources(String staticResourceLocation, String... pathPatterns) {
+    resourceGroup(UrlUtil.SLASH).resources(staticResourceLocation, pathPatterns);
     return this;
   }
 }

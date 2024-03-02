@@ -48,6 +48,7 @@ import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.EmptyWindwardContext;
 import org.flmelody.core.context.EnhancedWindwardContext;
+import org.flmelody.core.context.ResourceWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.exception.HandlerNotFoundException;
@@ -230,6 +231,11 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
           return new WebSocketWindwardContext(
               windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
               windwardResponseBuild.build());
+        } else if (context.isAssignableFrom(ResourceWindwardContext.class)) {
+          return new ResourceWindwardContext(
+              windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
+              windwardResponseBuild.build(),
+              functionMetaInfo.getPath());
         }
       } catch (Exception e) {
         logger.atError().log("Failed to construct context");

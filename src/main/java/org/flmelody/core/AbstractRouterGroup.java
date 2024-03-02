@@ -30,10 +30,13 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.flmelody.core.context.EnhancedWindwardContext;
+import org.flmelody.core.context.ResourceWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.context.support.HttpKind;
 import org.flmelody.core.exception.RouterMappingException;
+import org.flmelody.core.exception.WindwardException;
+import org.flmelody.core.plugin.resource.BaseStaticResourcePlugin;
 import org.flmelody.core.plugin.resource.ResourcePlugin;
 import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.support.EnhancedFunction;
@@ -144,12 +147,17 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
   }
 
   @Override
-  public RouterGroup<M> resource(String... pathPatterns) {
+  public RouterGroup<M> resources(String staticResourceLocation, String... pathPatterns) {
+    if (staticResourceLocation == null || staticResourceLocation.trim().isEmpty()) {
+      throw new WindwardException("Illegal staticResourceLocation!");
+    }
     if (pathPatterns != null) {
-      ResourcePlugin resourcePlugin = Windward.plugin(ResourcePlugin.class);
+      ResourcePlugin resourcePlugin =
+          Windward.plugin(BaseStaticResourcePlugin.class)
+              .mappingResource(staticResourceLocation, pathPatterns);
       for (String pathPattern : pathPatterns) {
         registerRouter(
-            pathPattern, HttpMethod.GET.name(), resourcePlugin, SimpleWindwardContext.class);
+            pathPattern, HttpMethod.GET.name(), resourcePlugin, ResourceWindwardContext.class);
       }
       if (!resourceRouter) {
         this.resourceRouter = true;
@@ -249,7 +257,7 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
       String relativePath, String method, I i, Class<? extends WindwardContext> clazz) {
     String path = UrlUtil.buildUrl(groupPath, relativePath);
     Map<String, Object> pathVariables = checkPlaceholder(path);
-    FunctionMetaInfo<I> functionMetaInfo = new FunctionMetaInfo<>(i, clazz, pathVariables);
+    FunctionMetaInfo<I> functionMetaInfo = new FunctionMetaInfo<>(path, i, clazz, pathVariables);
     if (routers.containsKey(path)) {
       routers.get(path).put(method, functionMetaInfo);
     } else {

@@ -21,4 +21,6 @@ import org.flmelody.core.plugin.Plugin;
 /**
  * @author esotericman
  */
-public interface ResourcePlugin extends Plugin {}
+public interface ResourcePlugin extends Plugin {
+  ResourcePlugin mappingResource(String staticResourceLocation, String... pathPatterns);
+}

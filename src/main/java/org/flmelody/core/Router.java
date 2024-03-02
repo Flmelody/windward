@@ -192,5 +192,17 @@ public interface Router<T> {
    * @param pathPatterns resources path pattern
    * @return this
    */
-  T resource(String... pathPatterns);
+  default T resource(String... pathPatterns) {
+    //noinspection unchecked
+    return (T) this;
+  }
+
+  /**
+   * Register resources path pattern for specific resource location
+   *
+   * @param staticResourceLocation resource location
+   * @param pathPatterns resources path pattern
+   * @return this
+   */
+  T resources(String staticResourceLocation, String... pathPatterns);
 }
