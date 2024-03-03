@@ -89,7 +89,8 @@ public class BaseStaticResourcePlugin implements ResourcePlugin, Consumer<Windwa
   }
 
   @Override
-  public final ResourcePlugin mappingResource(String staticResourceLocation, String... pathPatterns) {
+  public final ResourcePlugin mappingResource(
+      String staticResourceLocation, String... pathPatterns) {
     if (pathPatterns != null) {
       for (String pathPattern : pathPatterns) {
         mappedResources.put(pathPattern, staticResourceLocation);

@@ -38,8 +38,10 @@ import org.flmelody.core.exception.RouterMappingException;
 import org.flmelody.core.exception.WindwardException;
 import org.flmelody.core.plugin.resource.BaseStaticResourcePlugin;
 import org.flmelody.core.plugin.resource.ResourcePlugin;
+import org.flmelody.core.wind.event.RouterBindEvent;
 import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.support.EnhancedFunction;
+import org.flmelody.support.FunctionDefinition;
 import org.flmelody.util.AntPathMatcher;
 import org.flmelody.util.UrlUtil;
 
@@ -264,6 +266,19 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
       Map<String, Object> routerMap = new HashMap<>(2 << 3);
       routerMap.put(method, functionMetaInfo);
       routers.put(path, routerMap);
+    }
+    if (this.manager instanceof Windward) {
+      FunctionDefinition functionDefinition = functionMetaInfo.getFunctionDefinition();
+      if (functionDefinition.equals(FunctionDefinition.empty())) {
+        return;
+      }
+      ((Windward) this.manager)
+          .publishEvent(
+              RouterBindEvent.builder()
+                  .requestUrl(path)
+                  .classname(functionDefinition.getClassname())
+                  .method(functionDefinition.getMethod())
+                  .build());
     }
   }
 

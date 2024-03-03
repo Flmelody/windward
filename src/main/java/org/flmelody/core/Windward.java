@@ -147,12 +147,18 @@ public final class Windward implements Router<Windward> {
     return windward;
   }
 
+  /** Prepare work before startup. */
+  private void beforeStart() {
+    windManager.triggerEvent();
+  }
+
   /**
    * Run server
    *
    * @throws ServerException exception
    */
   public void run() throws ServerException {
+    beforeStart();
     // start server
     httpServer.run();
   }
@@ -273,7 +279,7 @@ public final class Windward implements Router<Windward> {
       return this;
     }
     for (Event event : events) {
-      windManager.trigger(event);
+      windManager.loadEvent(event);
     }
     return this;
   }

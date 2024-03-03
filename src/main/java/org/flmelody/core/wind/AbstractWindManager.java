@@ -42,10 +42,16 @@ public abstract class AbstractWindManager implements WindManager {
   }
 
   @Override
-  public void trigger(Event event) {
+  public void loadEvent(Event event) {
     events.add(event);
-    for (Listener listener : listeners) {
-      listener.cope(windward, event);
+  }
+
+  @Override
+  public void triggerEvent() {
+    for (Event event : events) {
+      for (Listener listener : listeners) {
+        listener.cope(windward, event);
+      }
     }
   }
 }

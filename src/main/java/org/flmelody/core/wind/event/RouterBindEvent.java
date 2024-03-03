@@ -20,6 +20,7 @@ package org.flmelody.core.wind.event;
  * @author esotericman
  */
 public class RouterBindEvent implements Event {
+  private String requestUrl;
   private String classname;
   private String method;
 
@@ -29,11 +30,29 @@ public class RouterBindEvent implements Event {
     return new RouterBindEventBuilder(new RouterBindEvent());
   }
 
-  private static class RouterBindEventBuilder {
+  public String getRequestUrl() {
+    return requestUrl;
+  }
+
+  public String getClassname() {
+    return classname;
+  }
+
+  public String getMethod() {
+    return method;
+  }
+
+  /** Builder for RouterBindEvent */
+  public static class RouterBindEventBuilder {
     private final RouterBindEvent routerBindEvent;
 
     private RouterBindEventBuilder(RouterBindEvent routerBindEvent) {
       this.routerBindEvent = routerBindEvent;
+    }
+
+    public RouterBindEventBuilder requestUrl(String requestUrl) {
+      this.routerBindEvent.requestUrl = requestUrl;
+      return this;
     }
 
     public RouterBindEventBuilder classname(String classname) {

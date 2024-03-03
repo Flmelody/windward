@@ -20,6 +20,7 @@ import java.util.Map;
 import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.exception.WindwardException;
 import org.flmelody.support.EnhancedFunction;
+import org.flmelody.support.FunctionDefinition;
 import org.flmelody.support.FunctionHelper;
 
 /**
@@ -32,6 +33,7 @@ public class FunctionMetaInfo<I> {
   private final Class<? extends WindwardContext> parameterType;
   private final Class<?> resultType;
   private final Map<String, Object> pathVariables;
+  private final FunctionDefinition functionDefinition;
 
   public FunctionMetaInfo(
       String path,
@@ -45,23 +47,22 @@ public class FunctionMetaInfo<I> {
     // Only for EnhancedFunction
     if (function instanceof EnhancedFunction) {
       EnhancedFunction<?, ?> enhancedFunction = (EnhancedFunction<?, ?>) function;
-      Map<Class<?>, Class<?>> resolvedFunction = FunctionHelper.resolveFunction(enhancedFunction);
-      if (resolvedFunction.isEmpty()) {
+      FunctionDefinition functionDefinition = FunctionHelper.resolveFunction(enhancedFunction);
+      if (functionDefinition.getParameterTypes().isEmpty()) {
         throw new WindwardException("Illegal function!");
       }
       // windward context
       //noinspection unchecked
       this.parameterType =
           (Class<? extends WindwardContext>)
-              resolvedFunction.keySet().stream()
+              functionDefinition.getParameterTypes().stream()
                   .findFirst()
                   .orElseThrow(() -> new WindwardException("Missed parameter type!"));
       // all java type
-      this.resultType =
-          resolvedFunction.values().stream()
-              .findFirst()
-              .orElseThrow(() -> new WindwardException("Missed result type!"));
+      this.resultType = functionDefinition.getReturnType();
+      this.functionDefinition = functionDefinition;
     } else {
+      this.functionDefinition = FunctionDefinition.empty();
       this.parameterType = null;
       this.resultType = null;
     }
@@ -89,5 +90,9 @@ public class FunctionMetaInfo<I> {
 
   public Map<String, Object> getPathVariables() {
     return pathVariables;
+  }
+
+  public FunctionDefinition getFunctionDefinition() {
+    return functionDefinition;
   }
 }

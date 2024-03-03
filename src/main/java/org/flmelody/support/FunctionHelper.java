@@ -19,9 +19,6 @@ package org.flmelody.support;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import org.flmelody.core.exception.WindwardException;
 
 /**
@@ -34,17 +31,16 @@ public final class FunctionHelper {
   }
 
   /**
-   * Parse functions generic type, and return a map that uses functions input type as key and result
-   * type as value.
+   * Parse functions generic type, and return function's definition.
    *
    * @param function a function
    * @return generic type map
    */
-  public static <F> Map<Class<?>, Class<?>> resolveFunction(F function) {
+  public static <F> FunctionDefinition resolveFunction(F function) {
     return findFunctionSmartly(function);
   }
 
-  private static <F> Map<Class<?>, Class<?>> findFunctionSmartly(F function) {
+  private static <F> FunctionDefinition findFunctionSmartly(F function) {
     String functionClassName = function.getClass().getName();
     int lambdaMarkerIndex = functionClassName.indexOf("$$Lambda$");
     // Not lambda function
@@ -54,21 +50,25 @@ public final class FunctionHelper {
     if (function instanceof Serializable) {
       return findLambdaFunction(function);
     }
-    return Collections.emptyMap();
+    return FunctionDefinition.empty();
   }
 
   // Use to non lambda function
-  private static <F> Map<Class<?>, Class<?>> findRegularFunction(F function) {
-    Map<Class<?>, Class<?>> functionMap = new HashMap<>();
+  private static <F> FunctionDefinition findRegularFunction(F function) {
+    FunctionDefinition.FunctionDefinitionBuilder builder = FunctionDefinition.builder();
     Method method = function.getClass().getMethods()[0];
     Class<?>[] parameterTypes = method.getParameterTypes();
-    functionMap.put(parameterTypes.length == 0 ? null : parameterTypes[0], method.getReturnType());
-    return functionMap;
+    builder
+        .classname(function.getClass().getName())
+        .method(method.getName())
+        .parameterType(parameterTypes.length == 0 ? null : parameterTypes[0])
+        .returnType(method.getReturnType());
+    return builder.build();
   }
 
   // Lambda function
-  private static <F> Map<Class<?>, Class<?>> findLambdaFunction(F function) {
-    Map<Class<?>, Class<?>> functionMap = new HashMap<>();
+  private static <F> FunctionDefinition findLambdaFunction(F function) {
+    FunctionDefinition.FunctionDefinitionBuilder builder = FunctionDefinition.builder();
     try {
       SerializedLambda serializedLambda = getSerializedLambda(function);
       String instantiatedMethodType = serializedLambda.getInstantiatedMethodType();
@@ -85,11 +85,15 @@ public final class FunctionHelper {
           Class.forName(parameterTypeString, true, function.getClass().getClassLoader());
       Class<?> resultType =
           Class.forName(resultTypeString, true, function.getClass().getClassLoader());
-      functionMap.put(parameterType, resultType);
+      builder
+          .classname(serializedLambda.getImplClass().replace("/", "."))
+          .method(serializedLambda.getImplMethodName())
+          .parameterType(parameterType)
+          .returnType(resultType);
     } catch (Exception e) {
       throw new WindwardException(e);
     }
-    return functionMap;
+    return builder.build();
   }
 
   private static <F> SerializedLambda getSerializedLambda(F lambda) {

@@ -32,9 +32,12 @@ public interface WindManager {
   void join(Listener listener);
 
   /**
-   * Publish event.
+   * Load event.
    *
    * @param event event
    */
-  void trigger(Event event);
+  void loadEvent(Event event);
+
+  /** Trigger events. */
+  void triggerEvent();
 }
