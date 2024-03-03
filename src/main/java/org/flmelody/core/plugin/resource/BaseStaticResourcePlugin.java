@@ -43,10 +43,10 @@ import org.flmelody.util.UrlUtil;
  */
 public class BaseStaticResourcePlugin implements ResourcePlugin, Consumer<WindwardContext> {
 
-  private final Map<String, String> mappedResources = new LinkedHashMap<>();
+  protected final Map<String, String> mappedResources = new LinkedHashMap<>();
 
   @Override
-  public final void accept(WindwardContext windwardContext) {
+  public void accept(WindwardContext windwardContext) {
     if (!(windwardContext instanceof ResourceWindwardContext)) {
       windwardContext.write(
           HttpStatus.INTERNAL_SERVER_ERROR.value(), MediaType.APPLICATION_JSON_VALUE.value, null);

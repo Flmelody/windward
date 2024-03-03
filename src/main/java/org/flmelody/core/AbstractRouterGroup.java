@@ -36,8 +36,7 @@ import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.context.support.HttpKind;
 import org.flmelody.core.exception.RouterMappingException;
 import org.flmelody.core.exception.WindwardException;
-import org.flmelody.core.plugin.resource.BaseStaticResourcePlugin;
-import org.flmelody.core.plugin.resource.ResourcePlugin;
+import org.flmelody.core.plugin.resource.ResourcePluginProxy;
 import org.flmelody.core.wind.event.RouterBindEvent;
 import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.support.EnhancedFunction;
@@ -154,12 +153,12 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
       throw new WindwardException("Illegal staticResourceLocation!");
     }
     if (pathPatterns != null) {
-      ResourcePlugin resourcePlugin =
-          Windward.plugin(BaseStaticResourcePlugin.class)
-              .mappingResource(staticResourceLocation, pathPatterns);
       for (String pathPattern : pathPatterns) {
         registerRouter(
-            pathPattern, HttpMethod.GET.name(), resourcePlugin, ResourceWindwardContext.class);
+            pathPattern,
+            HttpMethod.GET.name(),
+            ResourcePluginProxy.current().mappingResource(staticResourceLocation, pathPatterns),
+            ResourceWindwardContext.class);
       }
       if (!resourceRouter) {
         this.resourceRouter = true;

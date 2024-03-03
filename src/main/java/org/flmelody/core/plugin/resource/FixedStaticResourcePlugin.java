@@ -47,7 +47,7 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
       for (String fixedPage : fixedPages) {
         String fileUri = originalUri;
         // Wrong or lost resource
-        boolean ignoredResource = fileUri.matches("\\.[a-z|A-Z]+$");
+        boolean ignoredResource = fileUri.matches(".*\\.[a-z|A-Z]+$");
         if (ignoredResource) {
           throw e;
         }
