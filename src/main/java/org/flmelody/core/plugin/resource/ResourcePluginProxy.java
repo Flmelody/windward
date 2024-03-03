@@ -38,8 +38,9 @@ public final class ResourcePluginProxy extends BaseStaticResourcePlugin {
     if (resourcePlugin == null) {
       synchronized (resourceLock) {
         if (resourcePlugin == null) {
-          resourcePlugin = Windward.plugin(BaseStaticResourcePlugin.class);
-          resourcePlugin.mappedResources.putAll(mappedResources);
+          BaseStaticResourcePlugin plugin = Windward.plugin(BaseStaticResourcePlugin.class);
+          plugin.mappedResources.putAll(mappedResources);
+          resourcePlugin = plugin;
         }
       }
     }
