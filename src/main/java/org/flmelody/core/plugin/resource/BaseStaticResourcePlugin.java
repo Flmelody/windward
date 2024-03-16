@@ -80,6 +80,10 @@ public class BaseStaticResourcePlugin implements ResourcePlugin, Consumer<Windwa
       if (in == null || in instanceof ByteArrayInputStream) {
         throw new ResourceNotFoundException("No matched resource!");
       }
+      boolean validResource = fileUri.matches(".*\\.[a-z|A-Z]+$");
+      if (!validResource && in.available() <= 0) {
+        throw new ResourceNotFoundException("No matched resource!");
+      }
       return new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))
           .lines()
           .collect(Collectors.joining("\n"));

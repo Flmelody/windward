@@ -36,7 +36,8 @@ public class StaticResource {
     return fileUri;
   }
 
-  static class StaticResourceBuilder {
+  /** Builder for StaticResource */
+  public static class StaticResourceBuilder {
     private final StaticResource staticResource;
 
     private StaticResourceBuilder(StaticResource staticResource) {
