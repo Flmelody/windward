@@ -30,6 +30,16 @@ import org.flmelody.util.UrlUtil;
  */
 public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
   private final Set<String> fixedPages = new HashSet<>(Collections.singletonList("index.html"));
+  // If false, always try to return fixed page if resource not found exception occurred
+  private final boolean ignoredPattern;
+
+  public FixedStaticResourcePlugin() {
+    this(true);
+  }
+
+  public FixedStaticResourcePlugin(boolean ignoredPattern) {
+    this.ignoredPattern = ignoredPattern;
+  }
 
   // Add custom page yourself
   public void appendPages(String... pageNames) {
@@ -47,9 +57,11 @@ public class FixedStaticResourcePlugin extends BaseStaticResourcePlugin {
       for (String fixedPage : fixedPages) {
         String fileUri = originalUri;
         // Wrong or lost resource
-        boolean ignoredResource = fileUri.matches(".*\\.[a-z|A-Z]+$");
-        if (ignoredResource) {
-          throw e;
+        if (ignoredPattern) {
+          boolean ignoredResource = fileUri.matches(pattern);
+          if (ignoredResource) {
+            throw e;
+          }
         }
         int index = fileUri.lastIndexOf(UrlUtil.SLASH);
         if (index < 0) {

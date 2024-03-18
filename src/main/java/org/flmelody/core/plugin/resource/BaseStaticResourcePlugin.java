@@ -42,8 +42,8 @@ import org.flmelody.util.UrlUtil;
  * @author esotericman
  */
 public class BaseStaticResourcePlugin implements ResourcePlugin, Consumer<WindwardContext> {
-
   protected final Map<String, String> mappedResources = new LinkedHashMap<>();
+  protected final String pattern = ".*\\.[a-z|A-Z]+$";
 
   @Override
   public void accept(WindwardContext windwardContext) {
@@ -80,7 +80,7 @@ public class BaseStaticResourcePlugin implements ResourcePlugin, Consumer<Windwa
       if (in == null || in instanceof ByteArrayInputStream) {
         throw new ResourceNotFoundException("No matched resource!");
       }
-      boolean validResource = fileUri.matches(".*\\.[a-z|A-Z]+$");
+      boolean validResource = staticResource.getFileUri().matches(pattern);
       if (!validResource && in.available() <= 0) {
         throw new ResourceNotFoundException("No matched resource!");
       }
