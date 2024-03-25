@@ -252,10 +252,8 @@ public final class Windward implements Router<Windward> {
    * @param clazz plugin class
    * @param plugin plugin
    * @return current windward
-   * @deprecated use {@link #registerPlugin(PluginSlot, Plugin)} instead
    */
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  public Windward registerPlugin(Class<? extends Plugin> clazz, Plugin plugin) {
+  private Windward registerPlugin(Class<? extends Plugin> clazz, Plugin plugin) {
     // resolve plugin
     pluginResolver.resolve(this, plugin);
     // bind plugin
