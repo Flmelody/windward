@@ -39,6 +39,10 @@ public class ExtensionalWebSocketPlugin implements WebSocketPlugin {
   private final List<WebSocketCodec> webSocketCodecs;
   private final List<WebSocketParser<?>> webSocketParsers;
 
+  public ExtensionalWebSocketPlugin() {
+    this(Collections.emptyList(), Collections.emptyList());
+  }
+
   public ExtensionalWebSocketPlugin(
       List<WebSocketCodec> webSocketCodecs, List<WebSocketParser<?>> webSocketParsers) {
     this("/**", webSocketCodecs, webSocketParsers);

@@ -119,7 +119,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
 
   @Override
   public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-    // websocket context should always be cached
+    // Websocket context should always be cached
     if (evt instanceof WebSocketFireEvent
         && cachedWindwardContext instanceof WebSocketWindwardContext) {
       WebSocketFireEvent webSocketFireEvent = (WebSocketFireEvent) evt;
@@ -157,12 +157,16 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         List<WebSocketParser<?>> webSocketParsers = plugin.getWebSocketParsers();
         boolean emptyCodecs = webSocketCodecs == null || webSocketCodecs.isEmpty();
         boolean emptyParsers = webSocketParsers == null || webSocketParsers.isEmpty();
-        // Custom parsing generally requires both a codec and a message parser to be configured.
-        if (emptyCodecs || emptyParsers) {
+        // Custom parsing generally requires  a codec or a message parser to be configured.
+        if (emptyCodecs && emptyParsers) {
           continue;
         }
-        ctx.pipeline().addLast(webSocketCodecs.toArray(new WebSocketCodec[0]));
-        ctx.pipeline().addLast(webSocketParsers.toArray(new WebSocketParser[0]));
+        if (!emptyCodecs) {
+          ctx.pipeline().addLast(webSocketCodecs.toArray(new WebSocketCodec[0]));
+        }
+        if (!emptyParsers) {
+          ctx.pipeline().addLast(webSocketParsers.toArray(new WebSocketParser[0]));
+        }
         ctx.channel().attr(MULTIPLE_SUBSCRIBER).set(true);
         // Direct return without multiple merges to avoid unnecessary problems
         break;
