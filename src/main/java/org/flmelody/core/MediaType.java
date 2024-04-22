@@ -21,8 +21,8 @@ package org.flmelody.core;
  */
 public enum MediaType {
   WEB_SOCKET_BINARY("websocket", "binary", "websocket/binary;"),
+  TEXT_EVENT_STREAM("text", "event-stream", "text/event-stream"),
   MULTIPART_FORM_DATA_VALUE("multipart", "form-data", "multipart/form-data"),
-
   APPLICATION_JSON_VALUE("application", "json", "application/json;charset=UTF-8"),
   APPLICATION_STREAM_VALUE("application", "octet-stream", "application/octet-stream;charset=UTF-8"),
 

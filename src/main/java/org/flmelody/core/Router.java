@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.support.HttpKind;
+import org.flmelody.core.context.support.SseWindwardContext;
 import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.support.EnhancedFunction;
 
@@ -175,6 +176,15 @@ public interface Router<T> {
    */
   <C extends EnhancedWindwardContext & HttpKind> T delete(
       String relativePath, EnhancedFunction<C, ?> function);
+
+  /**
+   * Register SSE (server send event)
+   *
+   * @param relativePath relative path
+   * @param function function to consume
+   * @return this
+   */
+  T sse(String relativePath, EnhancedFunction<SseWindwardContext, SseEjector> function);
 
   /**
    * Register websocket function

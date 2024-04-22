@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.support.HttpKind;
+import org.flmelody.core.context.support.SseWindwardContext;
 import org.flmelody.core.exception.PluginMissException;
 import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.NettyHttpServer;
@@ -476,6 +477,14 @@ public final class Windward implements Router<Windward> {
   public <C extends EnhancedWindwardContext & HttpKind> Windward delete(
       String relativePath, EnhancedFunction<C, ?> function) {
     group(UrlUtil.SLASH).delete(relativePath, function);
+    return this;
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public Windward sse(
+      String relativePath, EnhancedFunction<SseWindwardContext, SseEjector> function) {
+    group(UrlUtil.SLASH).sse(relativePath, function);
     return this;
   }
 
