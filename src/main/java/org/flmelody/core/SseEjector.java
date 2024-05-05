@@ -16,7 +16,30 @@
 
 package org.flmelody.core;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.flmelody.core.context.support.SseWindwardContext;
+
 /**
  * @author esotericman
  */
-public class SseEjector {}
+public class SseEjector {
+  private final SseWindwardContext sseWindwardContext;
+  private final AtomicBoolean complete = new AtomicBoolean(false);
+  private final EjectorCallback callback = new EjectorCallback();
+
+  public SseEjector(SseWindwardContext sseWindwardContext) {
+    this.sseWindwardContext = sseWindwardContext;
+  }
+
+  public void send(SseEventSource.SseEventSourceBuilder builder) {
+    sseWindwardContext.send(builder.build());
+  }
+
+  private class EjectorCallback implements Runnable {
+
+    @Override
+    public void run() {
+      SseEjector.this.complete.set(true);
+    }
+  }
+}
