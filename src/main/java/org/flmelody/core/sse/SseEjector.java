@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package org.flmelody.core;
+package org.flmelody.core.sse;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.flmelody.core.context.support.SseWindwardContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author esotericman
  */
 public class SseEjector {
+  private static final Logger logger = LoggerFactory.getLogger(SseEjector.class);
   private final SseWindwardContext sseWindwardContext;
   private final AtomicBoolean complete = new AtomicBoolean(false);
   private final EjectorCallback callback = new EjectorCallback();
@@ -33,6 +36,14 @@ public class SseEjector {
 
   public void send(SseEventSource.SseEventSourceBuilder builder) {
     sseWindwardContext.send(builder.build());
+  }
+
+  public void complete() {
+    if (complete.compareAndSet(false, true)) {
+      sseWindwardContext.complete();
+    } else {
+      logger.atWarn().log("SseEjector already completed");
+    }
   }
 
   private class EjectorCallback implements Runnable {

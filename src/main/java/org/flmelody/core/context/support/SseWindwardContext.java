@@ -18,13 +18,14 @@ package org.flmelody.core.context.support;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.flmelody.core.HttpHeader;
+import org.flmelody.core.HttpHeaderValue;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
-import org.flmelody.core.SseEjector;
-import org.flmelody.core.SseEventSource;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.EnhancedWindwardContext;
+import org.flmelody.core.sse.SseChunkTail;
 
 /**
  * @author esotericman
@@ -33,8 +34,9 @@ public class SseWindwardContext extends EnhancedWindwardContext implements HttpK
   private static final Map<String, Object> headers = new HashMap<>();
 
   static {
-    headers.put("Cache-Control", "no-cache");
-    headers.put("Connection", "keep-alive");
+    headers.put(HttpHeader.CACHE_CONTROL, HttpHeaderValue.NO_CACHE);
+    headers.put(HttpHeader.CONNECTION, HttpHeaderValue.KEEP_ALIVE);
+    headers.put(HttpHeader.TRANSFER_ENCODING, HttpHeaderValue.CHUNKED);
   }
 
   public SseWindwardContext(WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
@@ -46,19 +48,19 @@ public class SseWindwardContext extends EnhancedWindwardContext implements HttpK
 
   @Override
   protected <R> void doOnResponse(R r) {
-    if (r instanceof SseEjector) {
-      windwardResponse.write(
-          HttpStatus.OK.value(),
-          MediaType.TEXT_EVENT_STREAM_VALUE.value,
-          headers,
-          SseEventSource.builder().comment("").build());
-    } else {
-      windwardResponse.write(
-          HttpStatus.OK.value(), MediaType.TEXT_EVENT_STREAM_VALUE.value, headers, r);
-    }
+    // No response here?
   }
 
   public <T> void send(T data) {
-    doOnResponse(data);
+    windwardResponse.write(
+        HttpStatus.OK.value(), MediaType.TEXT_EVENT_STREAM_VALUE.value, headers, data);
+  }
+
+  public void complete() {
+    windwardResponse.write(
+        HttpStatus.OK.value(),
+        MediaType.TEXT_EVENT_STREAM_VALUE.value,
+        headers,
+        SseChunkTail.SSE_CHUNK_TAIL);
   }
 }

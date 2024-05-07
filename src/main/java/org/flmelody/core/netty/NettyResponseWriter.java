@@ -20,23 +20,31 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufHolder;
+import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.stream.ChunkedStream;
 import io.netty.util.CharsetUtil;
 import java.util.Collections;
 import java.util.Map;
+import org.flmelody.core.HttpHeader;
+import org.flmelody.core.HttpHeaderValue;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.ResponseWriter;
 import org.flmelody.core.Windward;
 import org.flmelody.core.plugin.json.JsonPlugin;
+import org.flmelody.core.sse.SseChunkTail;
 
 /**
  * @author esotericman
@@ -73,16 +81,45 @@ public class NettyResponseWriter implements ResponseWriter {
   @Override
   public <T> void write(
       int code, String contentType, Map<String, Object> headers, T data, boolean close) {
+    write(code, contentType, headers, data, close, true);
+  }
+
+  @Override
+  public <T> void write(
+      int code,
+      String contentType,
+      Map<String, Object> headers,
+      T data,
+      boolean close,
+      boolean flush) {
     Channel channel = ctx.channel();
     if (!channel.isActive()) {
       return;
     }
     MediaType mediaType = MediaType.detectMediaType(contentType);
-    ByteBuf response = resolveRawResponse(mediaType, data);
-    FullHttpResponse httpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK, response);
-    httpResponse.setStatus(HttpResponseStatus.valueOf(code));
-    paddingHeaders(httpResponse, mediaType, headers, close);
-    ctx.writeAndFlush(httpResponse);
+    HttpResponse httpResponse;
+    if (chunkedResponse(headers)) {
+      httpResponse = new DefaultHttpResponse(HTTP_1_1, OK);
+      paddingHeaders(httpResponse, mediaType, headers, close);
+      ctx.write(httpResponse);
+      if (data instanceof SseChunkTail) {
+        ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+      } else {
+        ByteBuf response = resolveRawResponse(mediaType, data);
+        ByteBufInputStream contentStream = new ByteBufInputStream(response);
+        ctx.writeAndFlush(new ChunkedStream(contentStream));
+      }
+    } else {
+      ByteBuf response = resolveRawResponse(mediaType, data);
+      httpResponse = new DefaultFullHttpResponse(HTTP_1_1, OK, response);
+      httpResponse.setStatus(HttpResponseStatus.valueOf(code));
+      paddingHeaders(httpResponse, mediaType, headers, close);
+      if (!close && flush) {
+        ctx.writeAndFlush(httpResponse);
+      } else {
+        ctx.write(httpResponse);
+      }
+    }
     if (close) {
       close();
     }
@@ -91,6 +128,11 @@ public class NettyResponseWriter implements ResponseWriter {
   @Override
   public <T> void writeAndClose(int code, String contentType, T data) {
     write(code, contentType, data, Boolean.TRUE);
+  }
+
+  @Override
+  public void flush() {
+    ctx.flush();
   }
 
   @Override
@@ -119,20 +161,24 @@ public class NettyResponseWriter implements ResponseWriter {
 
   // Padding headers value for response
   private void paddingHeaders(
-      FullHttpResponse httpResponse,
-      MediaType mediaType,
-      Map<String, Object> headers,
-      boolean close) {
+      HttpResponse httpResponse, MediaType mediaType, Map<String, Object> headers, boolean close) {
     HttpHeaders httpHeaders = httpResponse.headers();
     httpHeaders.set(HttpHeaderNames.CONTENT_TYPE, mediaType.value);
     if (headers != null && !headers.isEmpty()) {
       headers.keySet().forEach(key -> httpHeaders.set(key, headers.get(key)));
     }
-    if (!MediaType.TEXT_EVENT_STREAM_VALUE.equals(mediaType)) {
-      httpHeaders.setInt(HttpHeaderNames.CONTENT_LENGTH, httpResponse.content().readableBytes());
+    if (httpResponse instanceof ByteBufHolder) {
+      httpHeaders.setInt(
+          HttpHeaderNames.CONTENT_LENGTH, ((ByteBufHolder) httpResponse).content().readableBytes());
     }
     if (!close) {
       httpResponse.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
     }
+  }
+
+  private boolean chunkedResponse(Map<String, Object> headers) {
+    return headers != null
+        && !headers.isEmpty()
+        && HttpHeaderValue.CHUNKED.equals(headers.get(HttpHeader.TRANSFER_ENCODING));
   }
 }

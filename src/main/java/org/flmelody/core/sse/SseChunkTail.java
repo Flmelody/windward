@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-package org.flmelody.core;
+package org.flmelody.core.sse;
 
 /**
  * @author esotericman
  */
-public interface SseEvent {
-  /** Add an SSE "id" line. */
-  SseEvent id(String id);
-
-  /** Add an SSE "event" line. */
-  SseEvent name(String eventName);
-
-  /** Add an SSE "retry" line. */
-  SseEvent reconnectTime(long reconnectTimeMillis);
-
-  /** Add an SSE "comment" line. */
-  SseEvent comment(String comment);
-
-  /** Add an SSE "data" line. */
-  SseEvent data(String object);
+public interface SseChunkTail {
+  SseChunkTail SSE_CHUNK_TAIL = new SseChunkTail(){};
 }

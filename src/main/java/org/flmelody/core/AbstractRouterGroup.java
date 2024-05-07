@@ -38,6 +38,7 @@ import org.flmelody.core.context.support.SseWindwardContext;
 import org.flmelody.core.exception.RouterMappingException;
 import org.flmelody.core.exception.WindwardException;
 import org.flmelody.core.plugin.resource.ResourcePluginProxy;
+import org.flmelody.core.sse.SseEjector;
 import org.flmelody.core.wind.event.RouterBindEvent;
 import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.support.EnhancedFunction;
@@ -145,7 +146,15 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
   @Override
   public RouterGroup<M> sse(
       String relativePath, EnhancedFunction<SseWindwardContext, SseEjector> function) {
-    return http(HttpMethod.GET, relativePath, function);
+    return sse(HttpMethod.GET, relativePath, function);
+  }
+
+  @Override
+  public RouterGroup<M> sse(
+      HttpMethod httpMethod,
+      String relativePath,
+      EnhancedFunction<SseWindwardContext, SseEjector> function) {
+    return http(httpMethod, relativePath, function);
   }
 
   @Override

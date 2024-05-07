@@ -43,6 +43,7 @@ import org.flmelody.core.plugin.view.ViewEngineDetector;
 import org.flmelody.core.plugin.view.freemarker.FreemarkerView;
 import org.flmelody.core.plugin.view.groovy.GroovyView;
 import org.flmelody.core.plugin.view.thymeleaf.ThymeleafView;
+import org.flmelody.core.sse.SseEjector;
 import org.flmelody.core.wind.DefaultWindManager;
 import org.flmelody.core.wind.WindManager;
 import org.flmelody.core.wind.event.Event;
@@ -485,6 +486,16 @@ public final class Windward implements Router<Windward> {
   public Windward sse(
       String relativePath, EnhancedFunction<SseWindwardContext, SseEjector> function) {
     group(UrlUtil.SLASH).sse(relativePath, function);
+    return this;
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public Windward sse(
+      HttpMethod httpMethod,
+      String relativePath,
+      EnhancedFunction<SseWindwardContext, SseEjector> function) {
+    group(UrlUtil.SLASH).sse(httpMethod, relativePath, function);
     return this;
   }
 

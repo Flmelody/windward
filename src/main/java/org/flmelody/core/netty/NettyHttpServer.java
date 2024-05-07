@@ -28,6 +28,7 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.cors.CorsConfigBuilder;
 import io.netty.handler.codec.http.cors.CorsHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import org.flmelody.core.HttpServer;
 import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.handler.HttpServerHandler;
@@ -67,6 +68,7 @@ public class NettyHttpServer implements HttpServer {
                               .allowCredentials()
                               .build()));
                   p.addLast(new HttpObjectAggregator(65536));
+                  p.addLast(new ChunkedWriteHandler());
                   p.addLast(new HttpServerHandler());
                 }
               });

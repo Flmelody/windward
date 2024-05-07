@@ -80,10 +80,32 @@ public interface ResponseWriter {
    *
    * @param code http code
    * @param contentType contentType
+   * @param headers responses header
+   * @param data data
+   * @param <T> data type
+   * @param close close connection or not
+   * @param flush flush response immediately
+   */
+  <T> void write(
+      int code,
+      String contentType,
+      Map<String, Object> headers,
+      T data,
+      boolean close,
+      boolean flush);
+
+  /**
+   * Write response data
+   *
+   * @param code http code
+   * @param contentType contentType
    * @param data data
    * @param <T> data type
    */
   <T> void writeAndClose(int code, String contentType, T data);
+
+  /** flush response immediately */
+  void flush();
 
   /** Close connection */
   void close();

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.flmelody.core;
+package org.flmelody.core.sse;
 
 /**
  * @author esotericman
