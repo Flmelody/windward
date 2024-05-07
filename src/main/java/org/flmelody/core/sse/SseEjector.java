@@ -17,6 +17,7 @@
 package org.flmelody.core.sse;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import org.flmelody.core.context.support.SseWindwardContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ public class SseEjector {
   private static final Logger logger = LoggerFactory.getLogger(SseEjector.class);
   private final SseWindwardContext sseWindwardContext;
   private final AtomicBoolean complete = new AtomicBoolean(false);
+  private final AtomicLong timeout = new AtomicLong(0);
   private final EjectorCallback callback = new EjectorCallback();
 
   public SseEjector(SseWindwardContext sseWindwardContext) {
@@ -38,11 +40,29 @@ public class SseEjector {
     sseWindwardContext.send(builder.build());
   }
 
+  public SseEjector keepAlive(Long seconds) {
+    if (seconds < 0) {
+      throw new IllegalArgumentException(
+          "SseEjector survival time must be greater than or equal to 0 seconds! ");
+    } else {
+      timeout.compareAndSet(0, seconds);
+    }
+    return this;
+  }
+
+  public long getTimeout() {
+    return timeout.get();
+  }
+
+  public EjectorCallback getCallback() {
+    return callback;
+  }
+
   public void complete() {
     if (complete.compareAndSet(false, true)) {
       sseWindwardContext.complete();
     } else {
-      logger.atWarn().log("SseEjector already completed");
+      logger.atWarn().log("SseEjector already completed! ");
     }
   }
 
@@ -50,7 +70,7 @@ public class SseEjector {
 
     @Override
     public void run() {
-      SseEjector.this.complete.set(true);
+      complete();
     }
   }
 }

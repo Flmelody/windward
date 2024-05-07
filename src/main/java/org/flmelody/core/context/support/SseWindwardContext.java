@@ -18,6 +18,9 @@ package org.flmelody.core.context.support;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.flmelody.core.HttpHeader;
 import org.flmelody.core.HttpHeaderValue;
 import org.flmelody.core.HttpStatus;
@@ -26,12 +29,15 @@ import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.sse.SseChunkTail;
+import org.flmelody.core.sse.SseEjector;
 
 /**
  * @author esotericman
  */
 public class SseWindwardContext extends EnhancedWindwardContext implements HttpKind {
   private static final Map<String, Object> headers = new HashMap<>();
+  private static final ScheduledExecutorService scheduler =
+      Executors.newSingleThreadScheduledExecutor();
 
   static {
     headers.put(HttpHeader.CACHE_CONTROL, HttpHeaderValue.NO_CACHE);
@@ -48,7 +54,14 @@ public class SseWindwardContext extends EnhancedWindwardContext implements HttpK
 
   @Override
   protected <R> void doOnResponse(R r) {
-    // No response here?
+    if (r instanceof SseEjector) {
+      SseEjector sseEjector = (SseEjector) r;
+      if (sseEjector.getTimeout() == 0) {
+        complete();
+      } else {
+        scheduler.schedule(sseEjector.getCallback(), sseEjector.getTimeout(), TimeUnit.SECONDS);
+      }
+    }
   }
 
   public <T> void send(T data) {
