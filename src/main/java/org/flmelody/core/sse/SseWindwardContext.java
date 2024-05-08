@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.flmelody.core.context.support;
+package org.flmelody.core.sse;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import org.flmelody.core.HttpHeader;
 import org.flmelody.core.HttpHeaderValue;
@@ -28,16 +29,15 @@ import org.flmelody.core.MediaType;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.EnhancedWindwardContext;
-import org.flmelody.core.sse.SseChunkTail;
-import org.flmelody.core.sse.SseEjector;
+import org.flmelody.core.context.support.HttpKind;
 
 /**
  * @author esotericman
  */
-public class SseWindwardContext extends EnhancedWindwardContext implements HttpKind {
+public final class SseWindwardContext extends EnhancedWindwardContext implements HttpKind {
   private static final Map<String, Object> headers = new HashMap<>();
-  private static final ScheduledExecutorService scheduler =
-      Executors.newSingleThreadScheduledExecutor();
+  private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
+  private ScheduledFuture<?> scheduledFuture;
 
   static {
     headers.put(HttpHeader.CACHE_CONTROL, HttpHeaderValue.NO_CACHE);
@@ -59,17 +59,28 @@ public class SseWindwardContext extends EnhancedWindwardContext implements HttpK
       if (sseEjector.getTimeout() == 0) {
         complete();
       } else {
-        scheduler.schedule(sseEjector.getCallback(), sseEjector.getTimeout(), TimeUnit.SECONDS);
+        scheduledFuture =
+            scheduler.schedule(sseEjector.getCallback(), sseEjector.getTimeout(), TimeUnit.SECONDS);
       }
     }
   }
 
-  public <T> void send(T data) {
+  /**
+   * Send data to client, actually It's type {@link SseEventSource.SseEventSourceBuilder} always.
+   *
+   * @param data data
+   * @param <T> data type
+   */
+  <T> void send(T data) {
     windwardResponse.write(
         HttpStatus.OK.value(), MediaType.TEXT_EVENT_STREAM_VALUE.value, headers, data);
   }
 
-  public void complete() {
+  /** Send last tail empty content for sse. */
+  void complete() {
+    if (scheduledFuture != null && !scheduledFuture.isDone()) {
+      scheduledFuture.cancel(true);
+    }
     windwardResponse.write(
         HttpStatus.OK.value(),
         MediaType.TEXT_EVENT_STREAM_VALUE.value,

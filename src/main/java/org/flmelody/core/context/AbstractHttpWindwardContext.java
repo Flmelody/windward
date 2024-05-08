@@ -20,6 +20,7 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
+import org.flmelody.core.HttpHeader;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.Windward;
@@ -74,7 +75,7 @@ public abstract class AbstractHttpWindwardContext extends AbstractWindwardContex
   public void redirect(int code, String redirectUrl) {
     if (HttpStatus.MOVED_PERMANENTLY.value() == code || HttpStatus.FOUND.value() == code) {
       HashMap<String, Object> headerMap = new HashMap<>();
-      headerMap.put("location", redirectUrl);
+      headerMap.put(HttpHeader.LOCATION, redirectUrl);
       windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE.value, headerMap, null);
       return;
     }
