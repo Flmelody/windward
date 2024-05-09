@@ -67,6 +67,9 @@ public class SseEjector {
    * @return ejector
    */
   public SseEjector keepAlive(Long seconds) {
+    if (complete.get()) {
+      return this;
+    }
     if (seconds < 0) {
       throw new IllegalArgumentException(
           "SseEjector survival time must be greater than or equal to 0 seconds! ");
