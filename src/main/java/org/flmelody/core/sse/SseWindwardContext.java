@@ -26,10 +26,12 @@ import org.flmelody.core.HttpHeader;
 import org.flmelody.core.HttpHeaderValue;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
+import org.flmelody.core.Windward;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.support.HttpKind;
+import org.flmelody.core.plugin.json.JsonPlugin;
 
 /**
  * @author esotericman
@@ -66,7 +68,7 @@ public final class SseWindwardContext extends EnhancedWindwardContext implements
   }
 
   /**
-   * Send data to client, actually it's type {@link SseEventSource.SseEventSourceBuilder} always.
+   * Send data to client, actually it's type string always.
    *
    * @param data data
    * @param <T> data type
@@ -100,6 +102,10 @@ public final class SseWindwardContext extends EnhancedWindwardContext implements
 
   @Override
   public <T> void write(int code, String contentType, T data) {
-    throw new UnsupportedOperationException();
+    if (data instanceof SseEventSource.SseEventSourceBuilder) {
+      send(data);
+    } else {
+      send(SseEventSource.builder().data(Windward.plugin(JsonPlugin.class).toJson(data)).build());
+    }
   }
 }
