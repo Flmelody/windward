@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import org.flmelody.core.HttpHeader;
 import org.flmelody.core.HttpHeaderValue;
 import org.flmelody.core.HttpStatus;
@@ -31,17 +30,11 @@ import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.support.HttpKind;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author esotericman
  */
 public final class SseWindwardContext extends EnhancedWindwardContext implements HttpKind {
-  // Whether It's SSE connection or not yet
-  // If it's pure SSE, normal http response is forbidden
-  private final AtomicBoolean pureSse = new AtomicBoolean(false);
-  private static final Logger logger = LoggerFactory.getLogger(SseWindwardContext.class);
   private static final Map<String, Object> headers = new HashMap<>();
   private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
   private ScheduledFuture<?> scheduledFuture;
@@ -81,7 +74,6 @@ public final class SseWindwardContext extends EnhancedWindwardContext implements
   <T> void send(T data) {
     windwardResponse.write(
         HttpStatus.OK.value(), MediaType.TEXT_EVENT_STREAM_VALUE.value, headers, data);
-    pureSse.compareAndSet(false, true);
   }
 
   /** Send last tail empty content for sse. */
@@ -96,32 +88,18 @@ public final class SseWindwardContext extends EnhancedWindwardContext implements
         SseChunkTail.SSE_CHUNK_TAIL);
   }
 
-  private boolean filterResponse() {
-    if (pureSse.get()) {
-      logger.atWarn().log("Ignore normal http response, because it's SSE mode now");
-      return false;
-    }
-    return true;
-  }
-
   @Override
   public void redirect(int code, String redirectUrl) {
-    if (filterResponse()) {
-      super.redirect(code, redirectUrl);
-    }
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public <M> void html(String viewUrl, M model) {
-    if (filterResponse()) {
-      super.html(viewUrl, model);
-    }
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public <T> void write(int code, String contentType, T data) {
-    if (filterResponse()) {
-      super.write(code, contentType, data);
-    }
+    throw new UnsupportedOperationException();
   }
 }
