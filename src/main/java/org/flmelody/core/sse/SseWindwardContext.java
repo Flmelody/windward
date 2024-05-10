@@ -103,7 +103,7 @@ public final class SseWindwardContext extends EnhancedWindwardContext implements
   @Override
   public <T> void write(int code, String contentType, T data) {
     if (data instanceof SseEventSource.SseEventSourceBuilder) {
-      send(data);
+      send(((SseEventSource.SseEventSourceBuilder) data).build());
     } else {
       send(SseEventSource.builder().data(Windward.plugin(JsonPlugin.class).toJson(data)).build());
     }
