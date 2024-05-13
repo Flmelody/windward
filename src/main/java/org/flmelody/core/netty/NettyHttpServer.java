@@ -31,6 +31,7 @@ import io.netty.handler.codec.http.cors.CorsHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import org.flmelody.core.HttpServer;
 import org.flmelody.core.exception.ServerException;
+import org.flmelody.core.netty.handler.HttpContextHandler;
 import org.flmelody.core.netty.handler.HttpServerHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,7 @@ public class NettyHttpServer implements HttpServer {
                   p.addLast(new HttpObjectAggregator(65536));
                   p.addLast(new ChunkedWriteHandler());
                   p.addLast(new HttpServerHandler());
+                  p.addLast(new HttpContextHandler());
                 }
               });
       try {

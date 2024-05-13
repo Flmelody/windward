@@ -43,6 +43,7 @@ import org.flmelody.core.HttpHeaderValue;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.ResponseWriter;
 import org.flmelody.core.Windward;
+import org.flmelody.core.netty.event.DestroyDelayEvent;
 import org.flmelody.core.plugin.json.JsonPlugin;
 import org.flmelody.core.sse.SseChunkTail;
 
@@ -104,6 +105,7 @@ public class NettyResponseWriter implements ResponseWriter {
       ctx.write(httpResponse);
       if (data instanceof SseChunkTail) {
         ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+        ctx.fireUserEventTriggered(DestroyDelayEvent.DESTROY_DELAY);
       } else {
         ByteBuf response = resolveRawResponse(mediaType, data);
         ByteBufInputStream contentStream = new ByteBufInputStream(response);

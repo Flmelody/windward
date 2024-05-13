@@ -51,9 +51,11 @@ import org.flmelody.core.context.EnhancedWindwardContext;
 import org.flmelody.core.context.ResourceWindwardContext;
 import org.flmelody.core.context.SimpleWindwardContext;
 import org.flmelody.core.context.WindwardContext;
+import org.flmelody.core.context.support.DelayContext;
 import org.flmelody.core.exception.HandlerNotFoundException;
 import org.flmelody.core.netty.NettyResponseWriter;
 import org.flmelody.core.plugin.ws.ExtensionalWebSocketPlugin;
+import org.flmelody.core.support.HttpRequestHolder;
 import org.flmelody.core.ws.WebSocketEvent;
 import org.flmelody.core.ws.WebSocketFireEvent;
 import org.flmelody.core.ws.WebSocketParser;
@@ -111,7 +113,15 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
             (WebSocketWindwardContext) cachedWindwardContext;
         websocketWindwardContext.setHttpResponse(true);
       }
-      handle(functionMetaInfo, windwardContext);
+      try {
+        HttpRequestHolder.setContext(windwardContext);
+        handle(functionMetaInfo, windwardContext);
+      } finally {
+        WindwardContext context = HttpRequestHolder.getContext();
+        if (!(context instanceof DelayContext)) {
+          HttpRequestHolder.resetContext();
+        }
+      }
     } else {
       ctx.fireChannelRead(msg);
     }
@@ -252,6 +262,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
     if (windwardContext.isClosed()) {
       return;
     }
+
     for (Filter filter : Windward.filters()) {
       try {
         filter.filter(windwardContext);

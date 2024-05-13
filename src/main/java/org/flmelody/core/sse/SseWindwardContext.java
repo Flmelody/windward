@@ -30,13 +30,15 @@ import org.flmelody.core.Windward;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.EnhancedWindwardContext;
+import org.flmelody.core.context.support.DelayContext;
 import org.flmelody.core.context.support.HttpKind;
 import org.flmelody.core.plugin.json.JsonPlugin;
 
 /**
  * @author esotericman
  */
-public final class SseWindwardContext extends EnhancedWindwardContext implements HttpKind {
+public final class SseWindwardContext extends EnhancedWindwardContext
+    implements DelayContext, HttpKind {
   private static final Map<String, Object> headers = new HashMap<>();
   private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
   private ScheduledFuture<?> scheduledFuture;
@@ -106,6 +108,13 @@ public final class SseWindwardContext extends EnhancedWindwardContext implements
       send(((SseEventSource.SseEventSourceBuilder) data).build());
     } else {
       send(SseEventSource.builder().data(Windward.plugin(JsonPlugin.class).toJson(data)).build());
+    }
+  }
+
+  @Override
+  public void destroy() {
+    if (scheduledFuture != null && !scheduledFuture.isDone()) {
+      scheduledFuture.cancel(true);
     }
   }
 }
