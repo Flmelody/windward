@@ -17,8 +17,11 @@
 package org.flmelody.core.context.support;
 
 /**
+ * Marker type interface, this type of Context has a delayed destruction feature.
+ *
  * @author esotericman
  */
 public interface DelayContext {
+  /** Destroy context and release resources */
   void destroy();
 }

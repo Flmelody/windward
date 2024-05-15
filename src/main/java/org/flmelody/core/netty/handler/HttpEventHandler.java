@@ -26,7 +26,7 @@ import org.flmelody.core.support.HttpRequestHolder;
 /**
  * @author esotericman
  */
-public class HttpContextHandler extends ChannelDuplexHandler {
+public class HttpEventHandler extends ChannelDuplexHandler {
 
   @Override
   public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {

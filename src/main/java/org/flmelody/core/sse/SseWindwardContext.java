@@ -116,5 +116,6 @@ public final class SseWindwardContext extends EnhancedWindwardContext
     if (scheduledFuture != null && !scheduledFuture.isDone()) {
       scheduledFuture.cancel(true);
     }
+    close();
   }
 }

@@ -19,7 +19,9 @@ package org.flmelody.core.support;
 import org.flmelody.core.context.WindwardContext;
 
 /**
- * @author esotericman
+ *  A useful holder, contains the request context for the current thread binding.
+ *
+ * @author esotericamn
  */
 public final class HttpRequestHolder {
   private static final ThreadLocal<WindwardContext> CONTEXT = new ThreadLocal<>();
