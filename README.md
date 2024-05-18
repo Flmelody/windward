@@ -17,7 +17,7 @@ Light web framework for Java
 <dependency>
     <groupId>org.flmelody</groupId>
     <artifactId>windward</artifactId>
-    <version>1.5.0-RELEASE</version>
+    <version>1.5.1-RELEASE</version>
 </dependency>
 ```
 
