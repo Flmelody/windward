@@ -20,18 +20,43 @@ package org.flmelody.core.sse;
  * @author esotericman
  */
 public interface SseEvent {
-  /** Add an SSE "id" line. */
+  /**
+   * Add an SSE "id" line.
+   *
+   * @param id SSE "id" line
+   * @return event
+   */
   SseEvent id(String id);
 
-  /** Add an SSE "event" line. */
+  /**
+   * Add an SSE "event" line.
+   *
+   * @param eventName SSE "event" line
+   * @return event
+   */
   SseEvent name(String eventName);
 
-  /** Add an SSE "retry" line. */
+  /**
+   * Add an SSE "retry" line.
+   *
+   * @param reconnectTimeMillis SSE "retry" line
+   * @return event
+   */
   SseEvent reconnectTime(long reconnectTimeMillis);
 
-  /** Add an SSE "comment" line. */
+  /**
+   * Add an SSE "comment" line.
+   *
+   * @param comment SSE "comment" line
+   * @return event
+   */
   SseEvent comment(String comment);
 
-  /** Add an SSE "data" line. */
+  /**
+   * Add an SSE "data" line.
+   *
+   * @param object SSE "data" line
+   * @return event
+   */
   SseEvent data(String object);
 }
