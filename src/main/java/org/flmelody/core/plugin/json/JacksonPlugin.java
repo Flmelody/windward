@@ -28,7 +28,7 @@ import org.flmelody.core.exception.JsonSerializeException;
  * @author esotericman
  */
 public class JacksonPlugin implements JsonPlugin {
-  final ObjectMapper objectMapper = new ObjectMapper();
+  protected final ObjectMapper objectMapper = new ObjectMapper();
 
   {
     objectMapper

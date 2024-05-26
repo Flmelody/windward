@@ -28,7 +28,7 @@ import org.flmelody.core.exception.JsonSerializeException;
  * @author esotericman
  */
 public class GsonPlugin implements JsonPlugin {
-  final Gson gson;
+  protected final Gson gson;
 
   {
     gson = new GsonBuilder().serializeNulls().create();
