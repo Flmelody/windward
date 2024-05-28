@@ -145,6 +145,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+    logger.atError().log("System error", cause);
     ctx.close()
         .addListener(
             (ChannelFutureListener)

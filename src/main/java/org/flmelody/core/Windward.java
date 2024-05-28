@@ -261,7 +261,7 @@ public final class Windward implements Router<Windward> {
     // bind plugin
     PluginSlot slot = PluginSlot.slot(clazz);
     if (PluginSlot.ANY.equals(slot)) {
-      globalPlugins.put(clazz, plugin);
+      globalPlugins.put(plugin.getClass(), plugin);
     } else {
       globalPlugins.put(slot.clazz, plugin);
     }
