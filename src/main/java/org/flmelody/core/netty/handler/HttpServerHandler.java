@@ -55,6 +55,7 @@ import org.flmelody.core.context.support.DelayContext;
 import org.flmelody.core.exception.HandlerNotFoundException;
 import org.flmelody.core.netty.NettyResponseWriter;
 import org.flmelody.core.plugin.ws.ExtensionalWebSocketPlugin;
+import org.flmelody.core.plugin.ws.MultiWebSocketPlugin;
 import org.flmelody.core.support.HttpRequestHolder;
 import org.flmelody.core.ws.WebSocketEvent;
 import org.flmelody.core.ws.WebSocketFireEvent;
@@ -163,26 +164,41 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
   private void extractHandlers(ChannelHandlerContext ctx, String uri) {
     List<ExtensionalWebSocketPlugin> plugins = Windward.plugins(ExtensionalWebSocketPlugin.class);
     for (ExtensionalWebSocketPlugin plugin : plugins) {
-      if (plugin.isMatch(uri)) {
-        List<WebSocketCodec> webSocketCodecs = plugin.getWebSocketCodecs();
-        List<WebSocketParser<?>> webSocketParsers = plugin.getWebSocketParsers();
-        boolean emptyCodecs = webSocketCodecs == null || webSocketCodecs.isEmpty();
-        boolean emptyParsers = webSocketParsers == null || webSocketParsers.isEmpty();
-        // Custom parsing generally requires  a codec or a message parser to be configured.
-        if (emptyCodecs && emptyParsers) {
-          continue;
+      if (plugin instanceof MultiWebSocketPlugin) {
+        MultiWebSocketPlugin multiWebSocketPlugin = (MultiWebSocketPlugin) plugin;
+        List<ExtensionalWebSocketPlugin> extensionalWebSocketPlugins =
+            multiWebSocketPlugin.getExtensionalWebSocketPlugins();
+        for (ExtensionalWebSocketPlugin extensionalWebSocketPlugin : extensionalWebSocketPlugins) {
+          if (extensionalWebSocketPlugin.isMatch(uri)
+              && applyHandler(ctx, extensionalWebSocketPlugin)) {
+            return;
+          }
         }
-        if (!emptyCodecs) {
-          ctx.pipeline().addLast(webSocketCodecs.toArray(new WebSocketCodec[0]));
+      } else {
+        if (plugin.isMatch(uri) && applyHandler(ctx, plugin)) {
+          return;
         }
-        if (!emptyParsers) {
-          ctx.pipeline().addLast(webSocketParsers.toArray(new WebSocketParser[0]));
-        }
-        ctx.channel().attr(MULTIPLE_SUBSCRIBER).set(true);
-        // Direct return without multiple merges to avoid unnecessary problems
-        break;
       }
     }
+  }
+
+  private boolean applyHandler(ChannelHandlerContext ctx, ExtensionalWebSocketPlugin plugin) {
+    List<WebSocketCodec> webSocketCodecs = plugin.getWebSocketCodecs();
+    List<WebSocketParser<?>> webSocketParsers = plugin.getWebSocketParsers();
+    boolean emptyCodecs = webSocketCodecs == null || webSocketCodecs.isEmpty();
+    boolean emptyParsers = webSocketParsers == null || webSocketParsers.isEmpty();
+    // Custom parsing generally requires  a codec or a message parser to be configured.
+    if (emptyCodecs && emptyParsers) {
+      return false;
+    }
+    if (!emptyCodecs) {
+      ctx.pipeline().addLast(webSocketCodecs.toArray(new WebSocketCodec[0]));
+    }
+    if (!emptyParsers) {
+      ctx.pipeline().addLast(webSocketParsers.toArray(new WebSocketParser[0]));
+    }
+    ctx.channel().attr(MULTIPLE_SUBSCRIBER).set(true);
+    return true;
   }
 
   private Map<String, List<String>> prepareHeaders(HttpHeaders httpHeaders) {
