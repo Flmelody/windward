@@ -49,6 +49,7 @@ import org.flmelody.core.wind.WindManager;
 import org.flmelody.core.wind.event.Event;
 import org.flmelody.core.wind.listener.Listener;
 import org.flmelody.core.ws.WebSocketWindwardContext;
+import org.flmelody.core.ws.authentication.AuthorizationProvider;
 import org.flmelody.support.EnhancedFunction;
 import org.flmelody.util.UrlUtil;
 
@@ -501,8 +502,11 @@ public final class Windward implements Router<Windward> {
 
   /** {@inheritDoc} */
   @Override
-  public Windward ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
-    group(UrlUtil.SLASH).ws(relativePath, consumer);
+  public Windward ws(
+      String relativePath,
+      Consumer<WebSocketWindwardContext> consumer,
+      AuthorizationProvider... authorizationProviders) {
+    group(UrlUtil.SLASH).ws(relativePath, consumer, authorizationProviders);
     return this;
   }
 

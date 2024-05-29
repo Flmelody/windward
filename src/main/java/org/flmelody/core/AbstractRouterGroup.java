@@ -41,6 +41,7 @@ import org.flmelody.core.sse.SseEjector;
 import org.flmelody.core.sse.SseWindwardContext;
 import org.flmelody.core.wind.event.RouterBindEvent;
 import org.flmelody.core.ws.WebSocketWindwardContext;
+import org.flmelody.core.ws.authentication.AuthorizationProvider;
 import org.flmelody.support.EnhancedFunction;
 import org.flmelody.support.FunctionDefinition;
 import org.flmelody.util.AntPathMatcher;
@@ -158,8 +159,16 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
   }
 
   @Override
-  public RouterGroup<M> ws(String relativePath, Consumer<WebSocketWindwardContext> consumer) {
-    registerRouter(relativePath, HttpMethod.GET.name(), consumer, WebSocketWindwardContext.class);
+  public RouterGroup<M> ws(
+      String relativePath,
+      Consumer<WebSocketWindwardContext> consumer,
+      AuthorizationProvider... authorizationProviders) {
+    registerRouter(
+        relativePath,
+        HttpMethod.GET.name(),
+        consumer,
+        WebSocketWindwardContext.class,
+        (Object[]) authorizationProviders);
     return this;
   }
 
@@ -271,10 +280,15 @@ public abstract class AbstractRouterGroup<M> implements RouterGroup<M> {
   }
 
   private <I> void registerRouter(
-      String relativePath, String method, I i, Class<? extends WindwardContext> clazz) {
+      String relativePath,
+      String method,
+      I i,
+      Class<? extends WindwardContext> clazz,
+      Object... args) {
     String path = UrlUtil.buildUrl(groupPath, relativePath);
     Map<String, Object> pathVariables = checkPlaceholder(path);
-    FunctionMetaInfo<I> functionMetaInfo = new FunctionMetaInfo<>(path, i, clazz, pathVariables);
+    FunctionMetaInfo<I> functionMetaInfo =
+        new FunctionMetaInfo<>(path, i, clazz, pathVariables, args);
     if (routers.containsKey(path)) {
       routers.get(path).put(method, functionMetaInfo);
     } else {

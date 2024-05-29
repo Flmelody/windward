@@ -16,6 +16,9 @@
 
 package org.flmelody.core;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.flmelody.core.context.WindwardContext;
 import org.flmelody.core.exception.WindwardException;
@@ -34,12 +37,14 @@ public class FunctionMetaInfo<I> {
   private final Class<?> resultType;
   private final Map<String, Object> pathVariables;
   private final FunctionDefinition functionDefinition;
+  private final List<?> args;
 
   public FunctionMetaInfo(
       String path,
       I function,
       Class<? extends WindwardContext> context,
-      Map<String, Object> pathVariables) {
+      Map<String, Object> pathVariables,
+      Object... args) {
     this.path = path;
     this.function = function;
     this.context = context;
@@ -65,6 +70,11 @@ public class FunctionMetaInfo<I> {
       this.functionDefinition = FunctionDefinition.empty();
       this.parameterType = null;
       this.resultType = null;
+    }
+    if (args != null) {
+      this.args = Arrays.asList(args);
+    } else {
+      this.args = Collections.emptyList();
     }
   }
 
@@ -94,5 +104,9 @@ public class FunctionMetaInfo<I> {
 
   public FunctionDefinition getFunctionDefinition() {
     return functionDefinition;
+  }
+
+  public List<?> getArgs() {
+    return args;
   }
 }

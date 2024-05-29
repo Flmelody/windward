@@ -36,9 +36,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.flmelody.core.ExceptionHandler;
 import org.flmelody.core.Filter;
 import org.flmelody.core.FunctionMetaInfo;
@@ -61,6 +64,7 @@ import org.flmelody.core.ws.WebSocketEvent;
 import org.flmelody.core.ws.WebSocketFireEvent;
 import org.flmelody.core.ws.WebSocketParser;
 import org.flmelody.core.ws.WebSocketWindwardContext;
+import org.flmelody.core.ws.authentication.AuthorizationProvider;
 import org.flmelody.core.ws.codec.WebSocketCodec;
 import org.flmelody.support.EnhancedFunction;
 import org.slf4j.Logger;
@@ -90,6 +94,10 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         }
       }
       if (isWebsocketUpgrade(fullHttpRequest.headers()) && cachedWindwardContext != null) {
+        if (!((WebSocketWindwardContext) cachedWindwardContext).authorized()) {
+          ctx.close();
+          return;
+        }
         ctx.pipeline()
             .addBefore(
                 ctx.name(),
@@ -261,7 +269,18 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         } else if (context.isAssignableFrom(WebSocketWindwardContext.class)) {
           return new WebSocketWindwardContext(
               windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),
-              windwardResponseBuild.build());
+              windwardResponseBuild.build(),
+              functionMetaInfo.getArgs().stream()
+                  .map(
+                      (Function<Object, AuthorizationProvider>)
+                          o -> {
+                            if (o instanceof AuthorizationProvider) {
+                              return (AuthorizationProvider) o;
+                            }
+                            return null;
+                          })
+                  .filter(Objects::nonNull)
+                  .collect(Collectors.toList()));
         } else if (context.isAssignableFrom(ResourceWindwardContext.class)) {
           return new ResourceWindwardContext(
               windwardRequestBuilder.pathVariables(functionMetaInfo.getPathVariables()).build(),

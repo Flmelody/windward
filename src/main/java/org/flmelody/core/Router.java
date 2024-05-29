@@ -24,6 +24,7 @@ import org.flmelody.core.context.support.HttpKind;
 import org.flmelody.core.sse.SseEjector;
 import org.flmelody.core.sse.SseWindwardContext;
 import org.flmelody.core.ws.WebSocketWindwardContext;
+import org.flmelody.core.ws.authentication.AuthorizationProvider;
 import org.flmelody.support.EnhancedFunction;
 
 /**
@@ -205,10 +206,14 @@ public interface Router<T> {
    *
    * @param relativePath relative path
    * @param consumer function to consume
+   * @param authorizationProviders authorizationProviders
    * @return this
    * @see org.flmelody.core.plugin.ws.ExtensionalWebSocketPlugin
    */
-  T ws(String relativePath, Consumer<WebSocketWindwardContext> consumer);
+  T ws(
+      String relativePath,
+      Consumer<WebSocketWindwardContext> consumer,
+      AuthorizationProvider... authorizationProviders);
 
   /**
    * Register resources path pattern

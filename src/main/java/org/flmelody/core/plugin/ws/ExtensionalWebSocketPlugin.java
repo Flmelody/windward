@@ -48,7 +48,7 @@ public class ExtensionalWebSocketPlugin implements WebSocketPlugin {
     this("/**", webSocketCodecs, webSocketParsers);
   }
 
-  protected ExtensionalWebSocketPlugin(
+  public ExtensionalWebSocketPlugin(
       String pattern,
       List<WebSocketCodec> webSocketCodecs,
       List<WebSocketParser<?>> webSocketParsers) {

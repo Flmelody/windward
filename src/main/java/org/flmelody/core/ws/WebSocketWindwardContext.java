@@ -16,11 +16,14 @@
 
 package org.flmelody.core.ws;
 
+import java.util.Collections;
+import java.util.List;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.AbstractWindwardContext;
+import org.flmelody.core.ws.authentication.AuthorizationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class WebSocketWindwardContext extends AbstractWindwardContext {
   private static final Logger logger = LoggerFactory.getLogger(WebSocketWindwardContext.class);
+  private final List<AuthorizationProvider> authorizationProviders;
   private WebSocketEvent webSocketEvent;
   private Object webSocketData;
   private boolean httpResponse;
@@ -36,7 +40,15 @@ public final class WebSocketWindwardContext extends AbstractWindwardContext {
 
   public WebSocketWindwardContext(
       WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
+    this(windwardRequest, windwardResponse, Collections.emptyList());
+  }
+
+  public WebSocketWindwardContext(
+      WindwardRequest windwardRequest,
+      WindwardResponse windwardResponse,
+      List<AuthorizationProvider> providers) {
     super(windwardRequest, windwardResponse);
+    this.authorizationProviders = providers;
   }
 
   public void setWebSocketEvent(WebSocketEvent webSocketEvent) {
@@ -69,6 +81,18 @@ public final class WebSocketWindwardContext extends AbstractWindwardContext {
       upgradedContext = true;
     }
     this.httpResponse = false;
+  }
+
+  public boolean authorized() {
+    if (authorizationProviders == null || authorizationProviders.isEmpty()) {
+      return true;
+    }
+    for (AuthorizationProvider authorizationProvider : authorizationProviders) {
+      if (authorizationProvider.authenticate(this)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
