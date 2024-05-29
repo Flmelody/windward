@@ -57,6 +57,12 @@ import org.flmelody.util.UrlUtil;
  * @author esotericman
  */
 public final class Windward implements Router<Windward> {
+  // Banner for windward
+  private static final String banner =
+      "  _      ___         __                   __\n"
+          + " | | /| / (_)__  ___/ /    _____ ________/ /\n"
+          + " | |/ |/ / / _ \\/ _  / |/|/ / _ `/ __/ _  / \n"
+          + " |__/|__/_/_//_/\\_,_/|__,__/\\_,_/_/  \\_,_/  ";
   // Registered function
   private static final List<AbstractRouterGroup<Windward>> routerGroups = new ArrayList<>();
   // Registered resource router
@@ -162,6 +168,7 @@ public final class Windward implements Router<Windward> {
    */
   public void run() throws ServerException {
     beforeStart();
+    System.out.println(banner);
     // start server
     httpServer.run();
   }
