@@ -76,12 +76,12 @@ public class NettyHttpServer implements HttpServer {
               });
       try {
         ChannelFuture f = b.bind(port).sync();
-        logger.atInfo().log("Server started success on port {}", port);
+        logger.atInfo().log("Service started successfully, listening on port {}", port);
         f.channel().closeFuture().sync();
       } catch (InterruptedException e) {
-        logger.atInfo().log("Server run error", e);
+        logger.atInfo().log("Service run error", e);
         Thread.currentThread().interrupt();
-        throw new ServerException("Server run error");
+        throw new ServerException("Service run error");
       }
     } finally {
       bossGroup.shutdownGracefully();

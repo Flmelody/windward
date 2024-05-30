@@ -16,6 +16,7 @@
 
 package org.flmelody.core;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,6 +52,7 @@ import org.flmelody.core.wind.listener.Listener;
 import org.flmelody.core.ws.WebSocketWindwardContext;
 import org.flmelody.core.ws.authentication.AuthorizationProvider;
 import org.flmelody.support.EnhancedFunction;
+import org.flmelody.util.ConsoleUtil;
 import org.flmelody.util.UrlUtil;
 
 /**
@@ -62,7 +64,9 @@ public final class Windward implements Router<Windward> {
       "  _      ___         __                   __\n"
           + " | | /| / (_)__  ___/ /    _____ ________/ /\n"
           + " | |/ |/ / / _ \\/ _  / |/|/ / _ `/ __/ _  / \n"
-          + " |__/|__/_/_//_/\\_,_/|__,__/\\_,_/_/  \\_,_/  ";
+          + " |__/|__/_/_//_/\\_,_/|__,__/\\_,_/_/  \\_,_/  \n"
+          + "                                            \n"
+          + "     Windward Version {0}";
   // Registered function
   private static final List<AbstractRouterGroup<Windward>> routerGroups = new ArrayList<>();
   // Registered resource router
@@ -139,21 +143,20 @@ public final class Windward implements Router<Windward> {
         .registerFilter(filters)
         .registerPlugin(PluginSlot.JSON, AutoJsonBinder.jsonPlugin)
         .registerPlugin(PluginSlot.RESOURCE, new BaseStaticResourcePlugin());
-    return prepareDefault(windward);
+    return windward;
   }
 
   // Prepare template engine
-  private static Windward prepareDefault(Windward windward) {
-    if (ViewEngineDetector.AVAILABLE_GROOVY_ENGINE) {
+  private static void prepareDefault(Windward windward) {
+    if (plugins(GroovyView.class).isEmpty() && ViewEngineDetector.AVAILABLE_GROOVY_ENGINE) {
       windward.registerPlugin(PluginSlot.GROOVY_VIEW, new GroovyView());
     }
-    if (ViewEngineDetector.AVAILABLE_THYMELEAF_ENGINE) {
+    if (plugins(ThymeleafView.class).isEmpty() && ViewEngineDetector.AVAILABLE_THYMELEAF_ENGINE) {
       windward.registerPlugin(PluginSlot.THYMELEAF_VIEW, new ThymeleafView());
     }
-    if (ViewEngineDetector.AVAILABLE_FREEMARKER_ENGINE) {
+    if (plugins(FreemarkerView.class).isEmpty() && ViewEngineDetector.AVAILABLE_FREEMARKER_ENGINE) {
       windward.registerPlugin(PluginSlot.FREEMARKER_VIEW, new FreemarkerView());
     }
-    return windward;
   }
 
   /** Prepare work before startup. */
@@ -167,8 +170,12 @@ public final class Windward implements Router<Windward> {
    * @throws ServerException exception
    */
   public void run() throws ServerException {
+    System.out.println(
+        ConsoleUtil.ANSI_GREEN
+            + MessageFormat.format(banner, Version.WINDWARD_VERSION)
+            + ConsoleUtil.ANSI_RESET);
+    prepareDefault(this);
     beforeStart();
-    System.out.println(banner);
     // start server
     httpServer.run();
   }

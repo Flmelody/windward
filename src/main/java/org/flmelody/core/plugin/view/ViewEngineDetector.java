@@ -35,21 +35,24 @@ public class ViewEngineDetector {
       AVAILABLE_GROOVY_ENGINE = true;
     } catch (ClassNotFoundException e) {
       AVAILABLE_GROOVY_ENGINE = false;
-      logger.atInfo().log("Unavailable groovy template due to missed groovy engine");
+      logger.atInfo().log(
+          "Missing Groovy template engine dependency, Groovy templates not available");
     }
     try {
       Class.forName("org.thymeleaf.TemplateEngine");
       AVAILABLE_THYMELEAF_ENGINE = true;
     } catch (ClassNotFoundException e) {
       AVAILABLE_THYMELEAF_ENGINE = false;
-      logger.atInfo().log("Unavailable thymeleaf template due to missed thymeleaf engine");
+      logger.atInfo().log(
+          "Missing Thymeleaf template engine dependency, Thymeleaf templates not available");
     }
     try {
       Class.forName("freemarker.template.Configuration");
       AVAILABLE_FREEMARKER_ENGINE = true;
     } catch (ClassNotFoundException e) {
       AVAILABLE_FREEMARKER_ENGINE = false;
-      logger.atInfo().log("Unavailable freemarker template due to missed groovy engine");
+      logger.atInfo().log(
+          "Missing Freemarker template engine dependency, Freemarker templates not available");
     }
   }
 }
