@@ -35,7 +35,7 @@ public class ViewEngineDetector {
       AVAILABLE_GROOVY_ENGINE = true;
     } catch (ClassNotFoundException e) {
       AVAILABLE_GROOVY_ENGINE = false;
-      logger.atInfo().log(
+      logger.atDebug().log(
           "Missing Groovy template engine dependency, Groovy templates not available");
     }
     try {
@@ -43,7 +43,7 @@ public class ViewEngineDetector {
       AVAILABLE_THYMELEAF_ENGINE = true;
     } catch (ClassNotFoundException e) {
       AVAILABLE_THYMELEAF_ENGINE = false;
-      logger.atInfo().log(
+      logger.atDebug().log(
           "Missing Thymeleaf template engine dependency, Thymeleaf templates not available");
     }
     try {
@@ -51,7 +51,7 @@ public class ViewEngineDetector {
       AVAILABLE_FREEMARKER_ENGINE = true;
     } catch (ClassNotFoundException e) {
       AVAILABLE_FREEMARKER_ENGINE = false;
-      logger.atInfo().log(
+      logger.atDebug().log(
           "Missing Freemarker template engine dependency, Freemarker templates not available");
     }
   }
