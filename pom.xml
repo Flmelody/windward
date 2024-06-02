@@ -4,7 +4,7 @@
 
     <groupId>org.flmelody</groupId>
     <artifactId>windward</artifactId>
-    <version>1.5.2-RELEASE</version>
+    <version>1.5.3-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>windward</name>
@@ -265,7 +265,6 @@
                         <configuration>
                             <target>
                                 <delete>
-                                    <fileset dir="${project.build.outputDirectory}" includes="*.properties"/>
                                     <fileset dir="${project.build.outputDirectory}" includes="*.yaml"/>
                                     <fileset dir="${project.build.outputDirectory}" includes="*.yml"/>
                                 </delete>
