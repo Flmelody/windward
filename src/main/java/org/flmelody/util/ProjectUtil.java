@@ -27,7 +27,8 @@ public final class ProjectUtil {
   private static final Properties props = new Properties();
 
   static {
-    InputStream is = ProjectUtil.class.getClassLoader().getResourceAsStream("windward.properties");
+    InputStream is =
+        ProjectUtil.class.getClassLoader().getResourceAsStream("META-INF/windward.properties");
     try {
       props.load(is);
     } catch (IOException e) {
