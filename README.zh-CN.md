@@ -3,16 +3,14 @@
 ![GitHub](https://img.shields.io/github/license/Flmelody/windward)
 ![Maven Central](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Frepo1.maven.org%2Fmaven2%2Forg%2Fflmelody%2Fwindward%2Fmaven-metadata.xml&query=%2F%2Fmetadata%2Fversioning%2Flatest&label=maven-central)
 
-[中文](README.zh-CN.md)
-
-Light web framework for Java 
+轻量级Java Web框架
 <div>
     <img src="https://github.com/Flmelody/windward-guide/blob/main/docs/.vuepress/public/windward.png" alt="windward" width="360" height="240">
 </div>
 
-## Quick start
+## 快速开始
 
-### Add maven dependency
+### 添加依赖
 
 ```xml
 
@@ -23,7 +21,7 @@ Light web framework for Java
 </dependency>
 ```
 
-use jackson
+添加Jackson库
 
 ```xml
 
@@ -34,7 +32,7 @@ use jackson
 </dependency>
 ```
 
-or gson
+或者使用Gson库
 
 ```xml
 
@@ -45,7 +43,7 @@ or gson
 </dependency>
 ```
 
-### Coding
+### 启动
 
 ```java
 public class Application {
@@ -57,10 +55,10 @@ public class Application {
 
 ```
 
-Everything is fine ! 😇, You'll see something like below 
+一切正常！😇，您将看到如下内容
 
 ![windward-started](windward-started.png)
 
-### Benchmark
+### 性能测试
 
 ![rps.png](rps.png)
