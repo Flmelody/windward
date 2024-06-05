@@ -43,6 +43,45 @@
 </dependency>
 ```
 
+添加Logback
+
+```xml
+
+<dependency>
+    <groupId>ch.qos.logback</groupId>
+    <artifactId>logback-classic</artifactId>
+    <version>1.3.14</version>
+</dependency>
+```
+
+`logback.xml`
+
+```xml
+
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+    <logger name="org.flmelody" level="info" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <!--添加你自己的包名-->
+    <!--    <logger name="your package" level="info" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>-->
+
+    <root level="error">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>
+```
+
 ### 启动
 
 ```java

@@ -5,7 +5,7 @@
 
 [中文](README.zh-CN.md)
 
-Light web framework for Java 
+Light web framework for Java
 <div>
     <img src="https://github.com/Flmelody/windward-guide/blob/main/docs/.vuepress/public/windward.png" alt="windward" width="360" height="240">
 </div>
@@ -45,7 +45,46 @@ or gson
 </dependency>
 ```
 
-### Coding
+Add Logback
+
+```xml
+
+<dependency>
+    <groupId>ch.qos.logback</groupId>
+    <artifactId>logback-classic</artifactId>
+    <version>1.3.14</version>
+</dependency>
+```
+
+`logback.xml`
+
+```xml
+
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </layout>
+    </appender>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+    <logger name="org.flmelody" level="info" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <!--add your package name-->
+    <!--    <logger name="your package" level="info" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>-->
+
+    <root level="error">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>
+```
+
+### Run
 
 ```java
 public class Application {
@@ -57,7 +96,7 @@ public class Application {
 
 ```
 
-Everything is fine ! 😇, You'll see something like below 
+Everything is fine ! 😇, You'll see something like below
 
 ![windward-started](windward-started.png)
 
