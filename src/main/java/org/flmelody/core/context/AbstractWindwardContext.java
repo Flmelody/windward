@@ -18,18 +18,23 @@ package org.flmelody.core.context;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.flmelody.core.HttpStatus;
 import org.flmelody.core.MediaType;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author esotericman
  */
 public abstract class AbstractWindwardContext implements WindwardContext {
+  private static final Logger logger = LoggerFactory.getLogger(AbstractWindwardContext.class);
   protected final WindwardRequest windwardRequest;
   protected final WindwardResponse windwardResponse;
-  private Boolean closed = Boolean.FALSE;
+  protected final AtomicBoolean alreadyDone = new AtomicBoolean(false);
+  private boolean closed;
 
   protected AbstractWindwardContext(
       WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
@@ -75,13 +80,13 @@ public abstract class AbstractWindwardContext implements WindwardContext {
   /** {@inheritDoc} */
   @Override
   public void close() {
-    this.closed = Boolean.TRUE;
+    this.closed = true;
     windwardResponse.close();
   }
 
   /** {@inheritDoc} */
   @Override
-  public Boolean isClosed() {
+  public boolean isClosed() {
     return this.closed;
   }
 
@@ -118,6 +123,10 @@ public abstract class AbstractWindwardContext implements WindwardContext {
   /** {@inheritDoc} */
   @Override
   public <T> void write(int code, String contentType, T data) {
-    windwardResponse.write(code, contentType, data);
+    if (alreadyDone.compareAndSet(false, true)) {
+      windwardResponse.write(code, contentType, data);
+    } else {
+      logger.atWarn().log("Failed to response more than once, Request already done");
+    }
   }
 }

@@ -96,7 +96,8 @@ public class SseEjector {
     }
   }
 
-  private class EjectorCallback implements Runnable {
+  /** Ejector callback */
+  public class EjectorCallback implements Runnable {
 
     @Override
     public void run() {

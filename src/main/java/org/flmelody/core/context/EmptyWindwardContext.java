@@ -55,8 +55,8 @@ public class EmptyWindwardContext implements WindwardContext {
   }
 
   @Override
-  public Boolean isClosed() {
-    return Boolean.TRUE;
+  public boolean isClosed() {
+    return true;
   }
 
   @Override

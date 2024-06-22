@@ -39,7 +39,7 @@ public abstract class EnhancedWindwardContext extends AbstractHttpWindwardContex
   }
 
   /** Check request before executing function. */
-  protected abstract void doOnRequest();
+  protected void doOnRequest() {}
 
   /**
    * Cope with result of function.
@@ -47,5 +47,5 @@ public abstract class EnhancedWindwardContext extends AbstractHttpWindwardContex
    * @param r Result of function
    * @param <R> Result type
    */
-  protected abstract <R> void doOnResponse(R r);
+  protected <R> void doOnResponse(R r) {}
 }

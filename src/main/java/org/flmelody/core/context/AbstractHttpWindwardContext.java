@@ -29,12 +29,16 @@ import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.exception.WindwardException;
 import org.flmelody.core.plugin.json.JsonPlugin;
 import org.flmelody.core.plugin.view.AbstractViewPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author esotericman
  */
 public abstract class AbstractHttpWindwardContext extends AbstractWindwardContext
     implements HttpBasicWindwardContext {
+  private static final Logger logger = LoggerFactory.getLogger(AbstractHttpWindwardContext.class);
+
   protected AbstractHttpWindwardContext(
       WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
     super(windwardRequest, windwardResponse);
@@ -73,48 +77,56 @@ public abstract class AbstractHttpWindwardContext extends AbstractWindwardContex
   /** {@inheritDoc} */
   @Override
   public void redirect(int code, String redirectUrl) {
-    if (HttpStatus.MOVED_PERMANENTLY.value() == code || HttpStatus.FOUND.value() == code) {
-      HashMap<String, Object> headerMap = new HashMap<>();
-      headerMap.put(HttpHeader.LOCATION, redirectUrl);
-      windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE.value, headerMap, null);
-      return;
+    if (alreadyDone.compareAndSet(false, true)) {
+      if (HttpStatus.MOVED_PERMANENTLY.value() == code || HttpStatus.FOUND.value() == code) {
+        HashMap<String, Object> headerMap = new HashMap<>();
+        headerMap.put(HttpHeader.LOCATION, redirectUrl);
+        windwardResponse.write(code, MediaType.TEXT_PLAIN_VALUE.value, headerMap, null);
+        return;
+      }
+      throw new WindwardException("Illegal redirecting code" + code);
+    } else {
+      logger.atWarn().log("Redirecting to " + redirectUrl + " failed, Request already done");
     }
-    throw new WindwardException("Illegal redirecting code" + code);
   }
 
   /** {@inheritDoc} */
   @Override
   public <M> void html(String viewUrl, M model) {
-    if (viewUrl == null || viewUrl.isEmpty()) {
-      throw new WindwardException("View name is empty!");
-    }
-    String extension;
-    int i = viewUrl.lastIndexOf(".");
-    if (i > 0) {
-      extension = viewUrl.substring(i + 1);
-    } else {
-      throw new WindwardException("Unknown View extension!");
-    }
-    Optional<AbstractViewPlugin> view =
-        Windward.plugins(AbstractViewPlugin.class).stream()
-            .filter(viewPlugin -> viewPlugin.supportedExtension(extension))
-            .findFirst();
-    if (view.isPresent()) {
-      AbstractViewPlugin viewPlugin = view.get();
-      try {
-        String renderedView =
-            viewPlugin.resolveView(
-                viewUrl, Windward.plugin(JsonPlugin.class).toObject(model, HashMap.class));
-        windwardResponse.write(
-            HttpStatus.OK.value(),
-            MediaType.TEXT_HTML_VALUE.value,
-            Collections.emptyMap(),
-            renderedView);
-      } catch (Exception e) {
-        throw new RuntimeException(e);
+    if (alreadyDone.compareAndSet(false, true)) {
+      if (viewUrl == null || viewUrl.isEmpty()) {
+        throw new WindwardException("View name is empty!");
+      }
+      String extension;
+      int i = viewUrl.lastIndexOf(".");
+      if (i > 0) {
+        extension = viewUrl.substring(i + 1);
+      } else {
+        throw new WindwardException("Unknown View extension!");
+      }
+      Optional<AbstractViewPlugin> view =
+          Windward.plugins(AbstractViewPlugin.class).stream()
+              .filter(viewPlugin -> viewPlugin.supportedExtension(extension))
+              .findFirst();
+      if (view.isPresent()) {
+        AbstractViewPlugin viewPlugin = view.get();
+        try {
+          String renderedView =
+              viewPlugin.resolveView(
+                  viewUrl, Windward.plugin(JsonPlugin.class).toObject(model, HashMap.class));
+          windwardResponse.write(
+              HttpStatus.OK.value(),
+              MediaType.TEXT_HTML_VALUE.value,
+              Collections.emptyMap(),
+              renderedView);
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      } else {
+        throw new WindwardException("Unsupported View extension!");
       }
     } else {
-      throw new WindwardException("Unsupported View extension!");
+      logger.atWarn().log("Failed to response view, Request already done");
     }
   }
 }

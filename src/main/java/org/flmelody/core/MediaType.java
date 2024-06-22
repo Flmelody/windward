@@ -59,7 +59,7 @@ public enum MediaType {
     }
     String baseType = null;
     for (MediaType mediaType : MediaType.values()) {
-      if (mediaType.value.contains(type)) {
+      if (mediaType.value.contains(type) || mediaType.value.split(";")[0].equals(type)) {
         return mediaType;
       }
       if (type.startsWith(mediaType.type)) {

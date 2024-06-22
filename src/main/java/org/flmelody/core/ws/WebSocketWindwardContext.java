@@ -144,7 +144,7 @@ public final class WebSocketWindwardContext extends AbstractWindwardContext {
   }
 
   @Override
-  public Boolean isCacheable() {
-    return Boolean.TRUE;
+  public boolean isCacheable() {
+    return true;
   }
 }

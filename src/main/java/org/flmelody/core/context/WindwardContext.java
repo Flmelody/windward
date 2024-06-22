@@ -72,15 +72,15 @@ public interface WindwardContext {
    *
    * @return is closed
    */
-  Boolean isClosed();
+  boolean isClosed();
 
   /**
    * Whether context can be cached
    *
    * @return cacheable flag
    */
-  default Boolean isCacheable() {
-    return Boolean.FALSE;
+  default boolean isCacheable() {
+    return false;
   }
 
   /**

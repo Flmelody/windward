@@ -30,9 +30,6 @@ public class ViewWindwardContext extends EnhancedWindwardContext implements Http
   }
 
   @Override
-  public void doOnRequest() {}
-
-  @Override
   public <R> void doOnResponse(R r) {
     if (!(r instanceof String)) {
       throw new ResourceNotFoundException("No suitable resource!");
