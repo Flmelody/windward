@@ -85,7 +85,10 @@ public final class Windward implements Router<Windward> {
   private final String staticResourceLocation;
   private final PluginResolver pluginResolver = new CompositePluginResolver();
   private final WindManager windManager = new DefaultWindManager(this);
+  // NettyHttpServer default
   private HttpServer httpServer;
+  // Whether to use ssl or not
+  private SslPair sslPair;
 
   private Windward(String contextPath, String templateRoot, String staticResourceLocation) {
     this.contextPath = contextPath;
@@ -176,8 +179,8 @@ public final class Windward implements Router<Windward> {
             + ConsoleUtil.ANSI_RESET);
     prepareDefault(this);
     beforeStart();
-    // start server
-    httpServer.run();
+    // Start server
+    httpServer.run(this.sslPair);
   }
 
   /**
@@ -205,6 +208,17 @@ public final class Windward implements Router<Windward> {
         new DefaultRouterGroup(this, UrlUtil.buildUrl(contextPath, relativePath), true);
     resourceRouterGroups.add(defaultRouterGroup);
     return defaultRouterGroup;
+  }
+
+  /**
+   * Use ssl for server
+   *
+   * @param sslPair ssl meta
+   * @return windward instance
+   */
+  public Windward withSsl(SslPair sslPair) {
+    this.sslPair = sslPair;
+    return this;
   }
 
   /**

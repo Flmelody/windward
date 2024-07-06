@@ -57,6 +57,7 @@
         <thymeleaf-layout-dialect.version>3.3.0</thymeleaf-layout-dialect.version>
         <groovy-templates.version>4.0.21</groovy-templates.version>
         <freemarker.version>2.3.33</freemarker.version>
+        <bcpkix-jdk18on.version>1.78.1</bcpkix-jdk18on.version>
     </properties>
 
     <dependencies>
@@ -84,6 +85,12 @@
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator-cdi</artifactId>
             <version>${hibernate-validator.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>${bcpkix-jdk18on.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

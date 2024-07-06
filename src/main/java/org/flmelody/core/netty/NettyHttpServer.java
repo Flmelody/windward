@@ -28,8 +28,13 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.cors.CorsConfigBuilder;
 import io.netty.handler.codec.http.cors.CorsHandler;
+import io.netty.handler.ssl.OptionalSslHandler;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import java.util.Objects;
 import org.flmelody.core.HttpServer;
+import org.flmelody.core.SslPair;
 import org.flmelody.core.exception.ServerException;
 import org.flmelody.core.netty.handler.HttpEventHandler;
 import org.flmelody.core.netty.handler.HttpServerHandler;
@@ -40,20 +45,41 @@ import org.slf4j.LoggerFactory;
  * @author esotericman
  */
 public class NettyHttpServer implements HttpServer {
-
+  private static final Logger logger = LoggerFactory.getLogger(NettyHttpServer.class);
   private final int port;
-  static Logger logger = LoggerFactory.getLogger(NettyHttpServer.class);
 
   public NettyHttpServer(int port) {
     this.port = port;
   }
 
   @Override
-  public void run() throws ServerException {
+  public void run(Object... args) throws ServerException {
     EventLoopGroup bossGroup = new NioEventLoopGroup();
     EventLoopGroup workerGroup = new NioEventLoopGroup();
+
     try {
       ServerBootstrap b = new ServerBootstrap();
+      // Detect ssl
+      SslContext sslContext = null;
+      boolean forceHttps = false;
+      if (args != null) {
+        for (Object arg : args) {
+          if (Objects.isNull(sslContext)) {
+            if (arg instanceof SslPair) {
+              SslPair sslPair = (SslPair) arg;
+              try {
+                forceHttps = sslPair.forceStatus();
+                sslContext =
+                    SslContextBuilder.forServer(sslPair.certFile(), sslPair.keyFile()).build();
+              } catch (Exception e) {
+                throw new ServerException("Failed to initialize ssl context");
+              }
+            }
+          }
+        }
+      }
+      SslContext finalSslContext = sslContext;
+      boolean finalForceHttps = forceHttps;
       b.group(bossGroup, workerGroup)
           .channel(NioServerSocketChannel.class)
           .childHandler(
@@ -61,6 +87,13 @@ public class NettyHttpServer implements HttpServer {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
                   ChannelPipeline p = ch.pipeline();
+                  if (Objects.nonNull(finalSslContext)) {
+                    if (finalForceHttps) {
+                      p.addLast(finalSslContext.newHandler(ch.alloc()));
+                    } else {
+                      p.addLast(new OptionalSslHandler(finalSslContext));
+                    }
+                  }
                   p.addLast(new HttpServerCodec());
                   p.addLast(
                       new CorsHandler(

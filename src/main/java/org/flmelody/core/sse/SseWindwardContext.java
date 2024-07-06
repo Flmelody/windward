@@ -54,9 +54,6 @@ public final class SseWindwardContext extends EnhancedWindwardContext
   }
 
   @Override
-  protected void doOnRequest() {}
-
-  @Override
   protected <R> void doOnResponse(R r) {
     if (r instanceof SseEjector) {
       SseEjector sseEjector = (SseEjector) r;

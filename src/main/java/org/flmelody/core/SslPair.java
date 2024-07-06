@@ -16,12 +16,36 @@
 
 package org.flmelody.core;
 
-import org.flmelody.core.exception.ServerException;
+import java.io.InputStream;
+import org.flmelody.core.netty.ssl.SimpleSslPair;
 
 /**
+ * Implement this interface to provide SSL certificates, note that the file format needs to be
+ * adapted to the current service implementation.
+ *
+ * @see SimpleSslPair
  * @author esotericman
  */
-@FunctionalInterface
-public interface HttpServer {
-  void run(Object... args) throws ServerException;
+public interface SslPair {
+
+  /**
+   * Path to the certificate file.
+   *
+   * @return certificate file
+   */
+  InputStream certFile();
+
+  /**
+   * Path to the key file.
+   *
+   * @return key file
+   */
+  InputStream keyFile();
+
+  /**
+   * Force https status
+   *
+   * @return must or not
+   */
+  boolean forceStatus();
 }
