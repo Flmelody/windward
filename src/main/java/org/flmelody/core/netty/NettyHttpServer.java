@@ -17,12 +17,12 @@
 package org.flmelody.core.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
@@ -59,54 +59,9 @@ public class NettyHttpServer implements HttpServer {
 
     try {
       ServerBootstrap b = new ServerBootstrap();
-      // Detect ssl
-      SslContext sslContext = null;
-      boolean forceHttps = false;
-      if (args != null) {
-        for (Object arg : args) {
-          if (Objects.isNull(sslContext)) {
-            if (arg instanceof SslPair) {
-              SslPair sslPair = (SslPair) arg;
-              try {
-                forceHttps = sslPair.forceStatus();
-                sslContext =
-                    SslContextBuilder.forServer(sslPair.certFile(), sslPair.keyFile()).build();
-              } catch (Exception e) {
-                throw new ServerException("Failed to initialize ssl context");
-              }
-            }
-          }
-        }
-      }
-      SslContext finalSslContext = sslContext;
-      boolean finalForceHttps = forceHttps;
       b.group(bossGroup, workerGroup)
           .channel(NioServerSocketChannel.class)
-          .childHandler(
-              new ChannelInitializer<SocketChannel>() {
-                @Override
-                protected void initChannel(SocketChannel ch) throws Exception {
-                  ChannelPipeline p = ch.pipeline();
-                  if (Objects.nonNull(finalSslContext)) {
-                    if (finalForceHttps) {
-                      p.addLast(finalSslContext.newHandler(ch.alloc()));
-                    } else {
-                      p.addLast(new OptionalSslHandler(finalSslContext));
-                    }
-                  }
-                  p.addLast(new HttpServerCodec());
-                  p.addLast(
-                      new CorsHandler(
-                          CorsConfigBuilder.forAnyOrigin()
-                              .allowNullOrigin()
-                              .allowCredentials()
-                              .build()));
-                  p.addLast(new HttpObjectAggregator(65536));
-                  p.addLast(new ChunkedWriteHandler());
-                  p.addLast(new HttpServerHandler());
-                  p.addLast(new HttpEventHandler());
-                }
-              });
+          .childHandler(new ServerChannelInitializer(args));
       try {
         ChannelFuture f = b.bind(port).sync();
         logger.atInfo().log("Service started successfully, listening on port {}", port);
@@ -120,6 +75,55 @@ public class NettyHttpServer implements HttpServer {
       bossGroup.shutdownGracefully();
       workerGroup.shutdownGracefully();
       logger.atInfo().log("Server shutdown");
+    }
+  }
+
+  /** Initializer for server */
+  private static class ServerChannelInitializer extends ChannelInitializer<Channel> {
+    private SslContext sslContext;
+    private boolean forceSsl;
+
+    private ServerChannelInitializer(Object... args) {
+      detectSsl(args);
+    }
+
+    @Override
+    protected void initChannel(Channel ch) throws Exception {
+      ChannelPipeline p = ch.pipeline();
+      if (Objects.nonNull(sslContext)) {
+        if (forceSsl) {
+          p.addLast(sslContext.newHandler(ch.alloc()));
+        } else {
+          p.addLast(new OptionalSslHandler(sslContext));
+        }
+      }
+      p.addLast(new HttpServerCodec());
+      p.addLast(
+          new CorsHandler(
+              CorsConfigBuilder.forAnyOrigin().allowNullOrigin().allowCredentials().build()));
+      p.addLast(new HttpObjectAggregator(65536));
+      p.addLast(new ChunkedWriteHandler());
+      p.addLast(new HttpServerHandler());
+      p.addLast(new HttpEventHandler());
+    }
+
+    private void detectSsl(Object... args) {
+      if (args != null) {
+        for (Object arg : args) {
+          if (Objects.isNull(sslContext)) {
+            if (arg instanceof SslPair) {
+              SslPair sslPair = (SslPair) arg;
+              try {
+                this.forceSsl = sslPair.forceStatus();
+                this.sslContext =
+                    SslContextBuilder.forServer(sslPair.certFile(), sslPair.keyFile()).build();
+              } catch (Exception e) {
+                throw new ServerException("Failed to initialize ssl context");
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
