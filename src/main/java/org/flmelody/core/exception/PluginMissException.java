@@ -24,7 +24,7 @@ public class PluginMissException extends RuntimeException {
     super(cause);
   }
 
-  public PluginMissException(String reason) {
-    super(reason);
+  public PluginMissException(String message) {
+    super(message);
   }
 }

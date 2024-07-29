@@ -20,7 +20,8 @@ package org.flmelody.core.exception;
  * @author esotericman
  */
 public class ResourceNotFoundException extends HandlerNotFoundException {
-  public ResourceNotFoundException(String reason) {
-    super(reason);
+
+  public ResourceNotFoundException(String message) {
+    super(message);
   }
 }

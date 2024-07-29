@@ -20,11 +20,16 @@ package org.flmelody.core.exception;
  * @author esotericman
  */
 public class WindwardException extends RuntimeException {
+
+  public WindwardException(String message) {
+    super(message);
+  }
+
   public WindwardException(Throwable cause) {
     super(cause);
   }
 
-  public WindwardException(String reason) {
-    super(reason);
+  public WindwardException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

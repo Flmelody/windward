@@ -21,7 +21,7 @@ package org.flmelody.core.exception;
  */
 public class ValidationException extends RuntimeException {
 
-  public ValidationException(String reason) {
-    super(reason);
+  public ValidationException(String message) {
+    super(message);
   }
 }

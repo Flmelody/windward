@@ -30,8 +30,12 @@ import org.flmelody.core.exception.JsonSerializeException;
 public class GsonPlugin implements JsonPlugin {
   protected final Gson gson;
 
-  {
-    gson = new GsonBuilder().serializeNulls().create();
+  public GsonPlugin() {
+    gson = gson();
+  }
+
+  protected Gson gson() {
+    return new GsonBuilder().serializeNulls().create();
   }
 
   /** {@inheritDoc} */

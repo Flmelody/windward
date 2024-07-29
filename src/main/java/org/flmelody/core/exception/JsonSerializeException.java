@@ -25,7 +25,7 @@ public class JsonSerializeException extends RuntimeException {
     super(cause);
   }
 
-  public JsonSerializeException(String reason) {
-    super(reason);
+  public JsonSerializeException(String message) {
+    super(message);
   }
 }

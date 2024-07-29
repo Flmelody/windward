@@ -21,7 +21,7 @@ package org.flmelody.core.exception;
  */
 public class HandlerNotFoundException extends RuntimeException {
 
-  public HandlerNotFoundException(String reason) {
-    super(reason);
+  public HandlerNotFoundException(String message) {
+    super(message);
   }
 }

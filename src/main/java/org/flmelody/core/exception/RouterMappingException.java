@@ -21,7 +21,7 @@ package org.flmelody.core.exception;
  */
 public class RouterMappingException extends RuntimeException {
 
-  public RouterMappingException(String reason) {
-    super(reason);
+  public RouterMappingException(String message) {
+    super(message);
   }
 }
