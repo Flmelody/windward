@@ -42,9 +42,9 @@ public final class FunctionHelper {
 
   private static <F> FunctionDefinition findFunctionSmartly(F function) {
     String functionClassName = function.getClass().getName();
-    int lambdaMarkerIndex = functionClassName.indexOf("$$Lambda$");
+    boolean lambda = functionClassName.contains("$$Lambda");
     // Not lambda function
-    if (lambdaMarkerIndex == -1) {
+    if (!lambda) {
       return findRegularFunction(function);
     }
     if (function instanceof Serializable) {
