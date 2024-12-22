@@ -324,6 +324,10 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         @SuppressWarnings("unchecked")
         final Consumer<WindwardContext> contextConsumer = (Consumer<WindwardContext>) function;
         contextConsumer.accept(windwardContext);
+        if (!windwardContext.isClosed()) {
+          windwardContext.writeString(null);
+          windwardContext.close();
+        }
       } else if (function instanceof EnhancedFunction) {
         EnhancedWindwardContext enhancedWindwardContext = (EnhancedWindwardContext) windwardContext;
         //noinspection unchecked
@@ -337,6 +341,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<Object> {
         } else {
           windwardContext.writeString(object.toString());
         }
+        windwardContext.close();
       } else {
         throw new HandlerNotFoundException("No handler found!");
       }

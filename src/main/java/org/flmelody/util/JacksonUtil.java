@@ -44,6 +44,14 @@ public class JacksonUtil {
    */
   public static <I> String toJson(I data) {
     try {
+      if (data instanceof String) {
+        try {
+          objectMapper.readTree((String) data);
+          return (String) data;
+        } catch (Exception ignored) {
+          // ignored
+        }
+      }
       return objectMapper.writeValueAsString(data);
     } catch (JsonProcessingException e) {
       throw new JsonSerializeException(e);

@@ -34,7 +34,7 @@ public abstract class AbstractWindwardContext implements WindwardContext {
   protected final WindwardRequest windwardRequest;
   protected final WindwardResponse windwardResponse;
   protected final AtomicBoolean alreadyDone = new AtomicBoolean(false);
-  private boolean closed;
+  private final AtomicBoolean closed = new AtomicBoolean(false);
 
   protected AbstractWindwardContext(
       WindwardRequest windwardRequest, WindwardResponse windwardResponse) {
@@ -80,14 +80,15 @@ public abstract class AbstractWindwardContext implements WindwardContext {
   /** {@inheritDoc} */
   @Override
   public void close() {
-    this.closed = true;
-    windwardResponse.close();
+    if (closed.compareAndSet(false, true)) {
+      windwardResponse.close();
+    }
   }
 
   /** {@inheritDoc} */
   @Override
   public boolean isClosed() {
-    return this.closed;
+    return this.closed.get();
   }
 
   /** {@inheritDoc} */

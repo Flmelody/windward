@@ -21,7 +21,6 @@ import org.flmelody.core.MediaType;
 import org.flmelody.core.WindwardRequest;
 import org.flmelody.core.WindwardResponse;
 import org.flmelody.core.context.EnhancedWindwardContext;
-import org.flmelody.core.exception.ValidationException;
 
 /**
  * @author esotericman
@@ -40,7 +39,7 @@ public class JsonWindwardContext extends EnhancedWindwardContext implements Http
         return;
       }
     }
-    throw new ValidationException("Content type must be JSON!");
+    // throw new ValidationException("Content type must be JSON!");
   }
 
   @Override
